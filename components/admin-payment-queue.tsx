@@ -12,11 +12,15 @@ interface PaymentOffer {
   supplier: string
   buyer: string
   invoiceNumber: string
+  vendorNumber: string
   amount: number
+  offeredAmount: number
+  feePercent: number
+  feeAmount: number
   bankDetails: string
-  status: "pending" | "approved" | "executed" | "failed"
-  reference: string
-  date: string
+  status: "accepted" | "approved" | "executed" | "failed"
+  createdAt: string
+  acceptedAt?: string
 }
 
 export default function AdminPaymentQueue() {
@@ -28,7 +32,21 @@ export default function AdminPaymentQueue() {
   useEffect(() => {
     fetch("/api/payments/queue")
       .then(res => res.json())
-      .then(data => setOffers(data))
+      .then(data => setOffers(Array.isArray(data) ? data.map((o: any) => ({
+        id: o.id,
+        supplier: o.supplier,
+        buyer: o.buyer,
+        invoiceNumber: o.invoice_number,
+        vendorNumber: o.vendor_number,
+        amount: Number(o.amount),
+        offeredAmount: Number(o.offered_amount),
+        feePercent: Number(o.fee_percent),
+        feeAmount: Number(o.fee_amount),
+        bankDetails: o.bank_details,
+        status: o.status,
+        createdAt: o.created_at,
+        acceptedAt: o.accepted_at
+      })) : []))
       .catch(() => setOffers([]))
   }, [])
 
@@ -56,7 +74,7 @@ export default function AdminPaymentQueue() {
   const filteredOffers = offers.filter(o =>
     (!filter.buyer || o.buyer === filter.buyer) &&
     (!filter.supplier || o.supplier === filter.supplier) &&
-    (!filter.date || o.date === filter.date)
+    (!filter.date || o.createdAt?.slice(0,10) === filter.date)
   )
 
   return (
@@ -95,9 +113,13 @@ export default function AdminPaymentQueue() {
               <th>Supplier</th>
               <th>Buyer</th>
               <th>Invoice</th>
+              <th>Vendor</th>
               <th>Amount</th>
+              <th>Offered</th>
+              <th>Fee %</th>
+              <th>Fee Amt</th>
               <th>Status</th>
-              <th>Date</th>
+              <th>Accepted At</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -107,9 +129,13 @@ export default function AdminPaymentQueue() {
                 <td>{offer.supplier}</td>
                 <td>{offer.buyer}</td>
                 <td>{offer.invoiceNumber}</td>
+                <td>{offer.vendorNumber}</td>
                 <td>{offer.amount.toLocaleString()}</td>
+                <td>{offer.offeredAmount.toLocaleString()}</td>
+                <td>{offer.feePercent}</td>
+                <td>{offer.feeAmount.toLocaleString()}</td>
                 <td><Badge>{offer.status}</Badge></td>
-                <td>{offer.date}</td>
+                <td>{offer.acceptedAt ? offer.acceptedAt.slice(0,10) : ""}</td>
                 <td>
                   <Button size="sm" onClick={() => { setSelectedOffer(offer); setDialogOpen(true) }}>
                     Details
@@ -128,15 +154,19 @@ export default function AdminPaymentQueue() {
                 <div><strong>Supplier:</strong> {selectedOffer.supplier}</div>
                 <div><strong>Buyer:</strong> {selectedOffer.buyer}</div>
                 <div><strong>Invoice:</strong> {selectedOffer.invoiceNumber}</div>
+                <div><strong>Vendor Number:</strong> {selectedOffer.vendorNumber}</div>
                 <div><strong>Amount:</strong> {selectedOffer.amount.toLocaleString()}</div>
+                <div><strong>Offered Amount:</strong> {selectedOffer.offeredAmount.toLocaleString()}</div>
+                <div><strong>Fee Percent:</strong> {selectedOffer.feePercent}</div>
+                <div><strong>Fee Amount:</strong> {selectedOffer.feeAmount.toLocaleString()}</div>
                 <div><strong>Bank Details:</strong> {selectedOffer.bankDetails}</div>
-                <div><strong>Reference:</strong> {selectedOffer.reference}</div>
                 <div><strong>Status:</strong> <Badge>{selectedOffer.status}</Badge></div>
+                <div><strong>Accepted At:</strong> {selectedOffer.acceptedAt ? selectedOffer.acceptedAt.slice(0,10) : ""}</div>
               </div>
             )}
           </DialogContent>
           <div className="flex gap-2 justify-end mt-4">
-              {selectedOffer && selectedOffer.status === "pending" && (
+              {selectedOffer && selectedOffer.status === "accepted" && (
                 <Button onClick={() => handleApprove(selectedOffer)}>Approve</Button>
               )}
               {selectedOffer && selectedOffer.status === "approved" && (
