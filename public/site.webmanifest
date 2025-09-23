@@ -1,0 +1,9 @@
+{
+  "name": "Future Mining Finance",
+  "short_name": "FMF",
+  "description": "Future Mining Finance Application",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a"
+}
