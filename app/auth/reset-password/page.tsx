@@ -16,7 +16,9 @@ const LogoIcon = ({ className = "w-8 h-8 text-blue-600" }) => (
   </svg>
 )
 
-export default function ResetPasswordPage() {
+import { Suspense } from "react"
+
+function ResetPasswordContent() {
   const router = useRouter()
   const params = useSearchParams()
   const email = params?.get("email") || ""
@@ -189,5 +191,13 @@ export default function ResetPasswordPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   )
 }
