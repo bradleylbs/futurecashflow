@@ -3,9 +3,9 @@ import { executeQuery } from "@/lib/database"
 
 export async function POST(req: Request) {
   const { id } = await req.json()
-  // Update payment status to 'approved' in DB
+  // Update payment status to 'accepted' in DB
   const result = await executeQuery(
-    `UPDATE early_payment_offers SET status = 'approved', updated_at = NOW() WHERE id = ?`,
+    `UPDATE early_payment_offers SET status = 'accepted', updated_at = NOW() WHERE id = ?`,
     [id]
   )
   // Log audit trail (simple example)
@@ -16,5 +16,5 @@ export async function POST(req: Request) {
   if (!result.success) {
     return NextResponse.json({ error: result.error }, { status: 500 })
   }
-  return NextResponse.json({ success: true, id, status: "approved" })
+  return NextResponse.json({ success: true, id, status: "accepted" })
 }
