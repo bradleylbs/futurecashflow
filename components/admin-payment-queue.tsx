@@ -26,18 +26,30 @@ export default function AdminPaymentQueue() {
   const [dialogOpen, setDialogOpen] = useState(false)
 
   useEffect(() => {
-    // TODO: Fetch offers from backend API
-    // setOffers(response.data)
+    fetch("/api/payments/queue")
+      .then(res => res.json())
+      .then(data => setOffers(data))
+      .catch(() => setOffers([]))
   }, [])
 
-  const handleApprove = (offer: PaymentOffer) => {
-    // TODO: Call backend to approve payment
+  const handleApprove = async (offer: PaymentOffer) => {
+    await fetch("/api/payments/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: offer.id })
+    })
     setSelectedOffer({ ...offer, status: "approved" })
+    setOffers(prev => prev.map(o => o.id === offer.id ? { ...o, status: "approved" } : o))
   }
 
-  const handleExecute = (offer: PaymentOffer) => {
-    // TODO: Call backend to execute payment
+  const handleExecute = async (offer: PaymentOffer) => {
+    await fetch("/api/payments/execute", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: offer.id })
+    })
     setSelectedOffer({ ...offer, status: "executed" })
+    setOffers(prev => prev.map(o => o.id === offer.id ? { ...o, status: "executed" } : o))
     setDialogOpen(false)
   }
 
