@@ -23,6 +23,7 @@ import {
 import { AdminApplicationsTable } from "@/components/admin-applications-table"
 import { AdminDocumentsTable } from "@/components/admin-documents-table"
 import { AdminBankingTable } from "@/components/admin-banking-table"
+import AdminPaymentQueue from "@/components/admin-payment-queue"
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { BarChart as ReBarChart, Bar, XAxis, YAxis, PieChart as RePieChart, Pie, Cell } from "recharts"
 
@@ -292,8 +293,26 @@ export default function AdminDashboard() {
       )}
 
       {/* Analytics and Management Tabs */}
-      <Tabs defaultValue="applications" className="space-y-6">
-        <TabsList className="bg-muted p-1 rounded-2xl">
+  <Tabs defaultValue="applications" className="space-y-6">
+  <TabsList className="bg-muted p-1 rounded-2xl">
+          <TabsTrigger value="payments" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:text-foreground rounded-xl">
+            <Clock className="h-4 w-4" />
+            Payments
+          </TabsTrigger>
+        <TabsContent value="payments" className="space-y-4">
+          <Card className="bg-card border border-border rounded-2xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Clock className="h-5 w-5 text-blue-600" />
+                <span className="text-xl font-bold">Payment Queue</span>
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">Review, approve, and execute supplier payments</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <AdminPaymentQueue />
+            </CardContent>
+          </Card>
+        </TabsContent>
           <TabsTrigger value="applications" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:text-foreground rounded-xl">
             <Building className="h-4 w-4" />
             Applications
