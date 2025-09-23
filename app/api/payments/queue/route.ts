@@ -7,6 +7,7 @@ export async function GET() {
     `SELECT 
       epo.id, 
       epo.supplier_user_id AS supplier, 
+      c.company_name AS supplier_company_name,
       epo.buyer_id AS buyer, 
       epo.invoice_number, 
       epo.amount, 
@@ -25,6 +26,7 @@ export async function GET() {
       bd.status AS banking_status
      FROM early_payment_offers epo
      JOIN users u ON epo.supplier_user_id = u.id
+     LEFT JOIN companies c ON c.user_id = u.id
      LEFT JOIN banking_details bd ON u.id = bd.user_id 
        AND bd.status = 'verified'
      WHERE epo.status = 'accepted'
@@ -39,6 +41,7 @@ export async function GET() {
   const transformedData = (result.data ?? []).map((row: any) => ({
     id: row.id,
     supplier: row.supplier,
+    supplier_company_name: row.supplier_company_name,
     buyer: row.buyer,
     invoice_number: row.invoice_number,
     amount: row.amount,
