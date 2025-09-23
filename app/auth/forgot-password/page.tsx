@@ -18,7 +18,12 @@ const LogoIcon = ({ className = "w-8 h-8 text-blue-600" }) => (
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
-  const params = useSearchParams()
+  let params: ReturnType<typeof useSearchParams> | null = null
+  try {
+    params = useSearchParams()
+  } catch {
+    params = null
+  }
   const prefillEmail = params?.get("email") || ""
   const returnTo = params?.get("returnTo") || ""
 
