@@ -9,8 +9,10 @@ import { Card, CardContent } from "@/components/ui/card"
 export const LogoIcon = ({ className = "w-10 h-10 text-blue-500" }) => (
   <div className="relative">
     <svg aria-hidden="true" className={className} fill="currentColor" viewBox="0 0 80 80">
-      <path d="M40 8L16 32H26L40 18L54 32H64L40 8Z" />
-      <path d="M40 28L16 52H26L40 38L54 52H64L40 28Z" />
+      {/* Bottom arrow blinks second */}
+      <path d="M40 28L16 52H26L40 38L54 52H64L40 28Z" className="animate-blink-2" />
+      {/* Top arrow blinks first */}
+      <path d="M40 8L16 32H26L40 18L54 32H64L40 8Z" className="animate-blink-1" />
     </svg>
   </div>
 )
@@ -18,49 +20,47 @@ export const LogoIcon = ({ className = "w-10 h-10 text-blue-500" }) => (
 // Hero Section - solid black background, solid blue accents (no shiny effects)
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen bg-black text-white overflow-hidden flex items-center justify-center">
-      
+    <section className="relative min-h-screen flex items-center justify-center bg-[#f7f7f9] text-gray-700">
       <div className="container relative z-10 text-center px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Logo and company name */}
-          <div className="flex items-center justify-center gap-8 mb-16">
-            <div className="relative">
-              <LogoIcon className="w-16 h-16 lg:w-20 lg:h-20 text-blue-500" />
+        <div className="max-w-3xl mx-auto">
+          {/* Arrows above headline */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="mb-4">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="mx-auto">
+                <path d="M20 12L15 18H17L20 15L23 18H25L20 12Z" fill="#a5b4fc" />
+                <path d="M20 20L15 26H17L20 23L23 26H25L20 20Z" fill="#2563eb" />
+              </svg>
             </div>
-            <div className="flex items-baseline">
-              <h1 className="font-black text-6xl lg:text-8xl xl:text-9xl tracking-tight text-white">
-                Future
-              </h1>
-              <div className="border-l-4 h-16 lg:h-20 xl:h-24 mx-6 bg-blue-500 w-1 rounded-full"></div>
-              <span className="font-light text-4xl lg:text-6xl xl:text-7xl text-white whitespace-nowrap">
-                Finance Cashflow 
-              </span>
-            </div>
-          </div>
-
-          {/* Tagline pill */}
-          <div className="mb-16">
-            <div className="inline-block bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-medium">
-              African Mining Supply Chain Finance Reimagined
+            <div className="flex items-center justify-center gap-4">
+              <h1 className="font-black text-4xl md:text-5xl lg:text-6xl text-[#181e29]">Future</h1>
+              <span className="h-10 w-px bg-[#2563eb] mx-4"></span>
+              <span className="font-light text-4xl md:text-5xl lg:text-6xl text-[#64748b]">Mining Finance</span>
             </div>
           </div>
 
-          {/* Credit provider info */}
-          <div className="mb-8">
-            <p className="text-gray-300 text-base">
-              Future Mining Finance (Pty) Ltd is a registered Credit Provider NCRCP18174
+          {/* Description */}
+          <div className="space-y-6 mb-8">
+            <p className="text-xl font-light text-foreground">
+              Future Mining Finance is a fintech and funding platform enabling mining companies to offer
+              <span className="bg-blue-600 text-white rounded-full px-4 py-1 font-semibold mx-2">early payment</span>
+              programs for SMEs in their supply chain.
+            </p>
+            <p className="text-xl font-light text-foreground">
+              Africa's mining sector can have a much greater impact on SMEs, but most mines take too long to pay their suppliers.
+            </p>
+            <p className="text-xl font-light text-foreground">
+              Through our platform, suppliers can receive immediate payments for approved invoices,
+              <span className="underline decoration-blue-500 underline-offset-4 mx-1">improving their cash flow</span>
+              and fostering sustainable growth.
             </p>
           </div>
-        </div>
-        {/* CTAs */}
-        <div className="mt-6 flex items-center justify-center gap-4">
-          <Link href="/register" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors">
-            Get started
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link href="/auth/login" className="inline-flex items-center gap-2 bg-white text-black hover:bg-gray-100 px-6 py-3 rounded-xl font-semibold transition-colors">
-            Sign in
-          </Link>
+
+          {/* CTA Button */}
+          <div className="mt-8 flex items-center justify-center">
+            <Link href="/register" className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full text-lg font-semibold transition-colors shadow-lg">
+              Get Started
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -440,8 +440,48 @@ const Footer = () => {
 // Main Component
 export default function LandingPage() {
   return (
-    <div className="bg-black text-white">
-      <HeroSection />
+    <div className="bg-[#f7f7f9] text-gray-700">
+      <style>{`
+        @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+        .animate-blink-1 { animation: blink 1.5s infinite; }
+        .animate-blink-2 { animation: blink 1.5s 0.3s infinite; }
+      `}</style>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <main className="flex flex-col items-center justify-center text-center p-4 max-w-4xl mx-auto">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            {/* Two blinking chevrons before 'Future' on one line */}
+            <span className="flex flex-col mr-2">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M16 8L10 14H13L16 11L19 14H22L16 8Z" fill="#2563eb" className="animate-blink-1" />
+                <path d="M16 16L10 22H13L16 19L19 22H22L16 16Z" fill="#2563eb" className="animate-blink-2" />
+              </svg>
+            </span>
+            <span className="font-bold text-2xl md:text-3xl lg:text-4xl text-[#181e29]">Future</span>
+            <span className="h-8 w-px bg-[#2563eb] mx-2"></span>
+            <span className="font-light text-2xl md:text-3xl lg:text-4xl text-[#64748b]">Mining Finance</span>
+          </div>
+
+          <div className="mt-12 space-y-6 text-xl text-gray-600 font-light">
+            <p>
+              Future Mining Finance is a fintech and funding platform enabling mining companies to offer <span className="bg-[#2563eb] text-white rounded-full px-3 py-1 font-normal">early payment</span> programs for SMEs in their supply chain.
+            </p>
+            <p>
+              Africa's mining sector can have a much greater impact on SMEs, but most mines take too long to pay their suppliers.
+            </p>
+            <p>
+              Through our platform, suppliers can receive immediate payments for approved invoices, <span className="underline decoration-[#2563eb] decoration-2 underline-offset-4">improving their cash flow</span> and fostering sustainable growth.
+            </p>
+          </div>
+
+          <div className="mt-12">
+            <Link href="/login" passHref>
+              <Button size="lg" className="rounded-full px-8 py-6 text-lg font-normal bg-[#2563eb] hover:bg-[#1d4ed8]">
+                Get Started
+              </Button>
+            </Link>
+          </div>
+        </main>
+      </div>
       <CompanyDescriptionSection />
       <ProblemSection />
       <SolutionSection />
