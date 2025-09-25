@@ -1,3 +1,4 @@
+"use client";
 import React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -438,6 +439,23 @@ const Footer = () => {
 }
 
 // Main Component
+// Best UI/UX: Animated word spinner with fade transition
+function WordSpinner({ words }: { words: string[] }) {
+  const [index, setIndex] = React.useState(0);
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((i) => (i + 1) % words.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [words.length]);
+  return (
+    <span className="flex items-center whitespace-nowrap" style={{ minWidth: '200px' }}>
+      <span className="text-blue-600 dark:text-blue-400 text-2xl md:text-3xl lg:text-4xl font-semibold mr-2">Finance</span>
+      <span className="text-blue-600 dark:text-blue-400 text-2xl md:text-3xl lg:text-4xl font-semibold">{words[index]}</span>
+    </span>
+  );
+}
+
 export default function LandingPage() {
   return (
     <div className="bg-[#f7f7f9] text-gray-700">
@@ -458,7 +476,10 @@ export default function LandingPage() {
             </span>
             <span className="font-bold text-2xl md:text-3xl lg:text-4xl text-[#181e29]">Future</span>
             <span className="h-8 w-px bg-[#2563eb] mx-2"></span>
-            <span className="font-light text-2xl md:text-3xl lg:text-4xl text-[#64748b]">Mining Finance</span>
+            {/* Dynamic animated word spinner - best UI/UX */}
+            <span className="relative flex items-center" style={{ minWidth: '220px', height: '40px' }}>
+              <WordSpinner words={["Mining", "SCM Automation", "Blockchain"]} />
+            </span>
           </div>
 
           <div className="mt-12 space-y-6 text-xl text-gray-600 font-light">
