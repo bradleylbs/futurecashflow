@@ -198,34 +198,43 @@ export function DocumentReviewDialog({ open, onOpenChange, document, onReviewCom
               <Label>Action *</Label>
               <div className="flex flex-col gap-2">
                 {actions.includes("start_review") && (
-                  <Button
-                    variant={action === "start_review" ? "default" : "outline"}
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setAction("start_review")}
-                    className="justify-start"
+                    onKeyPress={e => { if (e.key === 'Enter' || e.key === ' ') setAction("start_review") }}
+                    className={`justify-start px-4 py-2 rounded border text-left cursor-pointer flex items-center gap-2 ${action === "start_review" ? "bg-gray-200 border-gray-400" : "bg-white border-gray-300 hover:bg-gray-50"}`}
+                    style={{ outline: action === "start_review" ? "2px solid #2563eb" : undefined }}
                   >
                     <Eye className="mr-2 h-4 w-4" />
                     Start Review
-                  </Button>
+                  </div>
                 )}
                 {actions.includes("verify") && (
-                  <Button
-                    variant={action === "verify" ? "default" : "outline"}
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setAction("verify")}
-                    className="justify-start"
+                    onKeyPress={e => { if (e.key === 'Enter' || e.key === ' ') setAction("verify") }}
+                    className={`justify-start px-4 py-2 rounded border text-left cursor-pointer flex items-center gap-2 ${action === "verify" ? "bg-gray-200 border-gray-400" : "bg-white border-gray-300 hover:bg-gray-50"}`}
+                    style={{ outline: action === "verify" ? "2px solid #2563eb" : undefined }}
                   >
                     <CheckCircle className="mr-2 h-4 w-4" />
                     Verify Document
-                  </Button>
+                  </div>
                 )}
                 {actions.includes("reject") && (
-                  <Button
-                    variant={action === "reject" ? "destructive" : "outline"}
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setAction("reject")}
-                    className="justify-start"
+                    onKeyPress={e => { if (e.key === 'Enter' || e.key === ' ') setAction("reject") }}
+                    className={`justify-start px-4 py-2 rounded border text-left cursor-pointer flex items-center gap-2 ${action === "reject" ? "bg-red-100 border-red-400" : "bg-white border-gray-300 hover:bg-gray-50"}`}
+                    style={{ outline: action === "reject" ? "2px solid #dc2626" : undefined }}
                   >
                     <XCircle className="mr-2 h-4 w-4" />
                     Reject Document
-                  </Button>
+                  </div>
                 )}
               </div>
             </div>
