@@ -56,7 +56,7 @@ interface Document {
   document_type: string
   filename: string
   file_size: number
-  document_status: string
+  document_status: "uploaded" | "pending" | "under_review" | "verified" | "rejected"
   upload_date: string
   review_date?: string
   review_notes?: string
@@ -708,7 +708,6 @@ const GroupedView = ({
                     </div>
                   </div>
                 </div>
-                
                 <div className="flex items-center gap-2">
                   {group.stats.pending > 0 && (
                     <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
@@ -725,30 +724,27 @@ const GroupedView = ({
                       {group.stats.rejected} Rejected
                     </Badge>
                   )}
-                  
-                  {nextPending && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleReviewDocument(nextPending)
-                      }}
-                      className="ml-2 border-blue-500/30 hover:bg-blue-500/20"
-                    >
-                      <Eye className="h-3 w-3 mr-1" />
-                      Review Next
-                    </Button>
-                  )}
-                  
                   <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${
                     expandedCompanies.includes(companyKey) ? 'rotate-180' : ''
                   }`} />
                 </div>
               </div>
             </AccordionTrigger>
-            
             <AccordionContent className="pb-0">
+              {/* Move Review Next button here, only show if expanded and nextPending exists */}
+              {expandedCompanies.includes(companyKey) && nextPending && (
+                <div className="px-6 pt-4 pb-2 flex justify-end">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleReviewDocument(nextPending)}
+                    className="border-blue-500/30 hover:bg-blue-500/20"
+                  >
+                    <Eye className="h-3 w-3 mr-1" />
+                    Review Next
+                  </Button>
+                </div>
+              )}
               <div className="px-6 pb-4">
                 <Table>
                   <TableHeader>
