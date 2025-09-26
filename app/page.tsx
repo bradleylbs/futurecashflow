@@ -441,11 +441,6 @@ const Footer = () => {
 export default function LandingPage() {
   return (
     <div className="bg-[#f7f7f9] text-gray-700">
-      <style>{`
-        @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
-        .animate-blink-1 { animation: blink 1.5s infinite; }
-        .animate-blink-2 { animation: blink 1.5s 0.3s infinite; }
-      `}</style>
       <div className="flex flex-col items-center justify-center min-h-screen">
         <main className="flex flex-col items-center justify-center text-center p-4 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-6">

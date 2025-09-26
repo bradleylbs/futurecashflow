@@ -362,7 +362,7 @@ export default function VerifyOTPPage() {
 
             <Button 
               type="submit" 
-              className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:hover:scale-100 disabled:opacity-50" 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:hover:scale-100 disabled:opacity-50 disabled:bg-blue-400" 
               disabled={isLoading || otp.length !== 6}
             >
               {isLoading ? (
@@ -382,10 +382,9 @@ export default function VerifyOTPPage() {
             </p>
             
             <Button
-              variant="outline"
               onClick={handleResendOTP}
               disabled={isResending || countdown > 0}
-              className="w-full hover:bg-muted hover:scale-105 transition-all duration-300 py-3 px-6 rounded-xl"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:hover:scale-100 disabled:opacity-50 disabled:bg-blue-400"
             >
               {isResending ? (
                 <>

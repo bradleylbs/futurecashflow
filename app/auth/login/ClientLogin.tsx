@@ -241,27 +241,26 @@ export default function ClientLogin() {
 
     if (!target) {
       try {
-  const res = await fetch('/api/dashboard/status', { credentials: 'include', cache: 'no-store' })
+        const res = await fetch('/api/dashboard/status', { credentials: 'include', cache: 'no-store' })
         if (res.ok) {
           const snap = await res.json()
           const role = (snap?.user?.role || '').toLowerCase().trim()
           const kyc = (snap?.dashboard?.kyc_status || '').toLowerCase().trim()
+          const banking = (snap?.dashboard?.banking_status || '').toLowerCase().trim()
+          const agreementsSigned = !!snap?.dashboard?.agreements_signed
           if (role === 'fm_admin' || role === 'fa_admin' || role === 'admin') {
             target = '/dashboard/admin'
           } else if (role === 'buyer') {
             target = '/dashboard/buyer'
           } else if (role === 'supplier') {
-            const banking = (snap?.dashboard?.banking_status || '').toLowerCase().trim()
+            // Show onboarding if any step is incomplete
             const kycApproved = kyc === 'approved'
-            if (!kycApproved) {
+            const bankingDone = banking === 'submitted' || banking === 'verified'
+            if (!kycApproved || !bankingDone || !agreementsSigned) {
               setShowOnboardingInfo(true)
               return
             }
-            if (!(banking === 'submitted' || banking === 'verified')) {
-              target = '/supplier/banking'
-            } else {
-              target = '/dashboard/supplier'
-            }
+            target = '/dashboard/supplier/status'
           } else {
             target = '/dashboard'
           }
@@ -339,18 +338,31 @@ export default function ClientLogin() {
     try {
       if (loginResponse?.user?.role?.toLowerCase() === 'supplier' && loginResponse?.dashboardAccess?.completionStatus) {
         const cs = loginResponse.dashboardAccess.completionStatus
-        if (cs.kycCompleted && !cs.bankingSubmitted) {
+        if (!cs.kycCompleted) {
+          // Not done with KYC
+          return
+        }
+        if (!cs.bankingSubmitted) {
           router.push('/supplier/banking')
           return
         }
+        if (!cs.agreementsSigned) {
+          // Not done with agreement, go to supplier dashboard for signing
+          router.push('/dashboard/supplier')
+          return
+        }
+        // All onboarding steps complete, go to status page
+        router.push('/dashboard/supplier/status')
+        return
       }
 
-  const res = await fetch('/api/dashboard/status', { credentials: 'include', cache: 'no-store' })
+      const res = await fetch('/api/dashboard/status', { credentials: 'include', cache: 'no-store' })
       if (res.ok) {
         const snap = await res.json()
         const role = (snap?.user?.role || '').toLowerCase().trim()
         const kyc = (snap?.dashboard?.kyc_status || '').toLowerCase().trim()
         const banking = (snap?.dashboard?.banking_status || '').toLowerCase().trim()
+        const agreementsSigned = !!snap?.dashboard?.agreements_signed
 
         if (role === 'supplier') {
           if (kyc !== 'approved') {
@@ -360,7 +372,10 @@ export default function ClientLogin() {
             router.push('/supplier/banking')
             return
           }
-          router.push('/dashboard/supplier')
+          if (!agreementsSigned) {
+            return
+          }
+          router.push('/dashboard/supplier/status')
           return
         }
 
@@ -394,7 +409,17 @@ export default function ClientLogin() {
     }
   }
 
-  const getStepIcon = (completed: boolean, current: boolean) => {
+  const getStepIcon = (completed: boolean, current: boolean, step?: string, userRole?: string, completionStatus?: any) => {
+    // Special case: buyer, agreement step, KYC done, agreement not signed
+    if (
+      userRole === 'buyer' &&
+      step === 'sign_agreements' &&
+      completionStatus?.kycCompleted &&
+      !completionStatus?.agreementsSigned
+    ) {
+      // Show blue AlertCircle for pending agreement
+      return <AlertTriangle className="h-5 w-5 text-blue-500" />
+    }
     if (completed) return <CheckCircle className="h-5 w-5 text-blue-500" />
     if (current) return <Clock className="h-5 w-5 text-blue-500" />
     return <XCircle className="h-5 w-5 text-gray-300" />
@@ -555,36 +580,66 @@ export default function ClientLogin() {
               <Alert className="border-blue-200 bg-blue-50">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  {loginResponse.nextStepMessage || 'Please submit your banking details to continue with the onboarding process.'}
+                  {loginResponse.nextStepMessage || (
+                    userRole === 'buyer' && completionStatus?.kycCompleted && !completionStatus?.agreementsSigned
+                      ? 'Please sign your buyer agreement to continue with the onboarding process.'
+                      : 'Please submit your banking details to continue with the onboarding process.'
+                  )}
                 </AlertDescription>
               </Alert>
             )}
 
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-900 text-center">Completion Progress</h4>
-              
               <div className="space-y-3">
+                {/* KYC Step (always show) */}
                 <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                  {getStepIcon(getStepStatus('complete_kyc', completionStatus).completed, getStepStatus('complete_kyc', completionStatus).current)}
+                  {getStepIcon(
+                    getStepStatus('complete_kyc', completionStatus).completed,
+                    getStepStatus('complete_kyc', completionStatus).current,
+                    'complete_kyc',
+                    userRole,
+                    completionStatus
+                  )}
                   <div className="flex-1">
                     <p className="text-sm font-medium">Complete KYC Verification</p>
                     <p className="text-xs text-gray-500">Submit required documents</p>
                   </div>
                 </div>
-
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                  {getStepIcon(getStepStatus('submit_banking', completionStatus).completed, getStepStatus('submit_banking', completionStatus).current)}
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Submit Banking Details</p>
-                    <p className="text-xs text-gray-500">Provide bank account information</p>
+                {/* Banking Step (for suppliers only) */}
+                {userRole === 'supplier' && (
+                  <div className={`flex items-center space-x-3 p-3 rounded-lg ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'bg-blue-100 border border-blue-400' : 'bg-gray-50'}`}>
+                    {getStepIcon(
+                      getStepStatus('submit_banking', completionStatus).completed,
+                      getStepStatus('submit_banking', completionStatus).current,
+                      'submit_banking',
+                      userRole,
+                      completionStatus
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'text-blue-700 font-bold' : ''}`}>Submit Banking Details</p>
+                      <p className={`text-xs ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'text-blue-700' : 'text-gray-500'}`}>Provide bank account information</p>
+                      {(completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted) && (
+                        <span className="inline-block mt-1 text-xs text-blue-700 font-semibold">Pending</span>
+                      )}
+                    </div>
                   </div>
-                </div>
-
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                  {getStepIcon(getStepStatus('sign_agreements', completionStatus).completed, getStepStatus('sign_agreements', completionStatus).current)}
+                )}
+                {/* Agreement Step (always show) */}
+                <div className={`flex items-center space-x-3 p-3 rounded-lg ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'bg-blue-100 border border-blue-400' : 'bg-gray-50'}`}>
+                  {getStepIcon(
+                    getStepStatus('sign_agreements', completionStatus).completed,
+                    getStepStatus('sign_agreements', completionStatus).current,
+                    'sign_agreements',
+                    userRole,
+                    completionStatus
+                  )}
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Sign {userRole === 'supplier' ? 'Supplier' : 'Buyer'} Agreement</p>
-                    <p className="text-xs text-gray-500">Review and sign terms</p>
+                    <p className={`text-sm font-medium ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'text-blue-700 font-bold' : ''}`}>Sign {userRole === 'supplier' ? 'Supplier' : 'Buyer'} Agreement</p>
+                    <p className={`text-xs ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'text-blue-700' : 'text-gray-500'}`}>Review and sign terms</p>
+                    {(completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned) && (
+                      <span className="inline-block mt-1 text-xs text-blue-700 font-semibold">Pending</span>
+                    )}
                   </div>
                 </div>
               </div>

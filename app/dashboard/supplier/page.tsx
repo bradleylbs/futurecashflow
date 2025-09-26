@@ -210,7 +210,7 @@ export default function SupplierDashboard() {
               <div className="w-3 h-3 bg-primary/60 rounded-full animate-bounce delay-100"></div>
               <div className="w-3 h-3 bg-primary/80 rounded-full animate-bounce delay-200"></div>
             </div>
-            <p className="text-sm text-muted-foreground">Loading supplier dashboard…</p>
+            <p className="text-sm text-muted-foreground">Loading supplier dashboardâ€¦</p>
           </div>
         </div>
       </div>
@@ -424,25 +424,41 @@ export default function SupplierDashboard() {
           )}
 
           {data.dashboard.access_level === "banking_submitted" && (
-            <Card className="bg-card border border-border">
-              <CardHeader>
-                <CardTitle>Sign Agreement</CardTitle>
-                <CardDescription>Review and sign the supplier agreement to complete onboarding</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {selectedAgreement ? (
-                  <AgreementSigning
-                    agreement={selectedAgreement}
-                    onSigned={() => {
-                      setSelectedAgreement(null)
-                      fetchDashboardData()
-                    }}
-                  />
-                ) : (
-                  <AgreementList onSelectAgreement={(a: any) => setSelectedAgreement(a)} />
-                )}
-              </CardContent>
-            </Card>
+            <>
+              <Card className="bg-card border border-border">
+                <CardHeader>
+                  <CardTitle>Sign Agreement</CardTitle>
+                  <CardDescription>Review and sign the supplier agreement to complete onboarding</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {(data.dashboard.banking_status?.toLowerCase() === "verified" || data.dashboard.banking_status?.toLowerCase() === "submitted") ? (
+                    selectedAgreement ? (
+                      <AgreementSigning
+                        agreement={selectedAgreement}
+                        onSigned={() => {
+                          setSelectedAgreement(null)
+                          fetchDashboardData()
+                        }}
+                      />
+                    ) : (
+                      <AgreementList onSelectAgreement={(a: any) => setSelectedAgreement(a)} />
+                    )
+                  ) : (
+                    <Alert className="mb-4 border-blue-200 bg-blue-50 text-blue-900">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        Your banking details have been submitted and are pending verification. You may continue to sign the agreement, but full access will be granted after admin verification.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+              <div className="flex justify-end mt-4">
+                <Button className="bg-blue-600" onClick={() => setActiveTab('agreements')}>
+                  Continue to Complete Setup
+                </Button>
+              </div>
+            </>
           )}
 
           {canAccessOperations && (

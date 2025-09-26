@@ -173,6 +173,15 @@ export default function BuyerDashboard() {
     || data.dashboard.agreement_status === "signed"
   const supplierInvitesEnabled = canInviteSuppliers
 
+
+  // Onboarding steps for buyer
+  const onboardingSteps = [
+    { key: 'kyc', label: 'Complete KYC Verification', complete: data.dashboard.kyc_status === 'approved' },
+    { key: 'agreement', label: 'Sign Buyer Agreement', complete: data.dashboard.agreement_status === 'signed' },
+  ];
+  // Find the next incomplete step
+  const nextStepIndex = onboardingSteps.findIndex(step => !step.complete);
+
   return (
     <div className="relative min-h-screen bg-black text-white">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -215,6 +224,38 @@ export default function BuyerDashboard() {
             </Button>
           </div>
         </div>
+
+        {/* Onboarding Progress Section */}
+        <Card className="mb-6 bg-card border border-border">
+          <CardHeader>
+            <CardTitle>Login Successful!</CardTitle>
+            <CardDescription>
+              Welcome back! You have a few steps to complete before accessing your buyer dashboard.<br />
+              <span className="font-semibold">Please complete the next step to continue with the onboarding process.</span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <div className="font-semibold mb-2">Completion Progress</div>
+              <ol className="space-y-2">
+                {onboardingSteps.map((step, idx) => (
+                  <li key={step.key} className={`flex items-center gap-2 ${step.complete ? 'text-green-600' : idx === nextStepIndex ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>
+                    <span className={`inline-block w-2 h-2 rounded-full ${step.complete ? 'bg-green-600' : idx === nextStepIndex ? 'bg-blue-600' : 'bg-gray-400'}`}></span>
+                    {step.label}
+                    {step.complete && <span className="ml-2 text-xs text-green-500">(Completed)</span>}
+                    {idx === nextStepIndex && !step.complete && <span className="ml-2 text-xs text-blue-500">(Next Step)</span>}
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className="mt-4">
+              <div className="font-semibold mb-1">Next Steps</div>
+              <div className="text-sm text-muted-foreground">
+                Complete the required steps to unlock your full dashboard access.
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Activation banner */}
         {supplierInvitesEnabled && (
