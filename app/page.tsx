@@ -567,16 +567,19 @@ const Footer = () => {
 // Best UI/UX: Animated word spinner with fade transition
 function WordSpinner({ words }: { words: string[] }) {
   const [index, setIndex] = React.useState(0);
+
   React.useEffect(() => {
     const interval = setInterval(() => {
       setIndex((i) => (i + 1) % words.length);
     }, 3500);
     return () => clearInterval(interval);
   }, [words.length]);
+
   return (
     <span className="flex items-center whitespace-nowrap" style={{ minWidth: '200px' }}>
-      <span className="text-blue-600 dark:text-blue-400 text-2xl md:text-3xl lg:text-4xl font-semibold mr-2">Finance</span>
-      <span className="text-blue-600 dark:text-blue-400 text-2xl md:text-3xl lg:text-4xl font-semibold">{words[index]}</span>
+      <span className="text-blue-600 text-2xl md:text-3xl lg:text-4xl font-semibold">
+        {words[index]}
+      </span>
     </span>
   );
 }
@@ -596,9 +599,9 @@ export default function LandingPage() {
             </span>
             <span className="font-bold text-2xl md:text-3xl lg:text-4xl text-[#181e29]">Future</span>
             <span className="h-8 w-px bg-[#2563eb] mx-2"></span>
-            {/* Dynamic animated word spinner - best UI/UX */}
-            <span className="relative flex items-center" style={{ minWidth: '220px', height: '40px' }}>
-              <WordSpinner words={["Mining", "SCM Automation", "Blockchain"]} />
+            <span className="font-bold text-2xl md:text-3xl lg:text-4xl text-blue-600">Finance</span>
+            <span className="font-bold text-2xl md:text-3xl lg:text-4xl text-blue-600" style={{ marginLeft: '8px' }}>
+              <WordSpinner words={["eCommerce", "Blockchain", "Mining"]} />
             </span>
           </div>
 
@@ -629,6 +632,12 @@ export default function LandingPage() {
       <HowItWorksSection />
       <EcosystemSection />
       <Footer />
+      <style>{`
+  @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+  .animate-blink-1 { animation: blink 1.5s infinite; }
+  .animate-blink-2 { animation: blink 1.5s 0.3s infinite; }
+`}</style>
     </div>
   )
 }
+// End of file
