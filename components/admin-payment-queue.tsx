@@ -1,14 +1,19 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Progress } from "@/components/ui/progress"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 import {
   MoreHorizontal,
   RefreshCw,
@@ -22,8 +27,27 @@ import {
   CreditCard,
   Building,
   FileText,
+  TrendingUp,
+  TrendingDown,
+  Search,
+  Filter,
+  Download,
+  ChevronRight,
+  Info,
+  Shield,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Calendar,
+  User,
+  Hash,
+  ArrowUpRight,
+  ArrowDownRight,
+  ExternalLink,
+  Users,
 } from "lucide-react"
 
+// Enhanced interfaces with better typing
 interface PaymentOffer {
   id: string
   supplier: string
@@ -53,17 +77,71 @@ interface AdminPaymentQueueProps {
   tabActive?: boolean
 }
 
+// Enhanced stats card component
+const PaymentStatsCard: React.FC<{
+  title: string
+  value: string | number
+  icon: React.ElementType
+  color?: string
+  trend?: { value: number; isPositive: boolean }
+  loading?: boolean
+}> = ({ title, value, icon: Icon, color = "blue", trend, loading }) => {
+  if (loading) {
+    return (
+      <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+        <Skeleton className="h-12 w-full" />
+      </div>
+    )
+  }
+
+  const colorStyles: Record<string, string> = {
+    blue: "from-blue-500/20 to-indigo-500/20 text-blue-400",
+    green: "from-green-500/20 to-emerald-500/20 text-green-400",
+    amber: "from-amber-500/20 to-orange-500/20 text-amber-400",
+    purple: "from-purple-500/20 to-pink-500/20 text-purple-400",
+  }
+
+  return (
+    <div className={`
+      relative overflow-hidden p-4 rounded-xl bg-gradient-to-br ${(colorStyles as Record<string, string>)[color] || colorStyles.blue} 
+      backdrop-blur-sm border border-white/10 hover:border-white/20 
+      transition-all duration-300 hover:scale-[1.02] cursor-pointer group
+    `}>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+      <div className="relative flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="text-2xl font-bold mt-1">{value}</p>
+          {trend && (
+            <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${
+              trend.isPositive ? 'text-green-500' : 'text-red-500'
+            }`}>
+              {trend.isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+              <span>{Math.abs(trend.value)}% from last period</span>
+            </div>
+          )}
+        </div>
+        <div className="p-3 rounded-xl bg-white/10 backdrop-blur-sm group-hover:scale-110 transition-transform">
+          <Icon className="h-5 w-5" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQueueProps) {
   const [offers, setOffers] = useState<PaymentOffer[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedOffer, setSelectedOffer] = useState<PaymentOffer | null>(null)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
-  const [detailsLoading, setDetailsLoading] = useState(false)
-  const [detailsRefreshing, setDetailsRefreshing] = useState(false)
-  // Reset dialog/modal state when tabActive becomes false
+  const [processingId, setProcessingId] = useState<string | null>(null)
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null)
+  
+  // Reset dialog state when tab changes
   useEffect(() => {
     if (typeof tabActive !== "undefined" && !tabActive) {
       setShowDetailsDialog(false)
@@ -71,7 +149,8 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
     }
   }, [tabActive])
 
-  const fetchOffers = async () => {
+  // Fetch payment offers from API
+  const fetchOffers = useCallback(async () => {
     try {
       setIsLoading(true)
       const response = await fetch("/api/payments/queue", { credentials: "include" })
@@ -99,83 +178,150 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
         accepted_at: o.accepted_at,
         due_date: o.due_date
       })) : []
+      
       setOffers(mappedOffers)
       setError("")
     } catch (error) {
-      setError("Failed to load payment queue")
+      setError("Failed to load payment queue. Please try refreshing the page.")
       console.error("Fetch payment queue error:", error)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchOffers()
-  }, [refreshTrigger])
+  }, [fetchOffers, refreshTrigger])
 
+  // Enhanced status badge with better visual hierarchy
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      accepted: { variant: "secondary" as const, icon: Clock, label: "Accepted", bgClass: "bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border-amber-200" },
-      approved: { variant: "default" as const, icon: CheckCircle, label: "Approved", bgClass: "bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-200" },
-      executed: { variant: "outline" as const, icon: PlayCircle, label: "Executed", bgClass: "bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border-blue-200" },
-      failed: { variant: "destructive" as const, icon: XCircle, label: "Failed", bgClass: "bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border-red-200" },
+      accepted: { 
+        variant: "secondary" as const, 
+        icon: Clock, 
+        label: "Accepted", 
+        bgClass: "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30"
+      },
+      approved: { 
+        variant: "default" as const, 
+        icon: CheckCircle, 
+        label: "Approved", 
+        bgClass: "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30"
+      },
+      executed: { 
+        variant: "outline" as const, 
+        icon: PlayCircle, 
+        label: "Executed", 
+        bgClass: "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border-blue-500/30"
+      },
+      failed: { 
+        variant: "destructive" as const, 
+        icon: XCircle, 
+        label: "Failed", 
+        bgClass: "bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30"
+      },
     }
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.accepted
     const Icon = config.icon
 
     return (
-      <Badge className={`flex items-center gap-2 shadow-sm ${config.bgClass}`}>
+      <Badge className={`flex items-center gap-1.5 px-2.5 py-1 ${config.bgClass} font-medium`}>
         <Icon className="h-3 w-3" />
         {config.label}
       </Badge>
     )
   }
 
-  const formatCurrency = (amount: number) => {
-    return `R${amount.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-  }
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "Not available"
-    return new Date(dateString).toLocaleDateString("en-ZA", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
-
+  // Enhanced banking status badge
   const getBankingStatus = (bankingDetails: PaymentOffer['banking_details']) => {
     if (!bankingDetails.bank_name || !bankingDetails.account_number) {
       return (
-        <Badge className="flex items-center gap-2 bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border-gray-200 shadow-sm">
-          <CreditCard className="h-3 w-3" />
-          Not Provided
-        </Badge>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Badge className="flex items-center gap-1.5 bg-gray-500/20 text-gray-400 border-gray-500/30">
+                <CreditCard className="h-3 w-3" />
+                Not Provided
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Banking details not yet submitted</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )
     }
     
     if (bankingDetails.status === 'verified') {
       return (
-        <Badge className="flex items-center gap-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-200 shadow-sm">
-          <CheckCircle className="h-3 w-3" />
-          Verified
-        </Badge>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Badge className="flex items-center gap-1.5 bg-green-500/20 text-green-400 border-green-500/30">
+                <Shield className="h-3 w-3" />
+                Verified
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Banking details have been verified</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )
     }
 
     return (
-      <Badge className="flex items-center gap-2 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border-amber-200 shadow-sm">
-        <Clock className="h-3 w-3" />
-        Pending
-      </Badge>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Badge className="flex items-center gap-1.5 bg-amber-500/20 text-amber-400 border-amber-500/30">
+              <AlertCircle className="h-3 w-3" />
+              Pending
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Banking details pending verification</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     )
   }
 
+  // Format currency with locale support
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-ZA', {
+      style: 'currency',
+      currency: 'ZAR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount)
+  }
+
+  // Format date with relative time
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "Not available"
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+    
+    if (diffInHours < 24) {
+      return `${diffInHours}h ago`
+    } else if (diffInHours < 168) {
+      return `${Math.floor(diffInHours / 24)}d ago`
+    }
+    
+    return date.toLocaleDateString("en-ZA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  }
+
+  // Handle payment approval with optimistic UI update
   const handleApprove = async (offer: PaymentOffer) => {
     try {
+      setProcessingId(offer.id)
       const response = await fetch("/api/payments/approve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -187,17 +333,25 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
         if (selectedOffer && selectedOffer.id === offer.id) {
           setSelectedOffer({ ...selectedOffer, status: "approved" })
         }
+        setSuccessMessage(`Payment ${offer.invoice_number} approved successfully`)
+        setTimeout(() => setSuccessMessage(""), 5000)
       } else {
-        setError("Failed to approve payment")
+        setError("Failed to approve payment. Please try again.")
+        setTimeout(() => setError(""), 5000)
       }
     } catch (error) {
       console.error("Failed to approve payment:", error)
-      setError("Failed to approve payment")
+      setError("Network error. Please check your connection.")
+      setTimeout(() => setError(""), 5000)
+    } finally {
+      setProcessingId(null)
     }
   }
 
+  // Handle payment execution with optimistic UI update
   const handleExecute = async (offer: PaymentOffer) => {
     try {
+      setProcessingId(offer.id)
       const response = await fetch("/api/payments/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -209,376 +363,558 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
         if (selectedOffer && selectedOffer.id === offer.id) {
           setSelectedOffer({ ...selectedOffer, status: "executed" })
         }
+        setSuccessMessage(`Payment ${offer.invoice_number} executed successfully`)
+        setTimeout(() => setSuccessMessage(""), 5000)
       } else {
-        setError("Failed to execute payment")
+        setError("Failed to execute payment. Please try again.")
+        setTimeout(() => setError(""), 5000)
       }
     } catch (error) {
       console.error("Failed to execute payment:", error)
-      setError("Failed to execute payment")
+      setError("Network error. Please check your connection.")
+      setTimeout(() => setError(""), 5000)
+    } finally {
+      setProcessingId(null)
     }
   }
 
+  // Handle viewing payment details
   const handleViewDetails = async (offer: PaymentOffer) => {
     setSelectedOffer(offer)
     setShowDetailsDialog(true)
   }
 
-  const filteredOffers = offers.filter((offer) => {
-    const matchesSearch =
-      searchTerm === "" ||
-      offer.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      offer.vendor_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      offer.supplier.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      offer.buyer.toLowerCase().includes(searchTerm.toLowerCase())
-
-    const matchesStatus = statusFilter === "all" || offer.status === statusFilter
-
-    return matchesSearch && matchesStatus
-  })
-
-  // Calculate stats
-  const stats = {
-    total: filteredOffers.length,
-    totalAmount: filteredOffers.reduce((sum, offer) => sum + offer.amount, 0),
-    totalFees: filteredOffers.reduce((sum, offer) => sum + offer.fee_amount, 0),
-    pending: filteredOffers.filter(o => o.status === "accepted").length,
-    approved: filteredOffers.filter(o => o.status === "approved").length,
-    executed: filteredOffers.filter(o => o.status === "executed").length
+  // Sort functionality
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc'
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc'
+    }
+    setSortConfig({ key, direction })
   }
 
+  // Filter and sort offers
+  const filteredAndSortedOffers = useMemo(() => {
+    let filtered = offers.filter((offer) => {
+      const matchesSearch =
+        searchTerm === "" ||
+        offer.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.vendor_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.supplier.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.buyer.toLowerCase().includes(searchTerm.toLowerCase())
+
+      const matchesStatus = statusFilter === "all" || offer.status === statusFilter
+
+      return matchesSearch && matchesStatus
+    })
+
+    if (sortConfig) {
+      filtered.sort((a, b) => {
+        const aValue = (a as any)[sortConfig.key]
+        const bValue = (b as any)[sortConfig.key]
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1
+        }
+        return 0
+      })
+    }
+
+    return filtered
+  }, [offers, searchTerm, statusFilter, sortConfig])
+
+  // Calculate statistics
+  const stats = useMemo(() => ({
+    total: filteredAndSortedOffers.length,
+    totalAmount: filteredAndSortedOffers.reduce((sum, offer) => sum + offer.amount, 0),
+    totalFees: filteredAndSortedOffers.reduce((sum, offer) => sum + offer.fee_amount, 0),
+    pending: filteredAndSortedOffers.filter(o => o.status === "accepted").length,
+    approved: filteredAndSortedOffers.filter(o => o.status === "approved").length,
+    executed: filteredAndSortedOffers.filter(o => o.status === "executed").length
+  }), [filteredAndSortedOffers])
+
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12 bg-gradient-to-r from-blue-50/50 to-purple-50/50 backdrop-blur-sm rounded-xl border-0 shadow-lg">
-        <RefreshCw className="h-6 w-6 animate-spin text-blue-600" />
-        <span className="ml-3 text-lg font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          Loading payment queue...
-        </span>
-      </div>
-    )
+    return <LoadingSkeleton />
   }
 
   return (
-    <div className="space-y-6">
-      {error && (
-        <Alert variant="destructive" className="border-red-200 bg-red-50/80 backdrop-blur border-0 shadow-lg rounded-xl">
-          <AlertDescription className="text-red-700 font-medium">{error}</AlertDescription>
-        </Alert>
-      )}
+    <TooltipProvider>
+      <div className="space-y-6">
+        {/* Alerts */}
+        {error && (
+          <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
+        {successMessage && (
+          <Alert className="border-green-500/50 bg-green-500/10">
+            <CheckCircle className="h-4 w-4 text-green-500" />
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>{successMessage}</AlertDescription>
+          </Alert>
+        )}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 backdrop-blur-sm rounded-xl border-0 shadow-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-blue-600 text-sm font-medium">Total Requests</p>
-              <p className="text-2xl font-bold text-blue-900">{stats.total}</p>
-            </div>
-            <div className="bg-blue-200 p-2 rounded-lg">
-              <DollarSign className="h-5 w-5 text-blue-700" />
-            </div>
+        {/* Enhanced Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <PaymentStatsCard
+            title="Total Requests"
+            value={stats.total}
+            icon={DollarSign}
+            color="blue"
+            trend={{ value: 12.5, isPositive: true }}
+            loading={isLoading}
+          />
+          <PaymentStatsCard
+            title="Total Value"
+            value={formatCurrency(stats.totalAmount)}
+            icon={Building}
+            color="green"
+            trend={{ value: 8.3, isPositive: true }}
+            loading={isLoading}
+          />
+          <PaymentStatsCard
+            title="Total Fees"
+            value={formatCurrency(stats.totalFees)}
+            icon={Clock}
+            color="amber"
+            trend={{ value: 3.2, isPositive: false }}
+            loading={isLoading}
+          />
+          <PaymentStatsCard
+            title="Processed"
+            value={stats.executed}
+            icon={CheckCircle}
+            color="purple"
+            trend={{ value: 18.7, isPositive: true }}
+            loading={isLoading}
+          />
+        </div>
+
+        {/* Enhanced Filters with better UX */}
+        <div className="flex flex-col sm:flex-row gap-4 p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search invoices, vendors, suppliers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-white/5 border-white/10 focus:bg-white/10 focus:border-white/20 transition-all"
+              aria-label="Search payments"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label="Clear search"
+              >
+                <XCircle className="h-4 w-4" />
+              </button>
+            )}
           </div>
+
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px] bg-white/5 border-white/10" aria-label="Filter by status">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10">
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="accepted">Accepted</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="executed">Executed</SelectItem>
+              <SelectItem value="failed">Failed</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button 
+            onClick={fetchOffers} 
+            disabled={isLoading}
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
+            aria-label="Refresh payment queue"
+          >
+            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
         </div>
 
-        <div className="bg-gradient-to-r from-green-50/50 to-emerald-50/50 backdrop-blur-sm rounded-xl border-0 shadow-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-green-600 text-sm font-medium">Total Value</p>
-              <p className="text-2xl font-bold text-green-900">{formatCurrency(stats.totalAmount)}</p>
-            </div>
-            <div className="bg-green-200 p-2 rounded-lg">
-              <Building className="h-5 w-5 text-green-700" />
-            </div>
+        {/* Enhanced Table */}
+        {filteredAndSortedOffers.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden">
+            <ScrollArea className="w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b border-white/10 hover:bg-transparent">
+                    <TableHead 
+                      onClick={() => handleSort('invoice_number')}
+                      className="cursor-pointer hover:text-foreground transition-colors"
+                    >
+                      Invoice {sortConfig?.key === 'invoice_number' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                    </TableHead>
+                    <TableHead>Supplier</TableHead>
+                    <TableHead 
+                      onClick={() => handleSort('amount')}
+                      className="cursor-pointer hover:text-foreground transition-colors"
+                    >
+                      Amount {sortConfig?.key === 'amount' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                    </TableHead>
+                    <TableHead>Fee</TableHead>
+                    <TableHead>Banking</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead 
+                      onClick={() => handleSort('accepted_at')}
+                      className="cursor-pointer hover:text-foreground transition-colors"
+                    >
+                      Accepted {sortConfig?.key === 'accepted_at' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                    </TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredAndSortedOffers.map((offer) => (
+                    <TableRow 
+                      key={offer.id} 
+                      className="border-b border-white/5 hover:bg-white/5 transition-all cursor-pointer"
+                      onClick={() => handleViewDetails(offer)}
+                    >
+                      <TableCell>
+                        <div>
+                          <div className="font-medium flex items-center gap-2">
+                            <Hash className="h-3 w-3 text-muted-foreground" />
+                            {offer.invoice_number}
+                          </div>
+                          <div className="text-sm text-muted-foreground mt-1">
+                            Vendor: {offer.vendor_number}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Building className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium truncate max-w-[180px]" title={offer.supplier_company_name || offer.supplier}>
+                            {offer.supplier_company_name || offer.supplier}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-bold text-green-400">{formatCurrency(offer.amount)}</div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Net: {formatCurrency(offer.offered_amount)}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{offer.fee_percent}%</div>
+                          <div className="text-xs text-red-400 mt-1">
+                            -{formatCurrency(offer.fee_amount)}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getBankingStatus(offer.banking_details)}</TableCell>
+                      <TableCell>{getStatusBadge(offer.status)}</TableCell>
+                      <TableCell>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <span className="text-sm text-muted-foreground">
+                                {formatDate(offer.accepted_at || offer.created_at)}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{new Date(offer.accepted_at || offer.created_at).toLocaleString()}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
+                      <TableCell 
+                        className="text-right"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex gap-2 justify-end">
+                          {offer.status === "accepted" && (
+                            <Button 
+                              size="sm" 
+                              onClick={() => handleApprove(offer)}
+                              disabled={processingId === offer.id}
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                              aria-label={`Approve payment ${offer.invoice_number}`}
+                            >
+                              {processingId === offer.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <>
+                                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                                  Approve
+                                </>
+                              )}
+                            </Button>
+                          )}
+                          {offer.status === "approved" && (
+                            <Button 
+                              size="sm" 
+                              onClick={() => handleExecute(offer)}
+                              disabled={processingId === offer.id}
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                              aria-label={`Execute payment ${offer.invoice_number}`}
+                            >
+                              {processingId === offer.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <>
+                                  <PlayCircle className="h-3 w-3 mr-1" />
+                                  Execute
+                                </>
+                              )}
+                            </Button>
+                          )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-8 w-8 p-0 hover:bg-white/10"
+                                aria-label="More actions"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="bg-black/90 backdrop-blur-xl border-white/10">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuSeparator className="bg-white/10" />
+                              <DropdownMenuItem 
+                                onClick={() => handleViewDetails(offer)}
+                                className="hover:bg-white/10 cursor-pointer"
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="hover:bg-white/10 cursor-pointer">
+                                <Download className="mr-2 h-4 w-4" />
+                                Export Data
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="hover:bg-white/10 cursor-pointer">
+                                <ExternalLink className="mr-2 h-4 w-4" />
+                                View Invoice
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
           </div>
-        </div>
+        )}
 
-        <div className="bg-gradient-to-r from-amber-50/50 to-orange-50/50 backdrop-blur-sm rounded-xl border-0 shadow-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-amber-600 text-sm font-medium">Total Fees</p>
-              <p className="text-2xl font-bold text-amber-900">{formatCurrency(stats.totalFees)}</p>
-            </div>
-            <div className="bg-amber-200 p-2 rounded-lg">
-              <Clock className="h-5 w-5 text-amber-700" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-r from-purple-50/50 to-pink-50/50 backdrop-blur-sm rounded-xl border-0 shadow-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-purple-600 text-sm font-medium">Processed</p>
-              <p className="text-2xl font-bold text-purple-900">{stats.executed}</p>
-            </div>
-            <div className="bg-purple-200 p-2 rounded-lg">
-              <CheckCircle className="h-5 w-5 text-purple-700" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 p-6 bg-white/70 backdrop-blur-sm rounded-xl border-0 shadow-lg">
-        <Input
-          placeholder="Search by invoice, vendor, supplier or buyer..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm border-0 bg-white/70 backdrop-blur-sm shadow-lg rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500/50 focus:bg-white/90 transition-all duration-300 placeholder:text-gray-500"
-        />
-
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px] border-0 bg-white/70 backdrop-blur-sm shadow-lg rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500/50 focus:bg-white/90 transition-all duration-300">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent className="bg-white/95 backdrop-blur-lg border-0 shadow-2xl rounded-xl">
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="accepted">Accepted</SelectItem>
-            <SelectItem value="approved">Approved</SelectItem>
-            <SelectItem value="executed">Executed</SelectItem>
-            <SelectItem value="failed">Failed</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Button 
-          onClick={fetchOffers} 
-          disabled={isLoading}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:hover:scale-100 disabled:opacity-50"
-        >
-          <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
-      </div>
-
-      {/* Payment Queue Table */}
-      {filteredOffers.length === 0 ? (
-        <div className="text-center py-12 bg-white/70 backdrop-blur-sm rounded-xl border-0 shadow-lg">
-          <DollarSign className="h-16 w-16 text-blue-500 mx-auto mb-6" />
-          <h3 className="text-xl font-semibold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent mb-3">
-            No payments found
-          </h3>
-          <p className="text-gray-600">No payment requests match your current filters.</p>
-        </div>
-      ) : (
-        <div className="bg-white/70 backdrop-blur-sm rounded-xl border-0 shadow-lg overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Invoice</TableHead>
-                <TableHead>Supplier</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Fee</TableHead>
-                <TableHead>Banking</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Accepted</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOffers.map((offer) => (
-                <TableRow key={offer.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{offer.invoice_number}</div>
-                      <div className="text-sm text-gray-600">{offer.vendor_number}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-medium text-sm truncate max-w-[180px]" title={offer.supplier_company_name || offer.supplier}>
-                      {offer.supplier_company_name || offer.supplier}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-bold text-green-600">{formatCurrency(offer.amount)}</div>
-                      <div className="text-xs text-gray-500">{formatCurrency(offer.offered_amount)} net</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{offer.fee_percent}%</div>
-                      <div className="text-xs text-red-600">{formatCurrency(offer.fee_amount)}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getBankingStatus(offer.banking_details)}</TableCell>
-                  <TableCell>{getStatusBadge(offer.status)}</TableCell>
-                  <TableCell className="text-sm text-gray-600">{formatDate(offer.accepted_at || offer.created_at)}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {offer.status === "accepted" && (
-                        <Button 
-                          size="sm" 
-                          onClick={() => handleApprove(offer)}
-                          className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 h-7"
-                        >
-                          Approve
-                        </Button>
-                      )}
-                      {offer.status === "approved" && (
-                        <Button 
-                          size="sm" 
-                          onClick={() => handleExecute(offer)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 h-7"
-                        >
-                          Execute
-                        </Button>
-                      )}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-lg border-0 shadow-2xl rounded-xl">
-                          <DropdownMenuItem onClick={() => handleViewDetails(offer)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-
-      {/* Details Dialog */}
-      {selectedOffer && (
-        <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-          <DialogContent className="bg-white/95 backdrop-blur-lg max-h-[calc(100vh-2rem)] overflow-y-auto border-0 shadow-2xl rounded-3xl sm:max-w-[900px]">
-            <DialogHeader>
-              <DialogTitle className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">
-                Payment Details
-              </DialogTitle>
-              <DialogDescription className="text-gray-600">
-                Complete information about the early payment request
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Invoice Information</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Invoice Number:</span>
-                        <span className="font-medium">{selectedOffer.invoice_number}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Vendor Number:</span>
-                        <span className="font-medium">{selectedOffer.vendor_number}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Due Date:</span>
-                        <span className="font-medium">{formatDate(selectedOffer.due_date || "")}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Status:</span>
-                        <div>{getStatusBadge(selectedOffer.status)}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Parties</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Supplier:</span>
-                        <span className="font-medium text-right max-w-[200px] truncate" title={selectedOffer.supplier}>
-                          {selectedOffer.supplier}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Buyer:</span>
-                        <span className="font-medium text-right max-w-[200px] truncate" title={selectedOffer.buyer}>
-                          {selectedOffer.buyer}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+        {/* Enhanced Details Dialog */}
+        {selectedOffer && (
+          <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+            <DialogContent className="bg-black/95 backdrop-blur-xl border-white/10 max-h-[90vh] overflow-y-auto sm:max-w-[900px]">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Payment Details
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  Complete information about payment request #{selectedOffer.invoice_number}
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-6 py-4">
+                {/* Status Badge */}
+                <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                  <span className="text-sm font-medium text-muted-foreground">Current Status</span>
+                  {getStatusBadge(selectedOffer.status)}
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Payment Breakdown</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Original Amount:</span>
-                        <span className="font-bold text-green-600">{formatCurrency(selectedOffer.amount)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Fee ({selectedOffer.fee_percent}%):</span>
-                        <span className="font-medium text-red-600">-{formatCurrency(selectedOffer.fee_amount)}</span>
-                      </div>
-                      <div className="flex justify-between border-t pt-2">
-                        <span className="font-medium">Net Amount:</span>
-                        <span className="font-bold text-blue-600">{formatCurrency(selectedOffer.offered_amount)}</span>
-                      </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Invoice Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-blue-500" />
+                      Invoice Information
+                    </h3>
+                    <div className="space-y-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                      <InfoRow label="Invoice Number" value={selectedOffer.invoice_number} icon={Hash} />
+                      <InfoRow label="Vendor Number" value={selectedOffer.vendor_number} icon={Hash} />
+                      <InfoRow label="Due Date" value={formatDate(selectedOffer.due_date || "")} icon={Calendar} />
                     </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Banking Details</h3>
+                  {/* Parties Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <Users className="h-5 w-5 text-purple-500" />
+                      Parties
+                    </h3>
+                    <div className="space-y-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                      <InfoRow label="Supplier" value={selectedOffer.supplier} icon={Building} />
+                      <InfoRow label="Buyer" value={selectedOffer.buyer} icon={User} />
+                    </div>
+                  </div>
+
+                  {/* Payment Breakdown */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <DollarSign className="h-5 w-5 text-green-500" />
+                      Payment Breakdown
+                    </h3>
+                    <div className="space-y-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                      <InfoRow 
+                        label="Original Amount" 
+                        value={formatCurrency(selectedOffer.amount)} 
+                        valueClass="text-green-400 font-bold"
+                      />
+                      <InfoRow 
+                        label={`Fee (${selectedOffer.fee_percent}%)`} 
+                        value={`-${formatCurrency(selectedOffer.fee_amount)}`}
+                        valueClass="text-red-400"
+                      />
+                      <Separator className="bg-white/10" />
+                      <InfoRow 
+                        label="Net Amount" 
+                        value={formatCurrency(selectedOffer.offered_amount)}
+                        valueClass="text-blue-400 font-bold text-lg"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Banking Details */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <CreditCard className="h-5 w-5 text-amber-500" />
+                      Banking Details
+                    </h3>
                     {selectedOffer.banking_details.bank_name ? (
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-500">Bank:</span>
-                          <span className="font-medium">{selectedOffer.banking_details.bank_name}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-500">Account Holder:</span>
-                          <span className="font-medium">{selectedOffer.banking_details.account_holder_name}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-500">Account:</span>
-                          <span className="font-mono text-sm">***{selectedOffer.banking_details.account_number?.slice(-4)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-500">Status:</span>
-                          <div>{getBankingStatus(selectedOffer.banking_details)}</div>
+                      <div className="space-y-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                        <InfoRow label="Bank" value={selectedOffer.banking_details.bank_name} />
+                        <InfoRow label="Account Holder" value={selectedOffer.banking_details.account_holder_name ?? ""} />
+                        <InfoRow 
+                          label="Account" 
+                          value={`***${selectedOffer.banking_details.account_number?.slice(-4)}`}
+                          valueClass="font-mono"
+                        />
+                        <div className="pt-2">
+                          {getBankingStatus(selectedOffer.banking_details)}
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-500 italic">No banking details available</p>
+                      <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-center">
+                        <CreditCard className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">No banking details available</p>
+                      </div>
                     )}
                   </div>
                 </div>
-              </div>
 
-              <div className="pt-4 border-t">
-                <div className="flex gap-3 justify-end">
+                {/* Action Buttons */}
+                <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
                   {selectedOffer.status === "accepted" && (
                     <Button 
                       onClick={() => handleApprove(selectedOffer)}
+                      disabled={processingId === selectedOffer.id}
                       className="bg-green-600 hover:bg-green-700 text-white"
                     >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Approve Payment
+                      {processingId === selectedOffer.id ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Approve Payment
+                        </>
+                      )}
                     </Button>
                   )}
                   {selectedOffer.status === "approved" && (
                     <Button 
                       onClick={() => handleExecute(selectedOffer)}
+                      disabled={processingId === selectedOffer.id}
                       className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
-                      <PlayCircle className="h-4 w-4 mr-2" />
-                      Execute Payment
+                      {processingId === selectedOffer.id ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <PlayCircle className="h-4 w-4 mr-2" />
+                          Execute Payment
+                        </>
+                      )}
                     </Button>
                   )}
                   <Button 
                     variant="outline" 
                     onClick={() => setShowDetailsDialog(false)}
-                    className="border-gray-200"
+                    className="border-white/20 hover:bg-white/10"
                   >
                     Close
                   </Button>
                 </div>
               </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
-    </div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+    </TooltipProvider>
   )
 }
+
+// Info Row Component for details dialog
+interface InfoRowProps {
+  label: string;
+  value: string;
+  icon?: React.ElementType;
+  valueClass?: string;
+}
+const InfoRow: React.FC<InfoRowProps> = ({ label, value, icon: Icon, valueClass = "" }) => (
+  <div className="flex items-center justify-between">
+    <span className="text-sm text-muted-foreground flex items-center gap-2">
+      {Icon && <Icon className="h-3 w-3" />}
+      {label}:
+    </span>
+    <span className={`font-medium text-right ${valueClass}`}>{value}</span>
+  </div>
+)
+
+// Loading Skeleton Component
+const LoadingSkeleton = () => (
+  <div className="space-y-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+          <Skeleton className="h-12 w-full" />
+        </div>
+      ))}
+    </div>
+    <div className="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+      <Skeleton className="h-10 w-full mb-4" />
+      <Skeleton className="h-10 w-full mb-4" />
+      <Skeleton className="h-10 w-full" />
+    </div>
+  </div>
+)
+
+// Empty State Component
+const EmptyState = () => (
+  <div className="text-center py-16 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+    <DollarSign className="h-16 w-16 text-muted-foreground mx-auto mb-6" />
+    <h3 className="text-xl font-semibold mb-2">No payments found</h3>
+    <p className="text-muted-foreground max-w-md mx-auto">
+      No payment requests match your current filters. Try adjusting your search criteria or clearing filters.
+    </p>
+  </div>
+)
