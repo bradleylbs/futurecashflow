@@ -190,27 +190,27 @@ export default function SupplierDashboard() {
 
   if (loading) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="relative min-h-screen flex items-center justify-center bg-[#050505] text-[#fefefe]">
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
+          <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-[#3594f7]/20 blur-3xl"></div>
+          <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-[#3594f7]/10 blur-3xl"></div>
         </div>
         <div className="text-center">
           <div className="flex flex-col items-center space-y-6">
-            <div className="p-6 rounded-full border border-border bg-muted">
-              <RefreshCw className="w-8 h-8 text-primary animate-spin" />
+            <div className="p-6 rounded-full border border-[#3d3d3d] bg-[#b8b6b4]">
+              <RefreshCw className="w-8 h-8 text-[#3594f7] animate-spin" />
             </div>
             <div className="flex items-baseline space-x-3">
-              <h1 className="text-3xl font-bold">Future</h1>
-              <div className="w-px h-6 bg-primary/70" />
-              <span className="text-2xl font-light text-muted-foreground whitespace-nowrap">Finance Cashflow</span>
+              <h1 className="text-3xl font-bold text-[#fefefe]">Future</h1>
+              <div className="w-px h-6 bg-[#3594f7]/70" />
+              <span className="text-2xl font-light text-[#b4c5d6] whitespace-nowrap">Finance Cashflow</span>
             </div>
             <div className="flex space-x-2 mt-4">
-              <div className="w-3 h-3 bg-primary/80 rounded-full animate-bounce"></div>
-              <div className="w-3 h-3 bg-primary/60 rounded-full animate-bounce delay-100"></div>
-              <div className="w-3 h-3 bg-primary/80 rounded-full animate-bounce delay-200"></div>
+              <div className="w-3 h-3 bg-[#3594f7]/80 rounded-full animate-bounce"></div>
+              <div className="w-3 h-3 bg-[#3594f7]/60 rounded-full animate-bounce delay-100"></div>
+              <div className="w-3 h-3 bg-[#3594f7]/80 rounded-full animate-bounce delay-200"></div>
             </div>
-            <p className="text-sm text-muted-foreground">Loading supplier dashboardâ€¦</p>
+            <p className="text-sm text-[#b8b6b4]">Loading supplier dashboard…</p>
           </div>
         </div>
       </div>
@@ -220,7 +220,7 @@ export default function SupplierDashboard() {
   if (error || !data) {
     return (
       <div className="container mx-auto py-6">
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="bg-[#6c0e0e]/10 border border-[#6c0e0e] text-[#6c0e0e]">
           <AlertDescription>{error || "Failed to load dashboard"}</AlertDescription>
         </Alert>
       </div>
@@ -233,33 +233,33 @@ export default function SupplierDashboard() {
   const canAccessOperations = isAgreementSigned
 
   return (
-    <div className="relative min-h-screen bg-black text-white">
+    <div className="relative min-h-screen bg-[#050505] text-[#fefefe]">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
+        <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-[#3594f7]/20 blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-[#3594f7]/10 blur-3xl"></div>
       </div>
 
       <div className="container mx-auto py-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Supplier Dashboard</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold text-[#fefefe]">Supplier Dashboard</h1>
+          <p className="text-[#b8b6b4]">
             {data.dashboard.company_name ? `Welcome, ${data.dashboard.company_name}` : "Complete your onboarding"}
           </p>
         </div>
         <div className="flex gap-2">
           <Button
             onClick={fetchDashboardData}
-            className="h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white px-4"
+            className="h-9 rounded-full bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe] px-4"
             aria-label="Refresh"
             title="Refresh"
           >
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <RefreshCw className="mr-2 h-4 w-4 text-[#fefefe]" />
             Refresh
           </Button>
           <Button
-            className="h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white px-4"
+            className="h-9 rounded-full bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe] px-4"
             onClick={async () => {
               try {
                 await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
@@ -269,7 +269,7 @@ export default function SupplierDashboard() {
             aria-label="Logout"
             title="Logout"
           >
-            <LogOut className="mr-2 h-4 w-4" />
+            <LogOut className="mr-2 h-4 w-4 text-[#fefefe]" />
             Logout
           </Button>
         </div>
@@ -277,27 +277,27 @@ export default function SupplierDashboard() {
 
       {/* Invitation Context */}
       {data.invitation && (
-        <Card className="bg-blue-600/10 border border-blue-700">
+        <Card className="bg-[#3594f7]/10 border border-[#3594f7]">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-200">
-              <Mail className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-[#b4c5d6]">
+              <Mail className="h-5 w-5 text-[#3594f7]" />
               Invitation Details
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="font-medium text-blue-200">Invited by:</p>
-                <p className="text-blue-100">{data.invitation.buyer_company_name || data.invitation.buyer_email}</p>
+                <p className="font-medium text-[#b4c5d6]">Invited by:</p>
+                <p className="text-[#b8b6b4]">{data.invitation.buyer_company_name || data.invitation.buyer_email}</p>
               </div>
               <div>
-                <p className="font-medium text-blue-200">Invitation Date:</p>
-                <p className="text-blue-100">{new Date(data.invitation.sent_at).toLocaleDateString()}</p>
+                <p className="font-medium text-[#b4c5d6]">Invitation Date:</p>
+                <p className="text-[#b8b6b4]">{new Date(data.invitation.sent_at).toLocaleDateString()}</p>
               </div>
               {data.invitation.invitation_message && (
                 <div className="md:col-span-2">
-                  <p className="font-medium text-blue-200">Message:</p>
-                  <p className="text-blue-100 italic">"{data.invitation.invitation_message}"</p>
+                  <p className="font-medium text-[#b4c5d6]">Message:</p>
+                  <p className="text-[#b8b6b4] italic">"{data.invitation.invitation_message}"</p>
                 </div>
               )}
             </div>
@@ -307,44 +307,44 @@ export default function SupplierDashboard() {
 
       {/* Agreement Prompt */}
       {requireAgreementSignature && !selectedAgreement && (
-        <Card className="bg-blue-600/10 border border-blue-700">
+        <Card className="bg-[#3594f7]/10 border border-[#3594f7]">
           <CardHeader>
-            <CardTitle className="text-blue-200">Agreement pending signature</CardTitle>
-            <CardDescription className="text-blue-100">A buyer has requested you to sign supplier terms. Please review and sign to activate the relationship.</CardDescription>
+            <CardTitle className="text-[#b4c5d6]">Agreement pending signature</CardTitle>
+            <CardDescription className="text-[#b8b6b4]">A buyer has requested you to sign supplier terms. Please review and sign to activate the relationship.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setActiveTab('agreements')}>Sign Agreement Now</Button>
+            <Button className="bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" onClick={() => setActiveTab('agreements')}>Sign Agreement Now</Button>
           </CardContent>
         </Card>
       )}
 
       {/* Progress Overview */}
-      <Card className="bg-card border border-border">
+      <Card className="bg-[#161616] border border-[#3d3d3d]">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Building className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-[#fefefe]">
+            <Building className="h-5 w-5 text-[#b4c5d6]" />
             Onboarding Progress
           </CardTitle>
-          <CardDescription>{levelInfo.description}</CardDescription>
+          <CardDescription className="text-[#b8b6b4]">{levelInfo.description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">{levelInfo.title}</span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm font-medium text-[#fefefe]">{levelInfo.title}</span>
+            <span className="text-sm text-[#b8b6b4]">
               Step {levelInfo.step} of {levelInfo.total}
             </span>
           </div>
-          <Progress value={progressPercentage} className="h-2" />
+          <Progress value={progressPercentage} className="h-2 bg-[#3594f7]" />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
                 {data.dashboard.kyc_status === "approved" ? (
-                  <CheckCircle className="h-4 w-4 text-blue-500" />
+                  <CheckCircle className="h-4 w-4 text-[#3594f7]" />
                 ) : (
-                  <Clock className="h-4 w-4 text-blue-500" />
+                  <Clock className="h-4 w-4 text-[#3594f7]" />
                 )}
-                <span className="text-sm font-medium">KYC Status</span>
+                <span className="text-sm font-medium text-[#fefefe]">KYC Status</span>
               </div>
               <Badge className={getStatusColor(data.dashboard.kyc_status)}>
                 {data.dashboard.kyc_status?.replace("_", " ").toUpperCase()}
@@ -354,8 +354,8 @@ export default function SupplierDashboard() {
             {data.dashboard.banking_status && (
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
-                  <CreditCard className="h-4 w-4" />
-                  <span className="text-sm font-medium">Banking</span>
+                  <CreditCard className="h-4 w-4 text-[#b4c5d6]" />
+                  <span className="text-sm font-medium text-[#fefefe]">Banking</span>
                 </div>
                 <Badge className={getStatusColor(data.dashboard.banking_status)}>
                   {data.dashboard.banking_status?.replace("_", " ").toUpperCase()}
@@ -366,8 +366,8 @@ export default function SupplierDashboard() {
             {data.dashboard.agreement_status && (
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
-                  <FileText className="h-4 w-4" />
-                  <span className="text-sm font-medium">Agreement</span>
+                  <FileText className="h-4 w-4 text-[#b4c5d6]" />
+                  <span className="text-sm font-medium text-[#fefefe]">Agreement</span>
                 </div>
                 <Badge className={getStatusColor(data.dashboard.agreement_status)}>
                   {data.dashboard.agreement_status?.replace("_", " ").toUpperCase()}
@@ -380,22 +380,22 @@ export default function SupplierDashboard() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-muted">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsList className="bg-[#b8b6b4]">
+          <TabsTrigger value="overview" className="text-[#050505]">Overview</TabsTrigger>
           {(data.dashboard.access_level !== "pre_kyc" || hasPresentedAgreement) && (
-            <TabsTrigger id="agreements-tab-trigger" value="agreements">Agreements</TabsTrigger>
+            <TabsTrigger id="agreements-tab-trigger" value="agreements" className="text-[#050505]">Agreements</TabsTrigger>
           )}
           {canAccessOperations && (
-            <TabsTrigger value="operations">Operations</TabsTrigger>
+            <TabsTrigger value="operations" className="text-[#050505]">Operations</TabsTrigger>
           )}
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
           {data.dashboard.access_level === "pre_kyc" && (
-            <Card className="bg-card border border-border">
+            <Card className="bg-[#161616] border border-[#3d3d3d]">
               <CardHeader>
-                <CardTitle>Complete Your KYC Application</CardTitle>
-                <CardDescription>Submit your company information and required documents</CardDescription>
+                <CardTitle className="text-[#fefefe]">Complete Your KYC Application</CardTitle>
+                <CardDescription className="text-[#b8b6b4]">Submit your company information and required documents</CardDescription>
               </CardHeader>
               <CardContent>
                 <KYCApplicationForm />
@@ -404,19 +404,19 @@ export default function SupplierDashboard() {
           )}
 
           {data.dashboard.access_level === "kyc_approved" && (
-            <Card className="bg-card border border-border">
+            <Card className="bg-[#161616] border border-[#3d3d3d]">
               <CardHeader>
-                <CardTitle>Submit Banking Details</CardTitle>
-                <CardDescription>Provide your banking information for verification</CardDescription>
+                <CardTitle className="text-[#fefefe]">Submit Banking Details</CardTitle>
+                <CardDescription className="text-[#b8b6b4]">Provide your banking information for verification</CardDescription>
               </CardHeader>
               <CardContent>
-                <Alert className="mb-4 border-blue-200 bg-blue-50 text-blue-900">
-                  <AlertTriangle className="h-4 w-4" />
+                <Alert className="mb-4 border-[#b4c5d6] bg-[#b4c5d6]/15 text-[#050505]">
+                  <AlertTriangle className="h-4 w-4 text-[#3594f7]" />
                   <AlertDescription>
                     Your KYC application has been approved. Continue to submit your banking details for verification.
                   </AlertDescription>
                 </Alert>
-                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                <Button asChild className="bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]">
                   <a href="/supplier/banking">Go to Banking</a>
                 </Button>
               </CardContent>
@@ -425,10 +425,10 @@ export default function SupplierDashboard() {
 
           {data.dashboard.access_level === "banking_submitted" && (
             <>
-              <Card className="bg-card border border-border">
+              <Card className="bg-[#161616] border border-[#3d3d3d]">
                 <CardHeader>
-                  <CardTitle>Sign Agreement</CardTitle>
-                  <CardDescription>Review and sign the supplier agreement to complete onboarding</CardDescription>
+                  <CardTitle className="text-[#fefefe]">Sign Agreement</CardTitle>
+                  <CardDescription className="text-[#b8b6b4]">Review and sign the supplier agreement to complete onboarding</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {(data.dashboard.banking_status?.toLowerCase() === "verified" || data.dashboard.banking_status?.toLowerCase() === "submitted") ? (
@@ -444,8 +444,8 @@ export default function SupplierDashboard() {
                       <AgreementList onSelectAgreement={(a: any) => setSelectedAgreement(a)} />
                     )
                   ) : (
-                    <Alert className="mb-4 border-blue-200 bg-blue-50 text-blue-900">
-                      <AlertTriangle className="h-4 w-4" />
+                    <Alert className="mb-4 border-[#b4c5d6] bg-[#b4c5d6]/15 text-[#050505]">
+                      <AlertTriangle className="h-4 w-4 text-[#3594f7]" />
                       <AlertDescription>
                         Your banking details have been submitted and are pending verification. You may continue to sign the agreement, but full access will be granted after admin verification.
                       </AlertDescription>
@@ -454,7 +454,7 @@ export default function SupplierDashboard() {
                 </CardContent>
               </Card>
               <div className="flex justify-end mt-4">
-                <Button className="bg-blue-600" onClick={() => setActiveTab('agreements')}>
+                <Button className="bg-[#3594f7] text-[#fefefe]" onClick={() => setActiveTab('agreements')}>
                   Continue to Complete Setup
                 </Button>
               </div>
@@ -463,37 +463,37 @@ export default function SupplierDashboard() {
 
           {canAccessOperations && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-card border border-border">
+              <Card className="bg-[#161616] border border-[#3d3d3d]">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-500" />
+                  <CardTitle className="flex items-center gap-2 text-[#fefefe]">
+                    <CheckCircle className="h-5 w-5 text-[#3594f7]" />
                     Onboarding Complete
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">
+                  <p className="text-[#b8b6b4]">
                     Congratulations! Your supplier onboarding is complete. You can now access all platform features.
                   </p>
                     {data.dashboard.access_level === "banking_verified" && (
-                    <Badge className="mt-2 bg-blue-600/15 text-blue-300 border border-border">Premium Features Unlocked</Badge>
+                    <Badge className="mt-2 bg-[#3594f7]/15 text-[#3594f7] border border-[#3d3d3d]">Premium Features Unlocked</Badge>
                   )}
                 </CardContent>
               </Card>
 
-              <Card className="bg-card border border-border">
+              <Card className="bg-[#161616] border border-[#3d3d3d]">
                 <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
+                  <CardTitle className="text-[#fefefe]">Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white" asChild>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
                     <a href="/dashboard/invoices">
-                      <FileText className="mr-2 h-4 w-4" />
+                      <FileText className="mr-2 h-4 w-4 text-[#fefefe]" />
                       View Invoices
                     </a>
                   </Button>
-                  <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white" asChild>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
                     <a href="/dashboard/communication">
-                      <User className="mr-2 h-4 w-4" />
+                      <User className="mr-2 h-4 w-4 text-[#fefefe]" />
                       Contact Buyer
                     </a>
                   </Button>
@@ -504,10 +504,10 @@ export default function SupplierDashboard() {
         </TabsContent>
 
         <TabsContent value="agreements" className="space-y-4">
-          <Card className="bg-card border border-border">
+          <Card className="bg-[#161616] border border-[#3d3d3d]">
             <CardHeader>
-              <CardTitle>Your Agreements</CardTitle>
-              <CardDescription>View and manage your signed agreements</CardDescription>
+              <CardTitle className="text-[#fefefe]">Your Agreements</CardTitle>
+              <CardDescription className="text-[#b8b6b4]">View and manage your signed agreements</CardDescription>
             </CardHeader>
             <CardContent>
               {selectedAgreement ? (
@@ -527,27 +527,27 @@ export default function SupplierDashboard() {
 
         <TabsContent value="operations" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-card border border-border">
+            <Card className="bg-[#161616] border border-[#3d3d3d]">
               <CardHeader>
-                <CardTitle>Invoice Management</CardTitle>
-                <CardDescription>Manage your invoices and payments</CardDescription>
+                <CardTitle className="text-[#fefefe]">Invoice Management</CardTitle>
+                <CardDescription className="text-[#b8b6b4]">Manage your invoices and payments</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">Invoice management features coming soon.</p>
-                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                <p className="text-[#b8b6b4] mb-4">Invoice management features coming soon.</p>
+                <Button asChild className="bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]">
                   <a href="/dashboard/invoices">View Invoices</a>
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="bg-card border border-border">
+            <Card className="bg-[#161616] border border-[#3d3d3d]">
               <CardHeader>
-                <CardTitle>Buyer Communication</CardTitle>
-                <CardDescription>Communicate with your buyer</CardDescription>
+                <CardTitle className="text-[#fefefe]">Buyer Communication</CardTitle>
+                <CardDescription className="text-[#b8b6b4]">Communicate with your buyer</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">Communication features coming soon.</p>
-                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                <p className="text-[#b8b6b4] mb-4">Communication features coming soon.</p>
+                <Button asChild className="bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]">
                   <a href="/dashboard/communication">Send Message</a>
                 </Button>
               </CardContent>
