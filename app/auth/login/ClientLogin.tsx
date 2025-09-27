@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 
 // Modern Logo Component
-const LogoIcon = ({ className = "w-10 h-10 text-blue-600" }) => (
+const LogoIcon = ({ className = "w-10 h-10 text-primary" }) => (
   <div className="relative">
     <svg aria-hidden="true" className={className} fill="currentColor" viewBox="0 0 80 80">
       <path d="M40 8L16 32H26L40 18L54 32H64L40 8Z" />
@@ -451,7 +451,7 @@ export default function ClientLogin() {
   // Modern loading state
   if (!sessionChecked && !needsOTP && !showOnboardingInfo) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center bg-black text-white">
+  <div className="relative min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
@@ -459,11 +459,11 @@ export default function ClientLogin() {
         <div className="text-center">
           <div className="flex flex-col items-center space-y-6">
             <div className="p-6 rounded-full border border-border bg-muted">
-              <LogoIcon className="w-12 h-12 text-blue-600" />
+              <LogoIcon className="w-12 h-12 text-primary" />
             </div>
             
             <div className="flex items-baseline space-x-3">
-              <h1 className="text-3xl font-bold">Future</h1>
+              <h1 className="text-3xl font-bold text-primary">Future</h1>
               <div className="w-px h-6 bg-primary/70" />
               <span className="text-2xl font-light text-muted-foreground whitespace-nowrap"> Finance Cashflow</span>
             </div>
@@ -484,7 +484,7 @@ export default function ClientLogin() {
   // OTP verification state
   if (needsOTP) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4">
+  <div className="relative min-h-screen flex items-center justify-center bg-background text-foreground px-4">
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
@@ -493,7 +493,7 @@ export default function ClientLogin() {
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="p-4 rounded-full border border-border bg-muted">
-                <Mail className="h-12 w-12 text-blue-600" />
+                <Mail className="h-12 w-12 text-primary" />
               </div>
             </div>
             <CardTitle className="text-2xl font-bold">Verification Required</CardTitle>
@@ -505,7 +505,7 @@ export default function ClientLogin() {
           <CardContent>
             <div className="text-center space-y-4">
               <div className="rounded-xl p-4 border border-border bg-muted">
-                <Mail className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <Mail className="h-8 w-8 text-primary mx-auto mb-2" />
                 <p className="text-sm font-medium">
                   Check your email: <span className="font-bold">{formData.email}</span>
                 </p>
@@ -538,7 +538,7 @@ export default function ClientLogin() {
     const canContinue = !!completionStatus?.kycCompleted
     
     return (
-      <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4">
+  <div className="relative min-h-screen flex items-center justify-center bg-background text-foreground px-4">
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
@@ -567,7 +567,7 @@ export default function ClientLogin() {
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="p-4 rounded-full border border-border bg-muted">
-                <CheckCircle className="h-12 w-12 text-blue-600" />
+                <CheckCircle className="h-12 w-12 text-success" />
               </div>
             </div>
             <CardTitle className="text-2xl font-bold">Login Successful!</CardTitle>
@@ -577,7 +577,7 @@ export default function ClientLogin() {
           </CardHeader>
           <CardContent className="space-y-6">
             {(loginResponse.nextStepMessage || (userRole === 'buyer' && !completionStatus?.agreementsSigned)) && (
-              <Alert className="border-blue-200 bg-blue-50">
+              <Alert className="border-info bg-info/10">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
                   {loginResponse.nextStepMessage || (
@@ -590,10 +590,10 @@ export default function ClientLogin() {
             )}
 
             <div className="space-y-4">
-              <h4 className="font-semibold text-gray-900 text-center">Completion Progress</h4>
+              <h4 className="font-semibold text-foreground text-center">Completion Progress</h4>
               <div className="space-y-3">
                 {/* KYC Step (always show) */}
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3 p-3 bg-muted rounded-lg">
                   {getStepIcon(
                     getStepStatus('complete_kyc', completionStatus).completed,
                     getStepStatus('complete_kyc', completionStatus).current,
@@ -602,13 +602,13 @@ export default function ClientLogin() {
                     completionStatus
                   )}
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Complete KYC Verification</p>
-                    <p className="text-xs text-gray-500">Submit required documents</p>
+                    <p className="text-sm font-medium text-foreground">Complete KYC Verification</p>
+                    <p className="text-xs text-muted-foreground">Submit required documents</p>
                   </div>
                 </div>
                 {/* Banking Step (for suppliers only) */}
                 {userRole === 'supplier' && (
-                  <div className={`flex items-center space-x-3 p-3 rounded-lg ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'bg-blue-100 border border-blue-400' : 'bg-gray-50'}`}>
+                  <div className={`flex items-center space-x-3 p-3 rounded-lg ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'bg-info/10 border border-info' : 'bg-muted'}`}>
                     {getStepIcon(
                       getStepStatus('submit_banking', completionStatus).completed,
                       getStepStatus('submit_banking', completionStatus).current,
@@ -617,16 +617,16 @@ export default function ClientLogin() {
                       completionStatus
                     )}
                     <div className="flex-1">
-                      <p className={`text-sm font-medium ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'text-blue-700 font-bold' : ''}`}>Submit Banking Details</p>
-                      <p className={`text-xs ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'text-blue-700' : 'text-gray-500'}`}>Provide bank account information</p>
+                      <p className={`text-sm font-medium ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'text-info font-bold' : 'text-foreground'}`}>Submit Banking Details</p>
+                      <p className={`text-xs ${completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted ? 'text-info' : 'text-muted-foreground'}`}>Provide bank account information</p>
                       {(completionStatus?.kycCompleted && !completionStatus?.bankingSubmitted) && (
-                        <span className="inline-block mt-1 text-xs text-blue-700 font-semibold">Pending</span>
+                        <span className="inline-block mt-1 text-xs text-info font-semibold">Pending</span>
                       )}
                     </div>
                   </div>
                 )}
                 {/* Agreement Step (always show) */}
-                <div className={`flex items-center space-x-3 p-3 rounded-lg ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'bg-blue-100 border border-blue-400' : 'bg-gray-50'}`}>
+                <div className={`flex items-center space-x-3 p-3 rounded-lg ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'bg-info/10 border border-info' : 'bg-muted'}`}>
                   {getStepIcon(
                     getStepStatus('sign_agreements', completionStatus).completed,
                     getStepStatus('sign_agreements', completionStatus).current,
@@ -635,10 +635,10 @@ export default function ClientLogin() {
                     completionStatus
                   )}
                   <div className="flex-1">
-                    <p className={`text-sm font-medium ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'text-blue-700 font-bold' : ''}`}>Sign {userRole === 'supplier' ? 'Supplier' : 'Buyer'} Agreement</p>
-                    <p className={`text-xs ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'text-blue-700' : 'text-gray-500'}`}>Review and sign terms</p>
+                    <p className={`text-sm font-medium ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'text-info font-bold' : 'text-foreground'}`}>Sign {userRole === 'supplier' ? 'Supplier' : 'Buyer'} Agreement</p>
+                    <p className={`text-xs ${completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned ? 'text-info' : 'text-muted-foreground'}`}>Review and sign terms</p>
                     {(completionStatus?.bankingSubmitted && !completionStatus?.agreementsSigned) && (
-                      <span className="inline-block mt-1 text-xs text-blue-700 font-semibold">Pending</span>
+                      <span className="inline-block mt-1 text-xs text-info font-semibold">Pending</span>
                     )}
                   </div>
                 </div>
@@ -656,7 +656,7 @@ export default function ClientLogin() {
             <Button 
               onClick={proceedToOnboarding}
               disabled={!canContinue}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 text-white font-semibold py-3 rounded-xl transition-colors"
+              className="w-full bg-primary hover:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground text-foreground font-semibold py-3 rounded-xl transition-colors"
               title={!canContinue ? "Awaiting KYC approval from admin" : undefined}
             >
               {canContinue ? "Continue to Complete Setup" : "Awaiting KYC Approval"}
@@ -669,12 +669,12 @@ export default function ClientLogin() {
 
   // Main login form
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4">
+  <div className="relative min-h-screen flex items-center justify-center bg-background text-foreground px-4">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
       </div>
-      <Card className="w-full max-w-md bg-card border border-border shadow-sm text-foreground">
+  <Card className="w-full max-w-md bg-card border border-border shadow-sm text-foreground">
         <CardHeader className="text-center">
           <div className="flex items-center justify-between mb-4">
             {(isFromFacilityApp || returnTo) && (
@@ -691,17 +691,17 @@ export default function ClientLogin() {
             )}
             <div className="flex-1" />
             <div className="flex items-center gap-3">
-              <LogoIcon className="w-8 h-8 text-blue-600" />
-              <span className="font-bold">Future</span>
+              <LogoIcon className="w-8 h-8 text-primary" />
+              <span className="font-bold text-primary">Future</span>
               <div className="w-px h-5 bg-primary" />
-              <span className="font-bold whitespace-nowrap">Finance Cashflow</span>
+              <span className="font-bold whitespace-nowrap text-primary">Finance Cashflow</span>
             </div>
             <div className="flex-1" />
           </div>
 
           <div className="mb-6">
             <div className="p-4 rounded-full border border-border bg-muted inline-block">
-              <LogIn className="h-12 w-12 text-blue-600" />
+              <LogIn className="h-12 w-12 text-primary" />
             </div>
           </div>
 
@@ -718,8 +718,8 @@ export default function ClientLogin() {
           {isFromFacilityApp && (
             <div className="mt-4 rounded-xl p-4 border border-border bg-muted">
               <div className="flex items-center gap-2 mb-2">
-                <Shield className="h-5 w-5 text-blue-600" />
-                <span className="font-medium">Your Data is Safe</span>
+                <Shield className="h-5 w-5 text-primary" />
+                <span className="font-medium text-primary">Your Data is Safe</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 Your application data is safely stored and will be restored after login.
@@ -731,7 +731,7 @@ export default function ClientLogin() {
         <CardContent>
           <div className="space-y-6">
             {errors.length > 0 && (
-              <Alert variant="destructive" className="border-red-200 bg-red-50">
+              <Alert variant="destructive" className="border-error bg-error/10">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
                   <ul className="list-disc list-inside space-y-1">
@@ -799,20 +799,20 @@ export default function ClientLogin() {
 
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <button
-                  type="button"
-                  onClick={handleForgotPassword}
-                  className="font-medium text-blue-600 hover:underline"
-                  disabled={isLoading}
-                >
-                  Forgot your password?
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="font-medium text-primary hover:underline"
+                    disabled={isLoading}
+                  >
+                    Forgot your password?
+                  </button>
               </div>
             </div>
 
             <Button 
               onClick={handleSubmit} 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors disabled:hover:!bg-blue-700" 
+              className="w-full bg-primary hover:bg-primary/80 text-foreground font-semibold py-3 rounded-xl transition-colors disabled:hover:!bg-primary/80" 
               disabled={isLoading}
             >
               {isLoading ? (
@@ -828,7 +828,7 @@ export default function ClientLogin() {
             </Button>
           </div>
 
-          <div className="mt-6 text-center text-sm text-gray-600">
+          <div className="mt-6 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
             <Link
               href={
@@ -836,7 +836,7 @@ export default function ClientLogin() {
                   ? `/register?returnTo=${encodeURIComponent(returnTo)}&email=${encodeURIComponent(formData.email)}`
                   : "/register"
               }
-              className="font-medium text-blue-600 hover:underline"
+              className="font-medium text-primary hover:underline"
             >
               Create account
             </Link>
@@ -844,11 +844,11 @@ export default function ClientLogin() {
 
           {!isFromFacilityApp && (
             <div className="mt-4 text-center">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 Are you a supplier with an invitation?{" "}
                 <Link 
                   href="/register/supplier" 
-                  className="font-medium text-blue-600 hover:underline"
+                  className="font-medium text-primary hover:underline"
                 >
                   Access your invitation
                 </Link>
@@ -859,10 +859,10 @@ export default function ClientLogin() {
           {isFromFacilityApp && (
             <div className="mt-6 border-t border-gray-200 pt-6">
               <div className="text-center space-y-3">
-                <p className="text-xs text-gray-500">New to our platform?</p>
+                <p className="text-xs text-muted-foreground">New to our platform?</p>
                 <Link
                     href={`/register?returnTo=${encodeURIComponent(returnTo || "")}&email=${encodeURIComponent(formData.email)}`}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                   >
                   <User className="h-4 w-4" />
                   Create a new account instead

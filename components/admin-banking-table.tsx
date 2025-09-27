@@ -103,11 +103,11 @@ const BankingStatsCard: React.FC<{
   }
 
   const colorStyles: Record<string, string> = {
-    blue: "from-blue-500/20 to-indigo-500/20 text-blue-400 border-blue-500/30",
-    green: "from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30",
-    amber: "from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30",
-    purple: "from-purple-500/20 to-pink-500/20 text-purple-400 border-purple-500/30",
-    red: "from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30",
+  blue: "from-primary/20 to-primary/10 text-primary border-primary/30",
+  green: "from-success/20 to-success/10 text-success border-success/30",
+  amber: "from-warning/20 to-warning/10 text-warning border-warning/30",
+  purple: "from-info/20 to-info/10 text-info border-info/30",
+  red: "from-error/20 to-error/10 text-error border-error/30",
   }
 
   return (
@@ -265,25 +265,25 @@ export function AdminBankingTable() {
       pending: {
         icon: Clock,
         label: "Pending",
-        bgClass: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+        bgClass: "bg-warning/20 text-warning border-warning/30",
         description: "Awaiting verification"
       },
       verified: {
         icon: ShieldCheck,
         label: "Verified",
-        bgClass: "bg-green-500/20 text-green-400 border-green-500/30",
+        bgClass: "bg-success/20 text-success border-success/30",
         description: "Banking details verified and approved"
       },
       rejected: {
         icon: ShieldX,
         label: "Rejected",
-        bgClass: "bg-red-500/20 text-red-400 border-red-500/30",
+        bgClass: "bg-error/20 text-error border-error/30",
         description: "Banking details rejected"
       },
       resubmission_required: {
         icon: ShieldAlert,
         label: "Resubmission Required",
-        bgClass: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+        bgClass: "bg-info/20 text-info border-info/30",
         description: "Additional information required"
       }
     }

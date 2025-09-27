@@ -101,11 +101,11 @@ const ApplicationStatsCard: React.FC<{
   }
 
   const colorStyles: Record<string, string> = {
-    blue: "from-blue-500/20 to-indigo-500/20 text-blue-400 border-blue-500/30",
-    green: "from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30",
-    amber: "from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30",
-    purple: "from-purple-500/20 to-pink-500/20 text-purple-400 border-purple-500/30",
-    red: "from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30",
+  blue: "from-primary/20 to-primary/10 text-primary border-primary/30",
+  green: "from-success/20 to-success/10 text-success border-success/30",
+  amber: "from-warning/20 to-warning/10 text-warning border-warning/30",
+  purple: "from-info/20 to-info/10 text-info border-info/30",
+  red: "from-error/20 to-error/10 text-error border-error/30",
   }
 
   return (
@@ -225,31 +225,31 @@ export function AdminApplicationsTable({ refreshTrigger }: AdminApplicationsTabl
       pending: {
         icon: Clock,
         label: "Pending",
-        bgClass: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+        bgClass: "bg-warning/20 text-warning border-warning/30",
         description: "Application submitted, awaiting review"
       },
       under_review: {
         icon: Eye,
         label: "Under Review",
-        bgClass: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+        bgClass: "bg-primary/20 text-primary border-primary/30",
         description: "Currently being reviewed by admin"
       },
       ready_for_decision: {
         icon: AlertTriangle,
         label: "Ready for Decision",
-        bgClass: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+        bgClass: "bg-info/20 text-info border-info/30",
         description: "Review complete, awaiting final decision"
       },
       approved: {
         icon: CheckCircle,
         label: "Approved",
-        bgClass: "bg-green-500/20 text-green-400 border-green-500/30",
+        bgClass: "bg-success/20 text-success border-success/30",
         description: "Application approved"
       },
       rejected: {
         icon: XCircle,
         label: "Rejected",
-        bgClass: "bg-red-500/20 text-red-400 border-red-500/30",
+        bgClass: "bg-error/20 text-error border-error/30",
         description: "Application rejected"
       },
     }
@@ -281,8 +281,8 @@ export function AdminApplicationsTable({ refreshTrigger }: AdminApplicationsTabl
     const isSupplier = role === "supplier"
     const Icon = isSupplier ? Building : Users
     const bgClass = isSupplier 
-      ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
-      : "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+      ? "bg-info/20 text-info border-info/30"
+      : "bg-primary/20 text-primary border-primary/30"
     
     return (
       <TooltipProvider>
@@ -348,23 +348,23 @@ export function AdminApplicationsTable({ refreshTrigger }: AdminApplicationsTabl
           <span className="font-medium">{verifiedPercent}%</span>
         </div>
         
-        <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
           <div className="h-full flex">
             {app.verified_documents > 0 && (
               <div 
-                className="bg-green-500 transition-all duration-500"
+                className="bg-success transition-all duration-500"
                 style={{ width: `${verifiedPercent}%` }}
               />
             )}
             {app.rejected_documents > 0 && (
               <div 
-                className="bg-red-500 transition-all duration-500"
+                className="bg-error transition-all duration-500"
                 style={{ width: `${rejectedPercent}%` }}
               />
             )}
             {app.pending_documents > 0 && (
               <div 
-                className="bg-amber-500 transition-all duration-500"
+                className="bg-warning transition-all duration-500"
                 style={{ width: `${pendingPercent}%` }}
               />
             )}
@@ -374,19 +374,19 @@ export function AdminApplicationsTable({ refreshTrigger }: AdminApplicationsTabl
         <div className="flex items-center gap-3 text-xs">
           {app.verified_documents > 0 && (
             <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <div className="w-2 h-2 rounded-full bg-success" />
               <span>{app.verified_documents} verified</span>
             </div>
           )}
           {app.rejected_documents > 0 && (
             <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-red-500" />
+              <div className="w-2 h-2 rounded-full bg-error" />
               <span>{app.rejected_documents} rejected</span>
             </div>
           )}
           {app.pending_documents > 0 && (
             <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-amber-500" />
+              <div className="w-2 h-2 rounded-full bg-warning" />
               <span>{app.pending_documents} pending</span>
             </div>
           )}
