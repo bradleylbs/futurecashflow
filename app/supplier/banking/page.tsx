@@ -27,6 +27,27 @@ export default function SupplierBankingPage() {
     routing_number: "",
     account_holder_name: "",
   })
+
+  useEffect(() => {
+    let cancelled = false
+    async function fetchBankingDetails() {
+      try {
+        const res = await fetch("/api/banking/details", { credentials: "include" })
+        if (!res.ok) return
+        const data = await res.json()
+        if (!cancelled && data) {
+          setBankForm({
+            bank_name: data.bank_name || "",
+            account_number: data.account_number || "",
+            routing_number: data.routing_number || "",
+            account_holder_name: data.account_holder_name || "",
+          })
+        }
+      } catch {}
+    }
+    fetchBankingDetails()
+    return () => { cancelled = true }
+  }, [])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")

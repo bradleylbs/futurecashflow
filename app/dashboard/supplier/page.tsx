@@ -8,10 +8,12 @@ import { Progress } from "@/components/ui/progress"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Building, FileText, CreditCard, CheckCircle, Clock, AlertTriangle, Mail, User, RefreshCw, LogOut } from "lucide-react"
+import { BarChart } from "lucide-react"
 import { KYCApplicationForm } from "@/components/kyc-application-form"
 import { AgreementList } from "@/components/agreement-list"
 import { AgreementSigning } from "@/components/agreement-signing"
 import { EarlyPaymentOffers } from "@/components/early-payment-offers"
+import SupplierOnboardingWizard from "@/components/SupplierOnboardingWizard"
 
 interface DashboardData {
   user: {
@@ -391,6 +393,8 @@ export default function SupplierDashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
+          {/* Onboarding Wizard */}
+          <SupplierOnboardingWizard />
           {data.dashboard.access_level === "pre_kyc" && (
             <Card className="bg-[#161616] border border-[#3d3d3d]">
               <CardHeader>
@@ -486,6 +490,14 @@ export default function SupplierDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
+                  </Button>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
+                    <a href="/supplier/analytics">
+                      <BarChart className="mr-2 h-4 w-4 text-[#fefefe]" />
+                      Supplier Analytics
+                    </a>
+                  </Button>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
                     <a href="/dashboard/invoices">
                       <FileText className="mr-2 h-4 w-4 text-[#fefefe]" />
                       View Invoices
@@ -495,6 +507,36 @@ export default function SupplierDashboard() {
                     <a href="/dashboard/communication">
                       <User className="mr-2 h-4 w-4 text-[#fefefe]" />
                       Contact Buyer
+                    </a>
+                  </Button>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
+                    <a href="/supplier/payments">
+                      <CreditCard className="mr-2 h-4 w-4 text-[#fefefe]" />
+                      Payments
+                    </a>
+                  </Button>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
+                    <a href="/supplier/support">
+                      <User className="mr-2 h-4 w-4 text-[#fefefe]" />
+                      Support Tickets
+                    </a>
+                  </Button>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
+                    <a href="/supplier/early-payment-offers">
+                      <CreditCard className="mr-2 h-4 w-4 text-[#fefefe]" />
+                      Early Payment Offers
+                    </a>
+                  </Button>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
+                    <a href="/supplier/banking">
+                      <CreditCard className="mr-2 h-4 w-4 text-[#fefefe]" />
+                      Update Banking Details
+                    </a>
+                  </Button>
+                  <Button className="w-full justify-start bg-[#3594f7] hover:bg-[#2d2d2d] text-[#fefefe]" asChild>
+                    <a href="/supplier/profile">
+                      <User className="mr-2 h-4 w-4 text-[#fefefe]" />
+                      Update Profile
                     </a>
                   </Button>
                 </CardContent>
@@ -553,7 +595,6 @@ export default function SupplierDashboard() {
               </CardContent>
             </Card>
           </div>
-          <EarlyPaymentOffers />
         </TabsContent>
       </Tabs>
       </div>
