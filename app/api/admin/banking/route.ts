@@ -12,14 +12,21 @@ export async function GET(request: NextRequest) {
     }
 
     const url = new URL(request.url)
-    const status = url.searchParams.get("status") || "pending"
 
-    let where = ""
-    const params: any[] = []
+    // Allow filtering by any status value via query param
+    const allowedStatuses = ["pending", "verified", "rejected", "resubmission_required", "all"];
+    let status = url.searchParams.get("status") || "pending";
+    if (!allowedStatuses.includes(status)) status = "pending";
+
+    let where = "";
+    const params: any[] = [];
     if (status !== "all") {
-      where = "WHERE bd.status = ?"
-      params.push(status)
+      where = "WHERE bd.status = ?";
+      params.push(status);
     }
+
+    // If status is 'verified', only return verified accounts
+    // (already handled by above, but clarify for future logic)
 
     const query = `
       SELECT 
@@ -73,7 +80,28 @@ export async function GET(request: NextRequest) {
         routing_number_masked: routingMasked,
       }
     })
-    return NextResponse.json({ banking: sanitized })
+
+    // Calculate analytics
+    const total = sanitized.length;
+    const pending = sanitized.filter(r => r.status === 'pending').length;
+    const verified = sanitized.filter(r => r.status === 'verified').length;
+    const rejected = sanitized.filter(r => r.status === 'rejected').length;
+    const resubmission_required = sanitized.filter(r => r.status === 'resubmission_required').length;
+    const verificationRate = total > 0 ? Math.round((verified / total) * 100) : 0;
+    const rejectionRate = total > 0 ? Math.round((rejected / total) * 100) : 0;
+
+    return NextResponse.json({
+      banking: sanitized,
+      analytics: {
+        total,
+        pending,
+        verified,
+        rejected,
+        resubmission_required,
+        verificationRate,
+        rejectionRate,
+      }
+    })
   } catch (error) {
     console.error("Get banking admin list error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

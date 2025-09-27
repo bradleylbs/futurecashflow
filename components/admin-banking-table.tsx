@@ -138,6 +138,7 @@ const BankingStatsCard: React.FC<{
   )
 }
 
+
 export function AdminBankingTable() {
   const [rows, setRows] = useState<BankingRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -154,19 +155,19 @@ export function AdminBankingTable() {
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [bulkProcessing, setBulkProcessing] = useState(false)
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null)
+  const [analytics, setAnalytics] = useState<any | null>(null);
 
-  // Fetch banking submissions
+  // Fetch banking submissions and analytics
   const fetchRows = useCallback(async () => {
     try {
       setIsLoading(true)
       const params = new URLSearchParams()
       if (statusFilter !== "all") params.append("status", statusFilter)
-      
       const res = await fetch(`/api/admin/banking?${params.toString()}`)
       if (!res.ok) throw new Error("Failed to fetch banking submissions")
-      
       const data = await res.json()
       setRows(data.banking || [])
+      setAnalytics(data.analytics || null)
       setError("")
     } catch (e) {
       console.error(e)
@@ -180,26 +181,35 @@ export function AdminBankingTable() {
     fetchRows()
   }, [fetchRows])
 
-  // Calculate statistics
+  // Use analytics from API if present, else fallback to client-side calculation
   const statistics = useMemo(() => {
+    if (analytics) {
+      return {
+        total: analytics.total,
+        pending: analytics.pending,
+        verified: analytics.verified,
+        rejected: analytics.rejected,
+        resubmission: analytics.resubmission_required,
+        verificationRate: analytics.verificationRate,
+        rejectionRate: analytics.rejectionRate,
+      }
+    }
+    // fallback client-side
     const stats = {
       total: rows.length,
       pending: rows.filter(r => r.status === 'pending').length,
       verified: rows.filter(r => r.status === 'verified').length,
       rejected: rows.filter(r => r.status === 'rejected').length,
       resubmission: rows.filter(r => r.status === 'resubmission_required').length,
-      
       verificationRate: rows.length > 0 
         ? Math.round((rows.filter(r => r.status === 'verified').length / rows.length) * 100)
         : 0,
-        
       rejectionRate: rows.length > 0
         ? Math.round((rows.filter(r => r.status === 'rejected').length / rows.length) * 100)
         : 0
     }
-    
     return stats
-  }, [rows])
+  }, [analytics, rows])
 
   // Handle banking action
   const handleAction = async (banking_id: string, decision: "verify" | "reject" | "resubmission_required") => {
