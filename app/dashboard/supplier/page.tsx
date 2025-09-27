@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -520,29 +521,79 @@ export default function SupplierDashboard() {
                 {isExpanded && (
                   <div id={`section-${section.id}`} className="mt-1 ml-4 space-y-1">
                     {visibleItems.map((item) => {
-                      const ItemIcon = item.icon
-                      const isItemActive = activeView === item.id
-
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => handleNavClick(item.id, section.id)}
-                          className={`
-                            w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                            ${isItemActive 
-                              ? 'bg-blue-600 text-white' 
-                              : 'text-muted-foreground hover:bg-white/5 hover:text-white'
-                            }
-                          `}
-                          aria-current={isItemActive ? 'page' : undefined}
-                        >
-                          <ItemIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                          <div className="flex-1 text-left">
-                            <div className="text-sm font-medium">{item.label}</div>
-                            <div className="text-xs opacity-70">{item.description}</div>
-                          </div>
-                        </button>
-                      )
+                      const ItemIcon = item.icon;
+                      const isItemActive = activeView === item.id;
+                      if (typeof item.href === "string" && (item.id === "payments" || item.id === "early-payments")) {
+                        // Use Next.js Link for Payments and Early Payment Offers
+                        return (
+                          <Link href={item.href} key={item.id}>
+                            <span
+                              className={`
+                                w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                                ${isItemActive 
+                                  ? 'bg-blue-600 text-white' 
+                                  : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                                }
+                              `}
+                              aria-current={isItemActive ? 'page' : undefined}
+                              onClick={() => setSidebarOpen(false)}
+                              role="button"
+                              tabIndex={0}
+                            >
+                              <ItemIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                              <div className="flex-1 text-left">
+                                <div className="text-sm font-medium">{item.label}</div>
+                                <div className="text-xs opacity-70">{item.description}</div>
+                              </div>
+                            </span>
+                          </Link>
+                        );
+                      } else if (typeof item.href === "string") {
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => {
+                              setSidebarOpen(false);
+                              if (item.href) window.location.assign(item.href);
+                            }}
+                            className={`
+                              w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                              ${isItemActive 
+                                ? 'bg-blue-600 text-white' 
+                                : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                              }
+                            `}
+                            aria-current={isItemActive ? 'page' : undefined}
+                          >
+                            <ItemIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                            <div className="flex-1 text-left">
+                              <div className="text-sm font-medium">{item.label}</div>
+                              <div className="text-xs opacity-70">{item.description}</div>
+                            </div>
+                          </button>
+                        );
+                      } else {
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => handleNavClick(item.id, section.id)}
+                            className={`
+                              w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                              ${isItemActive 
+                                ? 'bg-blue-600 text-white' 
+                                : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                              }
+                            `}
+                            aria-current={isItemActive ? 'page' : undefined}
+                          >
+                            <ItemIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                            <div className="flex-1 text-left">
+                              <div className="text-sm font-medium">{item.label}</div>
+                              <div className="text-xs opacity-70">{item.description}</div>
+                            </div>
+                          </button>
+                        );
+                      }
                     })}
                   </div>
                 )}
