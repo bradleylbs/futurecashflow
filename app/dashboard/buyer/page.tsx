@@ -21,6 +21,7 @@ import { InvitationsTable } from "@/components/invitations-table"
 import { APUpload } from "@/components/ap-upload"
 import { BuyerPaymentsTable } from "@/components/buyer-payments-table"
 
+
 interface DashboardData {
   user: {
     id: string
@@ -647,6 +648,17 @@ export default function BuyerDashboard() {
                       {matching && <RefreshCw className="h-4 w-4 mr-2 animate-spin" />}
                       Auto-Match
                     </Button>
+                    <Button
+                      className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 shadow-lg rounded-full px-6 py-2"
+                      aria-label="Upload AP Data"
+                      onClick={() => {
+                        const el = document.getElementById('ap-upload-section');
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }}
+                    >
+                      <Upload className="h-5 w-5" />
+                      <span>Upload AP Data</span>
+                    </Button>
                   </div>
                   {matchResult && (
                     <Alert className={matchResult.includes('Success') ? 'border-green-500/30 bg-green-500/5' : 'border-yellow-500/30 bg-yellow-500/5'}>
@@ -657,24 +669,34 @@ export default function BuyerDashboard() {
               </Card>
 
               {/* Vendors */}
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-blue-500" />
-                    Consented Vendors
-                  </CardTitle>
-                  <CardDescription>Authorized vendor numbers</CardDescription>
+              <Card className="border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-purple-500/10 mb-6">
+                <CardHeader className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="h-5 w-5 text-blue-500" />
+                      Assign Vendors
+                    </CardTitle>
+                    <CardDescription>
+                      Assign authorized vendors to your account. This helps streamline invoice processing and supplier management.
+                    </CardDescription>
+                  </div>
+                  <AssignVendorsDialog 
+                    onAssigned={() => fetchDashboardData()}
+                  />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                    <p>Total consented vendors: <span className="font-bold">{data.dashboard.vendor_count ?? 0}</span></p>
+                  <div className="flex flex-col items-center justify-center gap-4 py-6">
+                    <Users className="h-12 w-12 text-blue-500 opacity-70" />
+                    <p className="text-lg font-semibold text-white">Total consented vendors: <span className="font-bold text-blue-400">{data.dashboard.vendor_count ?? 0}</span></p>
+                    <p className="text-sm text-muted-foreground">Vendors assigned here will be authorized for invoice uploads and payments.</p>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Upload */}
-              <APUpload consentedVendors={[]} buyerId={data.user.id} />
+              <div id="ap-upload-section">
+                <APUpload consentedVendors={[]} buyerId={data.user.id} />
+              </div>
 
               {/* Payments */}
               <BuyerPaymentsTable buyerId={data.user.id} />

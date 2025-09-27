@@ -54,62 +54,82 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
 
   const onBrowse = () => inputRef.current?.click()
 
+  // Excel column headers to match
+  const EXCEL_COLUMNS = [
+    "Company Code",
+    "Vendor Number",
+    "Vendor Name",
+    "Document Number",
+    "Document Type",
+    "Document Date",
+    "Posting Date",
+    "Baseline Date",
+    "Net Due Date",
+    "Days Overdue",
+    "Amount (Doc Curr)",
+    "Currency",
+    "Amount (Local Curr)",
+    "Payment Terms",
+    "Payment Method",
+    "Assignment (PO #)",
+    "Reference (Invoice #)",
+    "Open Item",
+    "Text"
+  ];
+
   const parseCSV = async (file: File) => {
-    const text = await file.text()
-    const lines = text.split(/\r?\n/).filter(Boolean)
-    if (lines.length === 0) return { rows: [], errors: ["Empty file"] }
-    const header = lines[0].split(",").map((h) => h.trim().toLowerCase())
-    const required = [
-      "company_code","vendor_number","vendor_name","document_number","document_type","document_date","posting_date","baseline_date","net_due_date","days_overdue","amount_in_document_currency","document_currency","amount_in_local_currency","tax_amount","payment_terms","payment_method","assignment","reference","clearing_document","clearing_date","open_item_indicator","text"
-    ]
-    const missing = required.filter((h) => !header.includes(h))
-    if (missing.length) return { rows: [], errors: ["Missing columns: " + missing.join(", ")] }
+    const text = await file.text();
+    const lines = text.split(/\r?\n/).filter(Boolean);
+    if (lines.length === 0) return { rows: [], errors: ["Empty file"] };
+    const header = lines[0].split(",").map((h) => h.trim());
+    const missing = EXCEL_COLUMNS.filter((h) => !header.includes(h));
+    if (missing.length) return { rows: [], errors: ["Missing columns: " + missing.join(", ")] };
 
-    const get = (arr: string[], name: string) => arr[header.indexOf(name)]?.trim() ?? ""
+    const get = (arr: string[], name: string) => arr[header.indexOf(name)]?.trim() ?? "";
 
-    const parsed: APRow[] = []
-    const errs: string[] = []
+    const parsed: APRow[] = [];
+    const errs: string[] = [];
     for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(",")
-      if (cols.length === 1 && cols[0].trim() === "") continue
+      const cols = lines[i].split(",");
+      if (cols.length === 1 && cols[0].trim() === "") continue;
       const row: APRow = {
-        company_code: get(cols, "company_code"),
-        vendor_number: get(cols, "vendor_number"),
-        vendor_name: get(cols, "vendor_name"),
-        document_number: get(cols, "document_number"),
-        document_type: get(cols, "document_type"),
-        document_date: get(cols, "document_date"),
-        posting_date: get(cols, "posting_date"),
-        baseline_date: get(cols, "baseline_date"),
-        net_due_date: get(cols, "net_due_date"),
-        days_overdue: get(cols, "days_overdue"),
-        amount_in_document_currency: get(cols, "amount_in_document_currency"),
-        document_currency: get(cols, "document_currency"),
-        amount_in_local_currency: get(cols, "amount_in_local_currency"),
-        tax_amount: get(cols, "tax_amount"),
-        payment_terms: get(cols, "payment_terms"),
-        payment_method: get(cols, "payment_method"),
-        assignment: get(cols, "assignment"),
-        reference: get(cols, "reference"),
-        clearing_document: get(cols, "clearing_document"),
-        clearing_date: get(cols, "clearing_date"),
-        open_item_indicator: get(cols, "open_item_indicator"),
-        text: get(cols, "text"),
-      }
-      const lineNo = i + 1
-      if (!row.vendor_number) errs.push(`Line ${lineNo}: vendor_number is required`)
-      if (!row.document_number) errs.push(`Line ${lineNo}: document_number is required`)
-      if (!row.amount_in_document_currency || isNaN(Number(row.amount_in_document_currency))) errs.push(`Line ${lineNo}: amount_in_document_currency must be a number`)
-      if (!row.document_date || !/^\d{4}-\d{2}-\d{2}$/.test(row.document_date)) errs.push(`Line ${lineNo}: document_date must be YYYY-MM-DD`)
+        company_code: get(cols, "Company Code"),
+        vendor_number: get(cols, "Vendor Number"),
+        vendor_name: get(cols, "Vendor Name"),
+        document_number: get(cols, "Document Number"),
+        document_type: get(cols, "Document Type"),
+        document_date: get(cols, "Document Date"),
+        posting_date: get(cols, "Posting Date"),
+        baseline_date: get(cols, "Baseline Date"),
+        net_due_date: get(cols, "Net Due Date"),
+        days_overdue: get(cols, "Days Overdue"),
+        amount_in_document_currency: get(cols, "Amount (Doc Curr)"),
+        document_currency: get(cols, "Currency"),
+        amount_in_local_currency: get(cols, "Amount (Local Curr)"),
+        tax_amount: "", // Not present in provided columns
+        payment_terms: get(cols, "Payment Terms"),
+        payment_method: get(cols, "Payment Method"),
+        assignment: get(cols, "Assignment (PO #)"),
+        reference: get(cols, "Reference (Invoice #)"),
+        clearing_document: "", // Not present in provided columns
+        clearing_date: "", // Not present in provided columns
+        open_item_indicator: get(cols, "Open Item"),
+        text: get(cols, "Text"),
+      };
+      const lineNo = i + 1;
+      if (!row.vendor_number) errs.push(`Line ${lineNo}: Vendor Number is required`);
+      if (!row.document_number) errs.push(`Line ${lineNo}: Document Number is required`);
+      if (!row.amount_in_document_currency || isNaN(Number(row.amount_in_document_currency))) errs.push(`Line ${lineNo}: Amount (Doc Curr) must be a number`);
+      if (!row.document_date) errs.push(`Line ${lineNo}: Document Date is required`);
       if (row.vendor_number && consentedVendors.length && !consentedVendors.includes(row.vendor_number)) {
-        errs.push(`Line ${lineNo}: vendor ${row.vendor_number} is not consented`)
+        errs.push(`Line ${lineNo}: Vendor ${row.vendor_number} is not consented`);
       }
       if (!errs.some((e) => e.includes(`Line ${lineNo}:`))) {
-        parsed.push(row)
+        parsed.push(row);
       }
     }
-    return { rows: parsed, errors: errs }
-  }
+    return { rows: parsed, errors: errs };
+  };
 
   const handleFiles = useCallback(async (files: FileList | null) => {
     if (!files || !files.length) return
@@ -194,7 +214,7 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
 
         <div className="text-sm text-gray-600 bg-gradient-to-r from-blue-50/60 to-purple-50/60 p-4 rounded-xl border-0 shadow-inner">
           <span className="font-semibold text-gray-800">Expected columns:</span> <br />
-          company_code, vendor_number, vendor_name, document_number, document_type, document_date, posting_date, baseline_date, net_due_date, days_overdue, amount_in_document_currency, document_currency, amount_in_local_currency, tax_amount, payment_terms, payment_method, assignment, reference, clearing_document, clearing_date, open_item_indicator, text
+          {EXCEL_COLUMNS.join(", ")}
         </div>
 
         {errors.length > 0 && (
@@ -207,6 +227,17 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
             </AlertDescription>
           </Alert>
         )}
+
+        {/* Upload AP Data button for backend upload */}
+        <Button
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 shadow-lg rounded-full px-6 py-2"
+          aria-label="Upload AP Data"
+          onClick={onUpload}
+          disabled={hasBlockingErrors || rows.length === 0 || uploading}
+        >
+          {uploading ? <RefreshCw className="h-5 w-5 animate-spin" /> : <UploadIcon className="h-5 w-5" />}
+          <span>Upload AP Data</span>
+        </Button>
 
         <div className="rounded-xl border-0 p-6 text-sm bg-gradient-to-br from-purple-50/80 to-blue-50/80 backdrop-blur-sm shadow-lg">
           <div className="font-semibold mb-3 text-purple-800 text-lg">API Connector</div>
