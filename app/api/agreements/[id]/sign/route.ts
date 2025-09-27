@@ -6,7 +6,8 @@ import { getDashboardUrl } from "@/lib/url-utils"
 
 export const runtime = "nodejs"
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const user = await verifyJWT(request)
     if (!user) {
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       SELECT id, agreement_type, status, counterparty_user_id, buyer_supplier_link_id FROM agreements 
       WHERE id = ? AND user_id = ? AND status = 'presented'
     `,
-      [params.id, user.id],
+        [id, user.id],
     )
 
     if (!agreement.success || (agreement.data ?? []).length === 0) {
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         signatory_title || "",
         clientIP,
         `signed_by_${user.id}_at_${Date.now()}`,
-        params.id,
+          id,
       ],
     )
 
@@ -69,13 +70,13 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         const row: any = (da.data as any[])[0]
         await executeQuery(
           `UPDATE dashboard_access SET access_level = 'agreement_signed', agreement_signing_date = NOW(), agreement_id = ?, last_level_change = NOW(), updated_at = NOW() WHERE id = ?`,
-          [params.id, row.id]
+            [id, row.id]
         )
       } else {
         // Create a new access record if none exists
         await executeQuery(
           `INSERT INTO dashboard_access (user_id, kyc_id, access_level, dashboard_features, agreement_id, agreement_signing_date, last_level_change) VALUES (?, NULL, 'agreement_signed', '[]', ?, NOW(), NOW())`,
-          [user.id, params.id]
+            [user.id, id]
         )
       }
     }
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     return NextResponse.json({
       message: "Agreement signed successfully",
-      agreement: { id: params.id, signed_at: new Date() },
+        agreement: { id, signed_at: new Date() },
     })
   } catch (error) {
     console.error("Error signing agreement:", error)

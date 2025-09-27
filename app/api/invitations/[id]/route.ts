@@ -1,12 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { executeQuery } from "@/lib/database"
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     // Get user info from middleware headers
     const userId = request.headers.get("x-user-id")
     const userRole = request.headers.get("x-user-role")
-    const invitationId = params.id
+  const invitationId = id
 
     if (!userId || !userRole) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
@@ -55,12 +56,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     // Get user info from middleware headers
     const userId = request.headers.get("x-user-id")
     const userRole = request.headers.get("x-user-role")
-    const invitationId = params.id
+  const invitationId = id
     const { action } = await request.json()
 
     if (!userId || !userRole) {

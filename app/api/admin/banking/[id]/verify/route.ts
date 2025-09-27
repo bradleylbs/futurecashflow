@@ -3,7 +3,8 @@ import { executeQuery } from "@/lib/database"
 import { sendBuyerMilestoneEmail, sendSupplierBankingResubmissionEmail } from "@/lib/email"
 import { getDashboardUrl } from "@/lib/url-utils"
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const userId = request.headers.get("x-user-id")
     const userRole = request.headers.get("x-user-role")
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 403 })
     }
 
-    const bankingId = params.id
+    const bankingId = id
     let body: any
     try {
       body = await request.json()

@@ -1,0 +1,1 @@
+SELECT * FROM cash_flow.v_admin_audit_log-id, action, target_type, target_id, metadata, ip_address, user_agent, created_at, actor_email, actor_user_id

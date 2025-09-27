@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { executeQuery } from "@/lib/database"
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     // Get user info from middleware headers
     const userId = request.headers.get("x-user-id")
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 403 })
     }
 
-    const documentId = params.id
+  const documentId = id
     const { action, notes } = await request.json()
 
     if (!["start_review", "verify", "reject"].includes(action)) {

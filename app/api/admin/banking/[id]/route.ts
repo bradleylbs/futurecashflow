@@ -3,7 +3,8 @@ import { executeQuery } from "@/lib/database"
 import { decryptSensitive } from "@/lib/crypto"
 
 // Securely fetch full banking details for a specific record (admin only)
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const userId = request.headers.get("x-user-id")
     const userRole = request.headers.get("x-user-role")
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 403 })
     }
 
-    const bankingId = params.id
+  const bankingId = id
     const result = await executeQuery(
       `SELECT id as banking_id, user_id, bank_name, account_number, routing_number, account_holder_name, status, submission_date, verification_date, verification_notes
        FROM banking_details WHERE id = ? LIMIT 1`,

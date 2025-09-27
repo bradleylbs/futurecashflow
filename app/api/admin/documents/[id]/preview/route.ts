@@ -15,14 +15,15 @@ async function getUserRole(req: NextRequest): Promise<string | null> {
   return (user?.role || "").toLowerCase() || null
 }
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const role = await getUserRole(req)
     if (!role || !ADMIN_ROLES.has(role)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    const id = params.id
+  // 'id' is already destructured above
     const { searchParams } = new URL(req.url)
     const forceDownload = searchParams.get('download') === '1'
 

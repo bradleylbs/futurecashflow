@@ -4,11 +4,12 @@ import { executeQuery } from "@/lib/database"
 
 export const runtime = "nodejs"
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const user = await verifyJWT(req as unknown as Request)
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    const threadId = params.id
+  const threadId = id
     // Ensure user is participant
     const can = await executeQuery(
       `SELECT id FROM message_threads WHERE id = ? AND (buyer_id = ? OR supplier_id = ?) LIMIT 1`,
@@ -28,11 +29,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const user = await verifyJWT(req as unknown as Request)
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    const threadId = params.id
+  const threadId = id
     const body = await req.json().catch(() => ({}))
     const text = String(body?.body || "").trim()
     if (!text) return NextResponse.json({ error: "body required" }, { status: 400 })
