@@ -1,18 +1,39 @@
 "use client"
 
-import React, { useCallback, useMemo, useRef, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Input } from "@/components/ui/input"
-import { RefreshCw, Upload as UploadIcon } from "lucide-react"
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { RefreshCw, Upload as UploadIcon } from "lucide-react";
 
 export type APRow = {
-  vendor_number: string
-  invoice_number: string
-  amount: number
-  due_date: string
+  company_code: string;
+  vendor_number: string;
+  vendor_name: string;
+  document_number: string;
+  document_type: string;
+  document_date: string;
+  posting_date: string;
+  baseline_date: string;
+  net_due_date: string;
+  days_overdue: string;
+  amount_in_document_currency: string;
+  document_currency: string;
+  amount_in_local_currency: string;
+  tax_amount: string;
+  payment_terms: string;
+  payment_method: string;
+  assignment: string;
+  reference: string;
+  clearing_document: string;
+  clearing_date: string;
+  open_item_indicator: string;
+  text: string;
 }
+
+
+
 
 export type UploadSummary = {
   batchId: string
@@ -38,7 +59,9 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
     const lines = text.split(/\r?\n/).filter(Boolean)
     if (lines.length === 0) return { rows: [], errors: ["Empty file"] }
     const header = lines[0].split(",").map((h) => h.trim().toLowerCase())
-    const required = ["vendor_number", "invoice_number", "amount", "due_date"]
+    const required = [
+      "company_code","vendor_number","vendor_name","document_number","document_type","document_date","posting_date","baseline_date","net_due_date","days_overdue","amount_in_document_currency","document_currency","amount_in_local_currency","tax_amount","payment_terms","payment_method","assignment","reference","clearing_document","clearing_date","open_item_indicator","text"
+    ]
     const missing = required.filter((h) => !header.includes(h))
     if (missing.length) return { rows: [], errors: ["Missing columns: " + missing.join(", ")] }
 
@@ -49,22 +72,40 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
     for (let i = 1; i < lines.length; i++) {
       const cols = lines[i].split(",")
       if (cols.length === 1 && cols[0].trim() === "") continue
-      const vendor = get(cols, "vendor_number")
-      const inv = get(cols, "invoice_number")
-      const amtStr = get(cols, "amount")
-      const due = get(cols, "due_date")
-
+      const row: APRow = {
+        company_code: get(cols, "company_code"),
+        vendor_number: get(cols, "vendor_number"),
+        vendor_name: get(cols, "vendor_name"),
+        document_number: get(cols, "document_number"),
+        document_type: get(cols, "document_type"),
+        document_date: get(cols, "document_date"),
+        posting_date: get(cols, "posting_date"),
+        baseline_date: get(cols, "baseline_date"),
+        net_due_date: get(cols, "net_due_date"),
+        days_overdue: get(cols, "days_overdue"),
+        amount_in_document_currency: get(cols, "amount_in_document_currency"),
+        document_currency: get(cols, "document_currency"),
+        amount_in_local_currency: get(cols, "amount_in_local_currency"),
+        tax_amount: get(cols, "tax_amount"),
+        payment_terms: get(cols, "payment_terms"),
+        payment_method: get(cols, "payment_method"),
+        assignment: get(cols, "assignment"),
+        reference: get(cols, "reference"),
+        clearing_document: get(cols, "clearing_document"),
+        clearing_date: get(cols, "clearing_date"),
+        open_item_indicator: get(cols, "open_item_indicator"),
+        text: get(cols, "text"),
+      }
       const lineNo = i + 1
-      if (!vendor) errs.push(`Line ${lineNo}: vendor_number is required`)
-      if (!inv) errs.push(`Line ${lineNo}: invoice_number is required`)
-      const amount = Number(amtStr)
-      if (!amtStr || Number.isNaN(amount) || amount <= 0) errs.push(`Line ${lineNo}: amount must be a positive number`)
-      if (!due || !/^\d{4}-\d{2}-\d{2}$/.test(due)) errs.push(`Line ${lineNo}: due_date must be YYYY-MM-DD`)
-      if (vendor && consentedVendors.length && !consentedVendors.includes(vendor)) {
-        errs.push(`Line ${lineNo}: vendor ${vendor} is not consented`)
+      if (!row.vendor_number) errs.push(`Line ${lineNo}: vendor_number is required`)
+      if (!row.document_number) errs.push(`Line ${lineNo}: document_number is required`)
+      if (!row.amount_in_document_currency || isNaN(Number(row.amount_in_document_currency))) errs.push(`Line ${lineNo}: amount_in_document_currency must be a number`)
+      if (!row.document_date || !/^\d{4}-\d{2}-\d{2}$/.test(row.document_date)) errs.push(`Line ${lineNo}: document_date must be YYYY-MM-DD`)
+      if (row.vendor_number && consentedVendors.length && !consentedVendors.includes(row.vendor_number)) {
+        errs.push(`Line ${lineNo}: vendor ${row.vendor_number} is not consented`)
       }
       if (!errs.some((e) => e.includes(`Line ${lineNo}:`))) {
-        parsed.push({ vendor_number: vendor, invoice_number: inv, amount, due_date: due })
+        parsed.push(row)
       }
     }
     return { rows: parsed, errors: errs }
@@ -152,7 +193,8 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
         </div>
 
         <div className="text-sm text-gray-600 bg-gradient-to-r from-blue-50/60 to-purple-50/60 p-4 rounded-xl border-0 shadow-inner">
-          <span className="font-semibold text-gray-800">Expected columns:</span> vendor_number, invoice_number, amount, due_date (YYYY-MM-DD)
+          <span className="font-semibold text-gray-800">Expected columns:</span> <br />
+          company_code, vendor_number, vendor_name, document_number, document_type, document_date, posting_date, baseline_date, net_due_date, days_overdue, amount_in_document_currency, document_currency, amount_in_local_currency, tax_amount, payment_terms, payment_method, assignment, reference, clearing_document, clearing_date, open_item_indicator, text
         </div>
 
         {errors.length > 0 && (
@@ -164,37 +206,6 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
               </ul>
             </AlertDescription>
           </Alert>
-        )}
-
-        {rows.length > 0 && (
-          <div className="rounded-xl border-0 p-6 text-sm bg-gradient-to-br from-blue-50/80 to-indigo-50/80 backdrop-blur-sm shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <div className="text-gray-800">
-                  Total parsed rows: <span className="font-semibold text-blue-700">{rows.length}</span>
-                </div>
-                <div className="text-gray-800">
-                  Vendors in batch: <span className="font-semibold text-blue-700">{Array.from(new Set(rows.map(r => r.vendor_number))).length}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button 
-                  disabled={uploading || hasBlockingErrors} 
-                  onClick={onUpload}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:hover:scale-100 disabled:opacity-50"
-                >
-                  {uploading ? (
-                    <>
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                      Uploading…
-                    </>
-                  ) : (
-                    'Upload Batch'
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
         )}
 
         <div className="rounded-xl border-0 p-6 text-sm bg-gradient-to-br from-purple-50/80 to-blue-50/80 backdrop-blur-sm shadow-lg">

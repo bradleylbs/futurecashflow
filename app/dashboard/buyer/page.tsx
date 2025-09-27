@@ -12,6 +12,7 @@ import { InviteSupplierDialog } from "@/components/invite-supplier-dialog"
 import { AssignVendorsDialog } from "@/components/assign-vendors-dialog"
 import { InvitationsTable } from "@/components/invitations-table"
 import { APUpload } from "@/components/ap-upload"
+import { BuyerPaymentsTable } from "@/components/buyer-payments-table"
 import { Input } from "@/components/ui/input"
 
 interface DashboardData {
@@ -48,6 +49,8 @@ export default function BuyerDashboard() {
   const [invoicesError, setInvoicesError] = useState("")
   const [consentedVendors, setConsentedVendors] = useState<string[]>([])
   const [vendorsLoading, setVendorsLoading] = useState(false)
+  const [matching, setMatching] = useState(false)
+  const [matchResult, setMatchResult] = useState<string>("")
 
   const fetchDashboardData = async () => {
     try {
@@ -344,11 +347,32 @@ export default function BuyerDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2 flex-wrap">
-          <Button onClick={() => setActiveTab('suppliers')} variant="outline" style={{ borderColor: '#3d3d3d', background: '#b8b6b4', color: '#727272' }}>
+                <Button onClick={() => setActiveTab('suppliers')} variant="outline" style={{ borderColor: '#3d3d3d', background: '#b8b6b4', color: '#727272' }}>
                   Manage Suppliers
                 </Button>
-          <Button onClick={() => setActiveTab('operations')} style={{ background: '#3594f7', color: '#fefefe' }} onMouseOver={e => (e.currentTarget.style.background = '#2176c7')} onMouseOut={e => (e.currentTarget.style.background = '#3594f7')}>
+                <Button onClick={() => setActiveTab('operations')} style={{ background: '#3594f7', color: '#fefefe' }} onMouseOver={e => (e.currentTarget.style.background = '#2176c7')} onMouseOut={e => (e.currentTarget.style.background = '#3594f7')}>
                   Refresh Invoices
+                </Button>
+                <Button
+                  style={{ background: '#2ecc40', color: '#fff' }}
+                  disabled={matching}
+                  onClick={async () => {
+                    setMatching(true)
+                    setMatchResult("")
+                    try {
+                      const res = await fetch('/api/buyer/invoices/match', { method: 'POST', credentials: 'include' })
+                      const data = await res.json()
+                      if (!res.ok) throw new Error(data?.error || 'Match failed')
+                      setMatchResult(`Matched ${data.matched ?? 0} invoices to suppliers.`)
+                    } catch (e: any) {
+                      setMatchResult(e?.message || 'Match failed')
+                    } finally {
+                      setMatching(false)
+                    }
+                  }}
+                >
+                  {matching ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Auto-Match Invoices
                 </Button>
                 <AssignVendorsDialog onAssigned={() => {
                   // refresh vendors list
@@ -366,6 +390,9 @@ export default function BuyerDashboard() {
                   })()
                 }} />
               </div>
+              {matchResult && (
+                <div className="mt-2 text-sm text-green-500 font-semibold">{matchResult}</div>
+              )}
             </CardContent>
             </Card>
 
@@ -424,6 +451,9 @@ export default function BuyerDashboard() {
               )}
             </CardContent>
             </Card>
+
+            {/* Payments Table for Buyer */}
+            <BuyerPaymentsTable buyerId={data.user.id} />
           </TabsContent>
         </Tabs>
 
