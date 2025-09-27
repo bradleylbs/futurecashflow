@@ -201,7 +201,9 @@ export default function BuyerDashboard() {
           <div className="flex items-center gap-2">
             <Button
               onClick={fetchDashboardData}
-              className="h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white px-4"
+              style={{ height: '2.25rem', borderRadius: '9999px', background: '#3594f7', color: '#fefefe', padding: '0 1rem', fontWeight: 500 }}
+              onMouseOver={e => (e.currentTarget.style.background = '#2176c7')}
+              onMouseOut={e => (e.currentTarget.style.background = '#3594f7')}
               aria-label="Refresh"
               title="Refresh"
             >
@@ -209,7 +211,9 @@ export default function BuyerDashboard() {
               Refresh
             </Button>
             <Button
-              className="h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white px-4"
+              style={{ height: '2.25rem', borderRadius: '9999px', background: '#3594f7', color: '#fefefe', padding: '0 1rem', fontWeight: 500 }}
+              onMouseOver={e => (e.currentTarget.style.background = '#2176c7')}
+              onMouseOut={e => (e.currentTarget.style.background = '#3594f7')}
               onClick={async () => {
                 try {
                   await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
@@ -239,11 +243,11 @@ export default function BuyerDashboard() {
               <div className="font-semibold mb-2">Completion Progress</div>
               <ol className="space-y-2">
                 {onboardingSteps.map((step, idx) => (
-                  <li key={step.key} className={`flex items-center gap-2 ${step.complete ? 'text-green-600' : idx === nextStepIndex ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>
-                    <span className={`inline-block w-2 h-2 rounded-full ${step.complete ? 'bg-green-600' : idx === nextStepIndex ? 'bg-blue-600' : 'bg-gray-400'}`}></span>
+                  <li key={step.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: step.complete ? '#2ecc40' : idx === nextStepIndex ? '#3594f7' : '#b8b6b4', fontWeight: idx === nextStepIndex ? 700 : 400 }}>
+                    <span style={{ display: 'inline-block', width: '0.5rem', height: '0.5rem', borderRadius: '9999px', background: step.complete ? '#2ecc40' : idx === nextStepIndex ? '#3594f7' : '#b8b6b4' }}></span>
                     {step.label}
-                    {step.complete && <span className="ml-2 text-xs text-green-500">(Completed)</span>}
-                    {idx === nextStepIndex && !step.complete && <span className="ml-2 text-xs text-blue-500">(Next Step)</span>}
+                    {step.complete && <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: '#2ecc40' }}>(Completed)</span>}
+                    {idx === nextStepIndex && !step.complete && <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: '#3594f7' }}>(Next Step)</span>}
                   </li>
                 ))}
               </ol>
@@ -340,10 +344,10 @@ export default function BuyerDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2 flex-wrap">
-                <Button onClick={() => setActiveTab('suppliers')} variant="outline" className="border-border bg-muted text-foreground hover:bg-gray-100">
+          <Button onClick={() => setActiveTab('suppliers')} variant="outline" style={{ borderColor: '#3d3d3d', background: '#b8b6b4', color: '#727272' }}>
                   Manage Suppliers
                 </Button>
-                <Button onClick={() => setActiveTab('operations')} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => setActiveTab('operations')} style={{ background: '#3594f7', color: '#fefefe' }} onMouseOver={e => (e.currentTarget.style.background = '#2176c7')} onMouseOut={e => (e.currentTarget.style.background = '#3594f7')}>
                   Refresh Invoices
                 </Button>
                 <AssignVendorsDialog onAssigned={() => {
@@ -462,7 +466,7 @@ function NoVendorsCard({ onInvite, onAdded }: { onInvite: () => void; onAdded: (
     <div className="text-sm text-muted-foreground">
       <div>No consented vendors yet. Use Supplier Invitations to onboard suppliers or assign vendor numbers to an existing supplier.</div>
       <div className="mt-3 flex items-center gap-2 flex-wrap">
-        <Button size="sm" onClick={onInvite} className="bg-blue-600 hover:bg-blue-700">Invite Suppliers</Button>
+  <Button size="sm" onClick={onInvite} style={{ background: '#3594f7', color: '#fefefe' }} onMouseOver={e => (e.currentTarget.style.background = '#2176c7')} onMouseOut={e => (e.currentTarget.style.background = '#3594f7')}>Invite Suppliers</Button>
         <AssignVendorsDialog onAssigned={onAdded} />
         <span className="text-xs text-muted-foreground">or add a single vendor number now</span>
       </div>
@@ -479,7 +483,7 @@ function NoVendorsCard({ onInvite, onAdded }: { onInvite: () => void; onAdded: (
           placeholder="Supplier email (optional)"
           className="flex-1 form-input"
         />
-        <Button size="sm" onClick={addVendor} disabled={saving || !vendor.trim()} className="bg-blue-600 hover:bg-blue-700">{saving ? 'Saving…' : 'Add'}</Button>
+  <Button size="sm" onClick={addVendor} disabled={saving || !vendor.trim()} style={{ background: '#3594f7', color: '#fefefe' }} onMouseOver={e => (e.currentTarget.style.background = '#2176c7')} onMouseOut={e => (e.currentTarget.style.background = '#3594f7')}>{saving ? 'Saving…' : 'Add'}</Button>
       </div>
       {error && <div className="mt-2 text-xs text-red-400" role="alert">{error}</div>}
     </div>

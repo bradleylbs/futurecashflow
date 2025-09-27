@@ -7,7 +7,7 @@ import { Landmark, Hammer, Truck, Linkedin, Twitter, ArrowRight, Check, Trending
 import { Card, CardContent } from "@/components/ui/card"
 
 // Logo with brand blue (solid, no gradient)
-export const LogoIcon = ({ className = "w-10 h-10 text-blue-500" }) => (
+export const LogoIcon = ({ className = "w-10 h-10" }) => (
   <div className="relative">
     <svg aria-hidden="true" className={className} fill="currentColor" viewBox="0 0 80 80">
       {/* Bottom arrow blinks second */}
@@ -21,21 +21,21 @@ export const LogoIcon = ({ className = "w-10 h-10 text-blue-500" }) => (
 // Hero Section - solid black background, solid blue accents (no shiny effects)
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-[#f7f7f9] text-gray-700">
+  <section className="relative min-h-screen flex items-center justify-center" style={{ background: '#b4c5d6', color: '#727272' }}>
       <div className="container relative z-10 text-center px-4">
         <div className="max-w-3xl mx-auto">
           {/* Arrows above headline */}
           <div className="flex flex-col items-center mb-8">
             <div className="mb-4">
               <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="mx-auto">
-                <path d="M20 12L15 18H17L20 15L23 18H25L20 12Z" fill="#a5b4fc" />
-                <path d="M20 20L15 26H17L20 23L23 26H25L20 20Z" fill="#2563eb" />
+                <path d="M20 12L15 18H17L20 15L23 18H25L20 12Z" fill="#3594f7" />
+                <path d="M20 20L15 26H17L20 23L23 26H25L20 20Z" fill="#3594f7" />
               </svg>
             </div>
             <div className="flex items-center justify-center gap-4">
-              <h1 className="font-black text-4xl md:text-5xl lg:text-6xl text-[#181e29]">Future</h1>
-              <span className="h-10 w-px bg-[#2563eb] mx-4"></span>
-              <span className="font-light text-4xl md:text-5xl lg:text-6xl text-[#64748b]">Mining Finance</span>
+              <h1 className="font-black text-4xl md:text-5xl lg:text-6xl" style={{ color: '#050505' }}>Future</h1>
+              <span className="h-10 w-px mx-4" style={{ background: '#3594f7', width: '1px', height: '2.5rem', display: 'inline-block' }}></span>
+              <span className="font-light text-4xl md:text-5xl lg:text-6xl" style={{ color: '#727272' }}>Mining Finance</span>
             </div>
           </div>
 
@@ -43,7 +43,7 @@ const HeroSection = () => {
           <div className="space-y-6 mb-8">
             <p className="text-xl font-light text-foreground">
               Future Mining Finance is a fintech and funding platform enabling mining companies to offer
-              <span className="bg-blue-600 text-white rounded-full px-4 py-1 font-semibold mx-2">early payment</span>
+              <span style={{ background: '#3594f7', color: '#fefefe', borderRadius: '9999px', padding: '0.25rem 1rem', fontWeight: 600, margin: '0 0.5rem' }}>early payment</span>
               programs for SMEs in their supply chain.
             </p>
             <p className="text-xl font-light text-foreground">
@@ -51,14 +51,14 @@ const HeroSection = () => {
             </p>
             <p className="text-xl font-light text-foreground">
               Through our platform, suppliers can receive immediate payments for approved invoices,
-              <span className="underline decoration-blue-500 underline-offset-4 mx-1">improving their cash flow</span>
+              <span style={{ textDecoration: 'underline', textDecorationColor: '#3594f7', textUnderlineOffset: '4px', margin: '0 0.25rem' }}>improving their cash flow</span>
               and fostering sustainable growth.
             </p>
           </div>
 
           {/* CTA Button */}
           <div className="mt-8 flex items-center justify-center">
-            <Link href="/register" className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full text-lg font-semibold transition-colors shadow-lg">
+            <Link href="/register" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#3594f7', color: '#fefefe', padding: '1rem 2.5rem', borderRadius: '9999px', fontSize: '1.125rem', fontWeight: 600, boxShadow: '0 4px 12px rgba(53,148,247,0.15)', transition: 'background 0.2s' }} onMouseOver={e => (e.currentTarget.style.background = '#2176c7')} onMouseOut={e => (e.currentTarget.style.background = '#3594f7')}>
               Get Started
             </Link>
           </div>
