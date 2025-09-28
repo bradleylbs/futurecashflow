@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { CreditCard, ArrowLeft, Loader2, LogOut } from "lucide-react"
+import { CreditCard, Loader2, Building } from "lucide-react"
 
 // LogoIcon matching presentation exactly
 const LogoIcon = () => (
@@ -46,7 +48,9 @@ export default function SupplierBankingPage() {
       } catch {}
     }
     fetchBankingDetails()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("")
@@ -74,7 +78,9 @@ export default function SupplierBankingPage() {
       }
     }
     checkStatus()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,10 +122,10 @@ export default function SupplierBankingPage() {
 
   if (kycApproved === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
         <div className="text-center">
           <div className="flex flex-col items-center space-y-6">
-            <div className="p-6 rounded-full border border-border bg-muted">
+            <div className="p-6 rounded-full border border-white/10 bg-white/5">
               <LogoIcon />
             </div>
             <p className="text-sm text-muted-foreground">Checking access…</p>
@@ -130,65 +136,47 @@ export default function SupplierBankingPage() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4">
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl"></div>
-      </div>
-      <Card className="w-full max-w-2xl bg-card border border-border shadow-sm text-foreground">
-        <CardHeader className="text-center pb-6">
-          <div className="flex items-center justify-between mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => router.back()}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div className="flex items-center gap-3">
-              <LogoIcon />
-              <span className="font-bold">Future</span>
-              <div className="w-px h-5 bg-blue-500" />
-              <span className="font-bold whitespace-nowrap">Finance Cashflow</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={logout}
-                className="rounded-lg border-border"
-                title="Logout"
-              >
-                <LogOut className="h-4 w-4 mr-2" /> Logout
-              </Button>
-            </div>
-          </div>
-          <CardTitle className="flex items-center justify-center gap-3 text-2xl">
-            <CreditCard className="h-6 w-6 text-blue-600" /> 
-            <span>Submit Banking Details</span>
-          </CardTitle>
-          <CardDescription className="text-base text-muted-foreground mt-2">
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
+          <CreditCard className="h-6 w-6 text-blue-500" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-white">Banking Details</h2>
+          <p className="text-sm text-muted-foreground">
             {kycApproved
-              ? "Your KYC is approved. Provide your banking information to proceed to your dashboard."
+              ? "Your KYC is approved. Provide your banking information to proceed."
               : "Your KYC is pending approval. Banking submission will be enabled once approved."}
+          </p>
+        </div>
+      </div>
+
+      <Card className="bg-card/50 backdrop-blur-sm border-border">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3 text-white">
+            <Building className="h-6 w-6 text-blue-500" />
+            Submit Banking Information
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Provide your banking information for payment processing and verification.
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="space-y-6">
           {error && (
-            <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
-              <AlertDescription>{error}</AlertDescription>
+            <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+              <AlertDescription className="text-red-400">{error}</AlertDescription>
             </Alert>
           )}
           {success && (
-            <Alert className="mb-6 border-green-200 bg-green-50">
-              <AlertDescription>{success}</AlertDescription>
+            <Alert className="border-green-500/50 bg-green-500/10">
+              <AlertDescription className="text-green-400">{success}</AlertDescription>
             </Alert>
           )}
 
           <form onSubmit={submit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="bank_name" className="text-sm font-semibold">
+                <Label htmlFor="bank_name" className="text-sm font-semibold text-white">
                   Bank Name *
                 </Label>
                 <Input
@@ -198,11 +186,11 @@ export default function SupplierBankingPage() {
                   onChange={handleChange}
                   required
                   placeholder="Enter your bank name"
-                  className="form-input"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus:border-blue-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="account_holder_name" className="text-sm font-semibold">
+                <Label htmlFor="account_holder_name" className="text-sm font-semibold text-white">
                   Account Holder Name *
                 </Label>
                 <Input
@@ -212,11 +200,11 @@ export default function SupplierBankingPage() {
                   onChange={handleChange}
                   required
                   placeholder="Enter account holder name"
-                  className="form-input"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus:border-blue-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="account_number" className="text-sm font-semibold">
+                <Label htmlFor="account_number" className="text-sm font-semibold text-white">
                   Account Number *
                 </Label>
                 <Input
@@ -226,11 +214,11 @@ export default function SupplierBankingPage() {
                   onChange={handleChange}
                   required
                   placeholder="Enter account number"
-                  className="form-input"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus:border-blue-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="routing_number" className="text-sm font-semibold">
+                <Label htmlFor="routing_number" className="text-sm font-semibold text-white">
                   Routing Number *
                 </Label>
                 <Input
@@ -240,16 +228,16 @@ export default function SupplierBankingPage() {
                   onChange={handleChange}
                   required
                   placeholder="Enter routing number"
-                  className="form-input"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus:border-blue-500"
                 />
               </div>
             </div>
-            
+
             <div className="pt-4">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={submitting || !kycApproved}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-50"
               >
                 {submitting ? (
                   <>

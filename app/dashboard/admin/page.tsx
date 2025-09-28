@@ -49,6 +49,7 @@ const NAV_SECTIONS = [
       { id: "applications", label: "Applications", icon: Building, description: "Manage KYC applications" },
       { id: "matched_invoices", label: "Matched Invoices", icon: FileText, description: "View matched invoices" },
       { id: "banking", label: "Banking", icon: CreditCard, description: "Verify banking details" },
+      { id: "documents", label: "Documents", icon: FileText, description: "Review uploaded documents" },
     ]
   },
   {
@@ -165,6 +166,7 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const [activeView, setActiveView] = useState("dashboard");
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [invoicesBySupplier, setInvoicesBySupplier] = useState<Array<{ supplier_user_id: string, invoice_count: number }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -176,10 +178,12 @@ export default function AdminDashboardPage() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/applications?limit=1", { credentials: "include" });
+      const res = await fetch("/api/admin/analytics", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch statistics");
       const data = await res.json();
-      setStats(data.stats);
+      // You may want to update AdminStats type to match analytics response if needed
+      setStats(data.stats || null);
+      setInvoicesBySupplier(data.invoicesBySupplier || []);
       setError("");
       lastRefresh.current = new Date();
     } catch (err) {
@@ -545,6 +549,38 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
+              {/* Supplier Invoice Counts Table */}
+              <Card className="bg-card/50 backdrop-blur-sm border-border/50 mt-6">
+                <CardHeader>
+                  <CardTitle>Invoices Assigned to Suppliers</CardTitle>
+                  <CardDescription>Number of invoices per supplier (user ID)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-sm">
+                      <thead>
+                        <tr>
+                          <th className="text-left px-2 py-1">Supplier User ID</th>
+                          <th className="text-left px-2 py-1">Invoice Count</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {invoicesBySupplier.length === 0 ? (
+                          <tr><td colSpan={2} className="px-2 py-2 text-muted-foreground">No data</td></tr>
+                        ) : (
+                          invoicesBySupplier.map(row => (
+                            <tr key={row.supplier_user_id}>
+                              <td className="px-2 py-1 font-mono">{row.supplier_user_id}</td>
+                              <td className="px-2 py-1">{row.invoice_count}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card className="bg-card/50 backdrop-blur-sm border-border/50">
                 <CardHeader>
                   <CardTitle>Quick Actions</CardTitle>
@@ -611,6 +647,7 @@ export default function AdminDashboardPage() {
                 {activeView === 'applications' && <AdminApplicationsTable refreshTrigger={refreshTrigger} />}
                 {activeView === 'matched_invoices' && <AdminMatchedInvoicesTable />}
                 {activeView === 'banking' && <AdminBankingTable />}
+                {activeView === 'documents' && <AdminDocumentsTable />}
                 {activeView === 'users' && <AdminUserManagement />}
                 {activeView === 'reports' && <AdminReports />}
                 {activeView === 'audit' && <AdminAuditLog />}

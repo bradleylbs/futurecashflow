@@ -41,35 +41,59 @@ import {
   DollarSign,
   CheckCircle2,
   Clock,
-  TrendingUp
+  TrendingUp,
+  Edit,
+  Link,
+  Info
 } from "lucide-react"
 
 // ============================================================================
 // TypeScript Interfaces
 // ============================================================================
 
-interface MatchedInvoice {
-  id: number
-  invoice_number: string
+interface Supplier {
+  id: string
   supplier_name: string
-  amount: number
-  status: 'matched' | 'processing' | 'completed' | 'failed'
-  matched_at: string
-  buyer_name?: string
-  payment_date?: string
-  currency?: string
+  invoice_count: number
+  total_amount: number
+  buyer_name: string
+  match_status: "matched" | "new_profile" | "conflict" | "missing_data"
+  returning_supplier: boolean
+  vendor_numbers: string[]
+  currency: string
+  last_invoice_date: string
+  supplier_id?: string
+  invoices?: Invoice[]
 }
 
-interface InvoicesResponse {
-  invoices: MatchedInvoice[]
+interface Invoice {
+  id: number
+  invoice_number: string
+  vendor_number: string
+  amount: number
+  due_date: string
+  validation_status: string
+  created_at: string
+  batch_total: number
+  batch_date: string
+  payment_status?: string
+  payment_date?: string
+  payment_reference?: string
+}
+
+interface SuppliersResponse {
+  suppliers: Supplier[]
   total: number
   page: number
   limit: number
-  stats?: {
-    total_matched: number
+  stats: {
+    total_suppliers: number
+    matched_suppliers: number
+    new_suppliers: number
+    conflict_suppliers: number
+    missing_data_suppliers: number
+    total_invoice_count: number
     total_amount: number
-    pending_count: number
-    completed_count: number
   }
 }
 
@@ -77,11 +101,18 @@ interface InvoicesResponse {
 // Constants
 // ============================================================================
 
-const STATUS_COLORS: Record<MatchedInvoice['status'], string> = {
-  'matched': 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-  'processing': 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-  'completed': 'bg-green-500/10 text-green-500 border-green-500/20',
-  'failed': 'bg-red-500/10 text-red-500 border-red-500/20',
+const STATUS_COLORS: Record<Supplier["match_status"], string> = {
+  matched: "bg-green-500/10 text-green-500 border-green-500/20",
+  new_profile: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  conflict: "bg-red-500/10 text-red-500 border-red-500/20",
+  missing_data: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+}
+
+const STATUS_LABELS: Record<Supplier["match_status"], string> = {
+  matched: "Matched",
+  new_profile: "New Profile",
+  conflict: "Conflict",
+  missing_data: "Missing Data",
 }
 
 const TIME_FILTERS = [
@@ -95,9 +126,12 @@ const TIME_FILTERS = [
 // Utility Functions
 // ============================================================================
 
-const formatCurrency = (amount: number, currency: string = 'USD'): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
+const formatCurrency = (amount: number, currency = "ZAR"): string => {
+  if (currency === "ZAR") {
+    return `R ${amount.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  }
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency: currency,
   }).format(amount)
 }
@@ -112,6 +146,15 @@ const formatRelativeTime = (dateString: string): string => {
   if (diffHours < 24) return `${diffHours}h ago`
   if (diffDays < 7) return `${diffDays}d ago`
   return date.toLocaleDateString()
+}
+
+const formatDate = (dateString: string): string => {
+  if (!dateString) return "N/A"
+  try {
+    return new Date(dateString).toLocaleDateString("en-ZA")
+  } catch {
+    return "Invalid Date"
+  }
 }
 
 // ============================================================================
@@ -177,9 +220,9 @@ const LoadingSkeleton = () => (
 const EmptyState = () => (
   <div className="text-center py-12">
     <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-    <h3 className="text-lg font-semibold mb-2">No Matched Invoices</h3>
+    <h3 className="text-lg font-semibold mb-2">No Matched Suppliers</h3>
     <p className="text-sm text-muted-foreground">
-      No invoices have been matched yet
+      No supplier matches found for the current filters
     </p>
   </div>
 )
@@ -189,7 +232,7 @@ const EmptyState = () => (
 // ============================================================================
 
 const AdminMatchedInvoicesTable: React.FC = () => {
-  const [invoices, setInvoices] = useState<MatchedInvoice[]>([])
+  const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
@@ -198,10 +241,11 @@ const AdminMatchedInvoicesTable: React.FC = () => {
   const [timeFilter, setTimeFilter] = useState<string>("all")
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
-  const [limit] = useState(20)
-  const [selectedInvoice, setSelectedInvoice] = useState<MatchedInvoice | null>(null)
+  const [limit, setLimit] = useState(25)
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null)
+  const [invoiceDetails, setInvoiceDetails] = useState<Invoice[]>([])
   const [exporting, setExporting] = useState(false)
-  const [stats, setStats] = useState<InvoicesResponse['stats']>()
+  const [stats, setStats] = useState<SuppliersResponse['stats'] | null>(null)
 
   // Debounce search
   useEffect(() => {
@@ -212,8 +256,8 @@ const AdminMatchedInvoicesTable: React.FC = () => {
     return () => clearTimeout(timer)
   }, [searchQuery])
 
-  // Fetch invoices
-  const fetchInvoices = useCallback(async () => {
+  // Fetch suppliers
+  const fetchSuppliers = useCallback(async () => {
     try {
       setLoading(true)
       setError("")
@@ -231,23 +275,29 @@ const AdminMatchedInvoicesTable: React.FC = () => {
         credentials: 'include'
       })
 
-      if (!response.ok) throw new Error('Failed to fetch matched invoices')
+      if (!response.ok) throw new Error('Failed to fetch supplier matches')
 
-      const data: InvoicesResponse = await response.json()
-      setInvoices(data.invoices || [])
+      const data: SuppliersResponse = await response.json()
+      setSuppliers(data.suppliers || [])
       setTotal(data.total || 0)
-      setStats(data.stats)
+      setStats(data.stats || null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load matched invoices')
-      setInvoices([])
+      setError(err instanceof Error ? err.message : 'Failed to load supplier matches')
+      setSuppliers([])
     } finally {
       setLoading(false)
     }
   }, [debouncedQuery, page, limit, statusFilter, timeFilter])
 
   useEffect(() => {
-    fetchInvoices()
-  }, [fetchInvoices])
+    fetchSuppliers()
+  }, [fetchSuppliers])
+
+  // Handle view details
+  const handleViewDetails = (supplier: Supplier) => {
+    setSelectedSupplier(supplier)
+    setInvoiceDetails(supplier.invoices || [])
+  }
 
   // Export handler
   const handleExport = async () => {
@@ -263,58 +313,58 @@ const AdminMatchedInvoicesTable: React.FC = () => {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `matched-invoices-${new Date().toISOString().split('T')[0]}.csv`
+      a.download = `supplier-matches-${new Date().toISOString().split('T')[0]}.csv`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (err) {
-      setError('Failed to export invoices')
+      setError('Failed to export supplier matches')
     } finally {
       setExporting(false)
     }
   }
 
   const totalPages = Math.ceil(total / limit)
-
-  const uniqueSuppliers = useMemo(() => {
-    const suppliers = new Set(invoices.map(inv => inv.supplier_name))
-    return Array.from(suppliers).sort()
-  }, [invoices])
+  const startItem = (page - 1) * limit + 1
+  const endItem = Math.min(page * limit, total)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard 
-          title="Total Matched" 
-          value={stats?.total_matched || 0}
-          subtitle="Invoices matched"
-          icon={FileText}
-          color="blue"
-        />
-        <StatsCard 
-          title="Total Amount" 
-          value={formatCurrency(stats?.total_amount || 0)}
-          subtitle="Combined value"
-          icon={DollarSign}
-          color="green"
-        />
-        <StatsCard 
-          title="Processing" 
-          value={stats?.pending_count || 0}
-          subtitle="Pending processing"
-          icon={Clock}
-          color="amber"
-        />
-        <StatsCard 
-          title="Completed" 
-          value={stats?.completed_count || 0}
-          subtitle="Successfully processed"
-          icon={CheckCircle2}
-          color="green"
-        />
-      </div>
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatsCard 
+            title="Total Suppliers" 
+            value={stats.total_suppliers}
+            subtitle="Unique suppliers"
+            icon={FileText}
+            color="blue"
+          />
+          <StatsCard 
+            title="Total Invoices" 
+            value={stats.total_invoice_count}
+            subtitle="Combined invoices"
+            icon={TrendingUp}
+            color="green"
+          />
+          <StatsCard 
+            title="Combined Value" 
+            value={formatCurrency(stats.total_amount)}
+            subtitle="Total amount"
+            icon={DollarSign}
+            color="amber"
+          />
+          <StatsCard 
+            title="Matched" 
+            value={stats.matched_suppliers}
+            subtitle="Successfully matched"
+            icon={CheckCircle2}
+            color="green"
+          />
+        </div>
+      )}
+
 
       {/* Error Alert */}
       {error && (
@@ -330,11 +380,11 @@ const AdminMatchedInvoicesTable: React.FC = () => {
           <div className="relative flex-1 sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search invoices..."
+              placeholder="Search by supplier, invoice, or PO number..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
-              aria-label="Search matched invoices"
+              aria-label="Search suppliers"
             />
           </div>
 
@@ -345,9 +395,9 @@ const AdminMatchedInvoicesTable: React.FC = () => {
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="matched">Matched</SelectItem>
-              <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="failed">Failed</SelectItem>
+              <SelectItem value="new_profile">New Profile</SelectItem>
+              <SelectItem value="conflict">Conflict</SelectItem>
+              <SelectItem value="missing_data">Missing Data</SelectItem>
             </SelectContent>
           </Select>
 
@@ -367,7 +417,7 @@ const AdminMatchedInvoicesTable: React.FC = () => {
 
         <div className="flex gap-2 w-full sm:w-auto">
           <Button
-            onClick={fetchInvoices}
+            onClick={fetchSuppliers}
             variant="outline"
             size="sm"
             disabled={loading}
@@ -389,17 +439,17 @@ const AdminMatchedInvoicesTable: React.FC = () => {
         </div>
       </div>
 
-      {/* Matched Invoices Table */}
+      {/* Supplier Matching Table */}
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-blue-500" />
-                Matched Invoices
+                Supplier Matching Dashboard
               </CardTitle>
               <CardDescription>
-                Showing {invoices.length} of {total} matched invoices
+                Showing {startItem} to {endItem} of {total} suppliers
               </CardDescription>
             </div>
           </div>
@@ -409,7 +459,7 @@ const AdminMatchedInvoicesTable: React.FC = () => {
             <div className="p-6">
               <LoadingSkeleton />
             </div>
-          ) : invoices.length === 0 ? (
+          ) : suppliers.length === 0 ? (
             <EmptyState />
           ) : (
             <>
@@ -417,71 +467,90 @@ const AdminMatchedInvoicesTable: React.FC = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Invoice #</TableHead>
-                      <TableHead>Supplier</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Matched</TableHead>
-                      <TableHead className="w-[80px]">Details</TableHead>
+                      <TableHead>Supplier Name</TableHead>
+                      <TableHead>Invoice Count</TableHead>
+                      <TableHead>Total Amount</TableHead>
+                      <TableHead>Buyer Name</TableHead>
+                      <TableHead>Match Status</TableHead>
+                      <TableHead>Returning Supplier</TableHead>
+                      <TableHead className="w-[120px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {invoices.map((invoice) => (
-                      <TableRow key={invoice.id} className="hover:bg-white/5">
+                    {suppliers.map((supplier) => (
+                      <TableRow key={supplier.id} className="hover:bg-white/5">
                         <TableCell>
-                          <span className="font-mono text-sm">
-                            {invoice.invoice_number}
+                          <span className="font-medium text-sm">
+                            {supplier.supplier_name}
                           </span>
                         </TableCell>
 
                         <TableCell>
-                          <div className="flex flex-col">
-                            <span className="text-sm font-medium">
-                              {invoice.supplier_name}
-                            </span>
-                            {invoice.buyer_name && (
-                              <span className="text-xs text-muted-foreground">
-                                Buyer: {invoice.buyer_name}
-                              </span>
-                            )}
-                          </div>
+                          <span className="text-sm">
+                            {supplier.invoice_count}
+                          </span>
                         </TableCell>
 
                         <TableCell>
-                          <span className="font-semibold">
-                            {formatCurrency(invoice.amount, invoice.currency)}
+                          <span className="font-semibold text-sm">
+                            {formatCurrency(supplier.total_amount, supplier.currency)}
+                          </span>
+                        </TableCell>
+
+                        <TableCell>
+                          <span className="text-sm">
+                            {supplier.buyer_name}
                           </span>
                         </TableCell>
 
                         <TableCell>
                           <Badge 
                             variant="outline" 
-                            className={STATUS_COLORS[invoice.status]}
+                            className={STATUS_COLORS[supplier.match_status]}
                           >
-                            {invoice.status}
+                            {STATUS_LABELS[supplier.match_status]}
                           </Badge>
                         </TableCell>
 
                         <TableCell>
-                          <div className="flex flex-col">
-                            <span className="text-xs font-medium">
-                              {formatRelativeTime(invoice.matched_at)}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(invoice.matched_at).toLocaleTimeString()}
-                            </span>
-                          </div>
+                          <Badge 
+                            variant="outline"
+                            className={supplier.returning_supplier 
+                              ? "bg-gray-900 text-white border-gray-900" 
+                              : "bg-gray-100 text-gray-700 border-gray-200"
+                            }
+                          >
+                            {supplier.returning_supplier ? "Yes" : "No"}
+                          </Badge>
                         </TableCell>
 
                         <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedInvoice(invoice)}
-                            aria-label="View details"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleViewDetails(supplier)}
+                              aria-label="View details"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              aria-label="Edit"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            {supplier.match_status === "conflict" && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label="Link"
+                              >
+                                <Link className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -491,9 +560,26 @@ const AdminMatchedInvoicesTable: React.FC = () => {
 
               {/* Pagination */}
               <div className="flex items-center justify-between px-6 py-4 border-t border-border/50">
-                <div className="text-sm text-muted-foreground">
-                  Page {page} of {totalPages}
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-muted-foreground">
+                    Rows per page:
+                  </span>
+                  <Select 
+                    value={limit.toString()} 
+                    onValueChange={(value) => setLimit(Number(value))}
+                  >
+                    <SelectTrigger className="w-[80px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
@@ -504,6 +590,9 @@ const AdminMatchedInvoicesTable: React.FC = () => {
                     <ChevronLeft className="h-4 w-4" />
                     Previous
                   </Button>
+                  <div className="text-sm text-muted-foreground mx-2">
+                    Page {page} of {totalPages}
+                  </div>
                   <Button
                     variant="outline"
                     size="sm"
@@ -520,75 +609,90 @@ const AdminMatchedInvoicesTable: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Invoice Detail Dialog */}
-      <Dialog open={!!selectedInvoice} onOpenChange={() => setSelectedInvoice(null)}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+      {/* Supplier Detail Dialog */}
+      <Dialog open={!!selectedSupplier} onOpenChange={() => setSelectedSupplier(null)}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Invoice Details</DialogTitle>
+            <DialogTitle>Supplier Invoice Details</DialogTitle>
             <DialogDescription>
-              Complete information for this matched invoice
+              All invoices for {selectedSupplier?.supplier_name}
             </DialogDescription>
           </DialogHeader>
-          {selectedInvoice && (
+          {selectedSupplier && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              {/* Supplier Summary */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Invoice Number
-                  </label>
-                  <p className="text-sm mt-1 font-mono">{selectedInvoice.invoice_number}</p>
+                  <div className="text-sm font-medium text-muted-foreground">Supplier</div>
+                  <div className="text-sm font-semibold">{selectedSupplier.supplier_name}</div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Amount
-                  </label>
-                  <p className="text-sm mt-1 font-semibold">
-                    {formatCurrency(selectedInvoice.amount, selectedInvoice.currency)}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Supplier
-                  </label>
-                  <p className="text-sm mt-1">{selectedInvoice.supplier_name}</p>
-                </div>
-                {selectedInvoice.buyer_name && (
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Buyer
-                    </label>
-                    <p className="text-sm mt-1">{selectedInvoice.buyer_name}</p>
-                  </div>
-                )}
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Status
-                  </label>
-                  <div className="mt-1">
-                    <Badge 
-                      variant="outline" 
-                      className={STATUS_COLORS[selectedInvoice.status]}
-                    >
-                      {selectedInvoice.status}
-                    </Badge>
+                  <div className="text-sm font-medium text-muted-foreground">Total Amount</div>
+                  <div className="text-sm font-semibold">
+                    {formatCurrency(selectedSupplier.total_amount, selectedSupplier.currency)}
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Matched At
-                  </label>
-                  <p className="text-sm mt-1">
-                    {new Date(selectedInvoice.matched_at).toLocaleString()}
-                  </p>
+                  <div className="text-sm font-medium text-muted-foreground">Invoice Count</div>
+                  <div className="text-sm font-semibold">{selectedSupplier.invoice_count}</div>
                 </div>
-                {selectedInvoice.payment_date && (
-                  <div className="col-span-2">
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Payment Date
-                    </label>
-                    <p className="text-sm mt-1">
-                      {new Date(selectedInvoice.payment_date).toLocaleDateString()}
-                    </p>
+                <div>
+                  <div className="text-sm font-medium text-muted-foreground">Status</div>
+                  <Badge 
+                    variant="outline" 
+                    className={STATUS_COLORS[selectedSupplier.match_status]}
+                  >
+                    {STATUS_LABELS[selectedSupplier.match_status]}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Invoice Details Table */}
+              <div className="border border-border/50 rounded-lg overflow-hidden">
+                {invoiceDetails.length === 0 ? (
+                  <div className="p-6 text-center text-muted-foreground">
+                    No invoice details available
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Invoice Number</TableHead>
+                          <TableHead>Vendor Number</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Due Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Created</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {invoiceDetails.map((invoice) => (
+                          <TableRow key={invoice.id}>
+                            <TableCell className="font-mono text-sm">
+                              {invoice.invoice_number}
+                            </TableCell>
+                            <TableCell className="font-mono text-sm">
+                              {invoice.vendor_number}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {formatCurrency(invoice.amount)}
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              {formatDate(invoice.due_date)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">
+                                {invoice.validation_status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              {formatDate(invoice.created_at)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </div>
                 )}
               </div>

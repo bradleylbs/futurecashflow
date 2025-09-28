@@ -1,3 +1,4 @@
+// app/api/supplier/offers/accept/route.ts
 import { NextRequest, NextResponse } from "next/server"
 import { verifyJWT } from "@/lib/auth"
 import { executeQuery } from "@/lib/database"
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "invoice_row_id is required" }, { status: 400 })
     }
 
-    // Validate eligibility (same criteria as GET) and compute current offer values
+    // Validate eligibility and compute current offer values
     const q = `
       SELECT 
         r.id AS invoice_row_id,
@@ -62,13 +63,18 @@ export async function POST(req: NextRequest) {
     const offered_amount = Number((Number(row.amount) - fee_amount).toFixed(2))
 
     // Upsert into early_payment_offers as accepted
-    // Try insert; if duplicate exists with 'offered', update to accepted
     const insert = `
       INSERT INTO early_payment_offers (
         invoice_row_id, buyer_id, supplier_user_id, vendor_number, invoice_number,
         amount, due_date, fee_percent, fee_amount, offered_amount, status, accepted_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'accepted', NOW())
-      ON DUPLICATE KEY UPDATE status='accepted', fee_percent=VALUES(fee_percent), fee_amount=VALUES(fee_amount), offered_amount=VALUES(offered_amount), accepted_at=NOW(), updated_at=NOW()
+      ON DUPLICATE KEY UPDATE 
+        status='accepted', 
+        fee_percent=VALUES(fee_percent), 
+        fee_amount=VALUES(fee_amount), 
+        offered_amount=VALUES(offered_amount), 
+        accepted_at=NOW(), 
+        updated_at=NOW()
     `
     const ins = await executeQuery(insert, [
       row.invoice_row_id,
@@ -82,11 +88,75 @@ export async function POST(req: NextRequest) {
       String(fee_amount),
       String(offered_amount),
     ])
+    
     if (!ins.success) {
       return NextResponse.json({ error: ins.error || "Failed to accept offer" }, { status: 500 })
     }
 
-    return NextResponse.json({ ok: true, fee_percent, fee_amount, offered_amount })
+    // Get the early_payment_offer ID that was created/updated
+    let earlyPaymentOfferId: string | null = null
+    
+    if (ins.data && typeof ins.data === 'object' && 'insertId' in ins.data) {
+      earlyPaymentOfferId = String(ins.data.insertId)
+    } else {
+      // If no insertId, try to get the existing offer ID
+      const offerQuery = await executeQuery(
+        `SELECT id FROM early_payment_offers WHERE invoice_row_id = ? AND supplier_user_id = ?`,
+        [row.invoice_row_id, user.id]
+      )
+      if (offerQuery.success && Array.isArray(offerQuery.data) && offerQuery.data.length > 0) {
+        earlyPaymentOfferId = offerQuery.data[0].id
+      }
+    }
+
+    // ALWAYS create or update payment record with the early_payment_offer_id
+    const paymentUpsert = `
+      INSERT INTO payments (
+        buyer_id, supplier_user_id, invoice_row_id, amount, 
+        payment_date, status, early_payment_offer_id, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, NULL, 'pending', ?, NOW(), NOW())
+      ON DUPLICATE KEY UPDATE 
+        amount = VALUES(amount),
+        early_payment_offer_id = VALUES(early_payment_offer_id),
+        status = 'pending',
+        updated_at = NOW()
+    `
+
+    const paymentResult = await executeQuery(paymentUpsert, [
+      row.buyer_id, 
+      user.id, 
+      row.invoice_row_id, 
+      String(offered_amount),
+      earlyPaymentOfferId
+    ])
+
+    let paymentRecord = null
+    if (paymentResult.success) {
+      // Fetch the newly created/updated payment record
+      const paymentFetch = await executeQuery(
+        `SELECT id, buyer_id, supplier_user_id, invoice_row_id, amount, payment_date, 
+                payment_reference, status, early_payment_offer_id, created_at, updated_at 
+         FROM payments 
+         WHERE invoice_row_id = ? AND supplier_user_id = ? 
+         ORDER BY created_at DESC LIMIT 1`,
+        [row.invoice_row_id, user.id]
+      )
+      if (paymentFetch.success && Array.isArray(paymentFetch.data) && paymentFetch.data.length > 0) {
+        paymentRecord = paymentFetch.data[0]
+      }
+    } else {
+      console.error("Failed to create payment record:", paymentResult.error)
+    }
+
+    return NextResponse.json({ 
+      ok: true, 
+      fee_percent, 
+      fee_amount, 
+      offered_amount, 
+      payment: paymentRecord,
+      payment_id: paymentRecord?.id,
+      early_payment_offer_id: earlyPaymentOfferId
+    })
   } catch (e: any) {
     console.error("Accept offer error:", e)
     return NextResponse.json({ error: e?.message || "Internal server error" }, { status: 500 })

@@ -1,3 +1,4 @@
+// components/admin-payment-queue.tsx
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react"
@@ -11,7 +12,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Progress } from "@/components/ui/progress"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -32,7 +32,6 @@ import {
   Search,
   Filter,
   Download,
-  ChevronRight,
   Info,
   Shield,
   CheckCircle2,
@@ -41,15 +40,14 @@ import {
   Calendar,
   User,
   Hash,
-  ArrowUpRight,
-  ArrowDownRight,
   ExternalLink,
   Users,
 } from "lucide-react"
 
-// Enhanced interfaces with better typing
+// Enhanced interfaces
 interface PaymentOffer {
   id: string
+  payment_id: string // CRITICAL: This is now the payments.id
   supplier: string
   supplier_company_name?: string
   buyer: string
@@ -66,7 +64,7 @@ interface PaymentOffer {
     routing_number?: string
     status?: string
   }
-  status: "accepted" | "approved" | "executed" | "failed"
+  status: "pending" | "paid" | "failed" | "reversed" // Updated to match payments.status
   created_at: string
   accepted_at?: string
   due_date?: string
@@ -77,7 +75,7 @@ interface AdminPaymentQueueProps {
   tabActive?: boolean
 }
 
-// Enhanced stats card component
+// PaymentStatsCard component (keep the same as before)
 const PaymentStatsCard: React.FC<{
   title: string
   value: string | number
@@ -161,22 +159,31 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
       }
 
       const data = await response.json()
-      const mappedOffers = Array.isArray(data) ? data.map((o: any) => ({
-        id: o.id,
-        supplier: o.supplier,
-        supplier_company_name: o.supplier_company_name,
-        buyer: o.buyer,
-        invoice_number: o.invoice_number,
-        vendor_number: o.vendor_number,
-        amount: Number(o.amount),
-        offered_amount: Number(o.offered_amount),
-        fee_percent: Number(o.fee_percent),
-        fee_amount: Number(o.fee_amount),
-        banking_details: o.banking_details || {},
-        status: o.status,
-        created_at: o.created_at,
-        accepted_at: o.accepted_at,
-        due_date: o.due_date
+      
+      // UPDATED MAPPING: Use payment_id as the primary ID
+      const mappedOffers = Array.isArray(data) ? data.map((item: any) => ({
+        id: item.payment_id, // Use payment_id as the main ID
+        payment_id: item.payment_id, // Explicit payment_id
+        supplier: item.supplier_email,
+        supplier_company_name: item.supplier_company_name,
+        buyer: item.buyer_email,
+        invoice_number: item.invoice_number,
+        vendor_number: item.vendor_number,
+        amount: Number(item.amount),
+        offered_amount: Number(item.offered_amount),
+        fee_percent: Number(item.fee_percent),
+        fee_amount: Number(item.fee_amount),
+        banking_details: {
+          bank_name: item.bank_name,
+          account_holder_name: item.account_holder_name,
+          account_number: item.account_number,
+          routing_number: item.routing_number,
+          status: item.banking_status
+        },
+        status: item.payment_status, // Use payment status from payments table
+        created_at: item.payment_created,
+        accepted_at: item.accepted_at,
+        due_date: item.due_date
       })) : []
       
       setOffers(mappedOffers)
@@ -193,26 +200,20 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
     fetchOffers()
   }, [fetchOffers, refreshTrigger])
 
-  // Enhanced status badge with better visual hierarchy
+  // Status badge for PAYMENTS status (not early payment offers status)
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      accepted: { 
+      pending: { 
         variant: "secondary" as const, 
         icon: Clock, 
-        label: "Accepted", 
+        label: "Pending", 
         bgClass: "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30"
       },
-      approved: { 
+      paid: { 
         variant: "default" as const, 
         icon: CheckCircle, 
-        label: "Approved", 
+        label: "Paid", 
         bgClass: "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30"
-      },
-      executed: { 
-        variant: "outline" as const, 
-        icon: PlayCircle, 
-        label: "Executed", 
-        bgClass: "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border-blue-500/30"
       },
       failed: { 
         variant: "destructive" as const, 
@@ -220,9 +221,15 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
         label: "Failed", 
         bgClass: "bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30"
       },
+      reversed: { 
+        variant: "outline" as const, 
+        icon: AlertCircle, 
+        label: "Reversed", 
+        bgClass: "bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-400 border-gray-500/30"
+      },
     }
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.accepted
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending
     const Icon = config.icon
 
     return (
@@ -233,7 +240,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
     )
   }
 
-  // Enhanced banking status badge
+  // Banking status badge (keep the same)
   const getBankingStatus = (bankingDetails: PaymentOffer['banking_details']) => {
     if (!bankingDetails.bank_name || !bankingDetails.account_number) {
       return (
@@ -288,7 +295,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
     )
   }
 
-  // Format currency with locale support
+  // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-ZA', {
       style: 'currency',
@@ -298,7 +305,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
     }).format(amount)
   }
 
-  // Format date with relative time
+  // Format date
   const formatDate = (dateString: string) => {
     if (!dateString) return "Not available"
     const date = new Date(dateString)
@@ -318,20 +325,28 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
     })
   }
 
-  // Handle payment approval with optimistic UI update
+  // UPDATED: Handle payment approval - use payment_id directly
   const handleApprove = async (offer: PaymentOffer) => {
     try {
-      setProcessingId(offer.id)
+      // Use payment_id directly from the offer object
+      const paymentId = offer.payment_id
+      if (!paymentId) {
+        setError("Payment record not found. Cannot approve.")
+        setTimeout(() => setError(""), 5000)
+        return
+      }
+      
+      setProcessingId(paymentId)
       const response = await fetch("/api/payments/approve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: offer.id })
+        body: JSON.stringify({ paymentId })
       })
       
       if (response.ok) {
-        setOffers(prev => prev.map(o => o.id === offer.id ? { ...o, status: "approved" } : o))
-        if (selectedOffer && selectedOffer.id === offer.id) {
-          setSelectedOffer({ ...selectedOffer, status: "approved" })
+        setOffers(prev => prev.map(o => o.payment_id === paymentId ? { ...o, status: "paid" } : o))
+        if (selectedOffer && selectedOffer.payment_id === paymentId) {
+          setSelectedOffer({ ...selectedOffer, status: "paid" })
         }
         setSuccessMessage(`Payment ${offer.invoice_number} approved successfully`)
         setTimeout(() => setSuccessMessage(""), 5000)
@@ -341,36 +356,6 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
       }
     } catch (error) {
       console.error("Failed to approve payment:", error)
-      setError("Network error. Please check your connection.")
-      setTimeout(() => setError(""), 5000)
-    } finally {
-      setProcessingId(null)
-    }
-  }
-
-  // Handle payment execution with optimistic UI update
-  const handleExecute = async (offer: PaymentOffer) => {
-    try {
-      setProcessingId(offer.id)
-      const response = await fetch("/api/payments/execute", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: offer.id })
-      })
-      
-      if (response.ok) {
-        setOffers(prev => prev.map(o => o.id === offer.id ? { ...o, status: "executed" } : o))
-        if (selectedOffer && selectedOffer.id === offer.id) {
-          setSelectedOffer({ ...selectedOffer, status: "executed" })
-        }
-        setSuccessMessage(`Payment ${offer.invoice_number} executed successfully`)
-        setTimeout(() => setSuccessMessage(""), 5000)
-      } else {
-        setError("Failed to execute payment. Please try again.")
-        setTimeout(() => setError(""), 5000)
-      }
-    } catch (error) {
-      console.error("Failed to execute payment:", error)
       setError("Network error. Please check your connection.")
       setTimeout(() => setError(""), 5000)
     } finally {
@@ -430,9 +415,8 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
     total: filteredAndSortedOffers.length,
     totalAmount: filteredAndSortedOffers.reduce((sum, offer) => sum + offer.amount, 0),
     totalFees: filteredAndSortedOffers.reduce((sum, offer) => sum + offer.fee_amount, 0),
-    pending: filteredAndSortedOffers.filter(o => o.status === "accepted").length,
-    approved: filteredAndSortedOffers.filter(o => o.status === "approved").length,
-    executed: filteredAndSortedOffers.filter(o => o.status === "executed").length
+    pending: filteredAndSortedOffers.filter(o => o.status === "pending").length,
+    paid: filteredAndSortedOffers.filter(o => o.status === "paid").length,
   }), [filteredAndSortedOffers])
 
   if (isLoading) {
@@ -459,7 +443,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
           </Alert>
         )}
 
-        {/* Enhanced Stats Cards */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <PaymentStatsCard
             title="Total Requests"
@@ -486,8 +470,8 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
             loading={isLoading}
           />
           <PaymentStatsCard
-            title="Processed"
-            value={stats.executed}
+            title="Pending Approval"
+            value={stats.pending}
             icon={CheckCircle}
             color="purple"
             trend={{ value: 18.7, isPositive: true }}
@@ -495,7 +479,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
           />
         </div>
 
-        {/* Enhanced Filters with better UX */}
+        {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -524,10 +508,10 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
             </SelectTrigger>
             <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10">
               <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="accepted">Accepted</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="executed">Executed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="paid">Paid</SelectItem>
               <SelectItem value="failed">Failed</SelectItem>
+              <SelectItem value="reversed">Reversed</SelectItem>
             </SelectContent>
           </Select>
 
@@ -542,7 +526,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
           </Button>
         </div>
 
-        {/* Enhanced Table */}
+        {/* Table */}
         {filteredAndSortedOffers.length === 0 ? (
           <EmptyState />
         ) : (
@@ -568,10 +552,10 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
                     <TableHead>Banking</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead 
-                      onClick={() => handleSort('accepted_at')}
+                      onClick={() => handleSort('created_at')}
                       className="cursor-pointer hover:text-foreground transition-colors"
                     >
-                      Accepted {sortConfig?.key === 'accepted_at' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                      Created {sortConfig?.key === 'created_at' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                     </TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -579,7 +563,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
                 <TableBody>
                   {filteredAndSortedOffers.map((offer) => (
                     <TableRow 
-                      key={offer.id} 
+                      key={offer.payment_id} 
                       className="border-b border-white/5 hover:bg-white/5 transition-all cursor-pointer"
                       onClick={() => handleViewDetails(offer)}
                     >
@@ -625,11 +609,11 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
                           <Tooltip>
                             <TooltipTrigger>
                               <span className="text-sm text-muted-foreground">
-                                {formatDate(offer.accepted_at || offer.created_at)}
+                                {formatDate(offer.created_at)}
                               </span>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>{new Date(offer.accepted_at || offer.created_at).toLocaleString()}</p>
+                              <p>{new Date(offer.created_at).toLocaleString()}</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -639,38 +623,20 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="flex gap-2 justify-end">
-                          {offer.status === "accepted" && (
+                          {offer.status === "pending" && (
                             <Button 
                               size="sm" 
                               onClick={() => handleApprove(offer)}
-                              disabled={processingId === offer.id}
+                              disabled={processingId === offer.payment_id}
                               className="bg-green-600 hover:bg-green-700 text-white"
                               aria-label={`Approve payment ${offer.invoice_number}`}
                             >
-                              {processingId === offer.id ? (
+                              {processingId === offer.payment_id ? (
                                 <Loader2 className="h-3 w-3 animate-spin" />
                               ) : (
                                 <>
                                   <CheckCircle2 className="h-3 w-3 mr-1" />
                                   Approve
-                                </>
-                              )}
-                            </Button>
-                          )}
-                          {offer.status === "approved" && (
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleExecute(offer)}
-                              disabled={processingId === offer.id}
-                              className="bg-blue-600 hover:bg-blue-700 text-white"
-                              aria-label={`Execute payment ${offer.invoice_number}`}
-                            >
-                              {processingId === offer.id ? (
-                                <Loader2 className="h-3 w-3 animate-spin" />
-                              ) : (
-                                <>
-                                  <PlayCircle className="h-3 w-3 mr-1" />
-                                  Execute
                                 </>
                               )}
                             </Button>
@@ -716,7 +682,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
           </div>
         )}
 
-        {/* Enhanced Details Dialog */}
+        {/* Details Dialog */}
         {selectedOffer && (
           <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
             <DialogContent className="bg-black/95 backdrop-blur-xl border-white/10 max-h-[90vh] overflow-y-auto sm:max-w-[900px]">
@@ -818,13 +784,13 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
-                  {selectedOffer.status === "accepted" && (
+                  {selectedOffer.status === "pending" && (
                     <Button 
                       onClick={() => handleApprove(selectedOffer)}
-                      disabled={processingId === selectedOffer.id}
+                      disabled={processingId === selectedOffer.payment_id}
                       className="bg-green-600 hover:bg-green-700 text-white"
                     >
-                      {processingId === selectedOffer.id ? (
+                      {processingId === selectedOffer.payment_id ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                           Processing...
@@ -833,25 +799,6 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
                         <>
                           <CheckCircle className="h-4 w-4 mr-2" />
                           Approve Payment
-                        </>
-                      )}
-                    </Button>
-                  )}
-                  {selectedOffer.status === "approved" && (
-                    <Button 
-                      onClick={() => handleExecute(selectedOffer)}
-                      disabled={processingId === selectedOffer.id}
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      {processingId === selectedOffer.id ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <PlayCircle className="h-4 w-4 mr-2" />
-                          Execute Payment
                         </>
                       )}
                     </Button>
@@ -873,7 +820,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
   )
 }
 
-// Info Row Component for details dialog
+// Info Row Component
 interface InfoRowProps {
   label: string;
   value: string;

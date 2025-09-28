@@ -8,6 +8,13 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
+import { EarlyPaymentOffers } from "@/components/early-payment-offers"
+import { SupplierPaymentsTable } from "@/components/supplier-payments-table"
+import { SupplierSupportTickets } from "@/components/supplier-support-tickets"
+import SupplierBankingPage from "../../supplier/banking/page"
+import SupplierAnalyticsPage from "../../supplier/analytics/page"
+import SupplierProfilePage from "../../supplier/profile/page"
+import InvoicesPage from "../invoices/page"
 import { 
   Building, FileText, CreditCard, CheckCircle, Clock, AlertTriangle, 
   Mail, User, RefreshCw, LogOut, Menu, X, ChevronRight, 
@@ -123,24 +130,21 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Invoices",
         icon: FileText,
         description: "Manage your invoices",
-        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed',
-        href: "/dashboard/invoices"
+        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed'
       },
       {
         id: "payments",
         label: "Payments",
         icon: CreditCard,
         description: "View payment history",
-        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed',
-        href: "/supplier/payments"
+        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed'
       },
       {
         id: "early-payments",
         label: "Early Payment Offers",
         icon: Clock,
         description: "Access early payment options",
-        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed',
-        href: "/supplier/early-payment-offers"
+        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed'
       }
     ]
   },
@@ -155,24 +159,21 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Profile Settings",
         icon: User,
         description: "Update your information",
-        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed',
-        href: "/supplier/profile"
+        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed'
       },
       {
         id: "banking-update",
         label: "Banking Details",
         icon: CreditCard,
         description: "Update bank information",
-        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed',
-        href: "/supplier/banking"
+        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed'
       },
       {
         id: "analytics",
         label: "Analytics",
         icon: BarChart,
         description: "View your metrics",
-        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed',
-        href: "/supplier/analytics"
+        visible: (data) => data?.dashboard.agreement_status?.toLowerCase() === 'signed'
       }
     ]
   }
@@ -523,38 +524,17 @@ export default function SupplierDashboard() {
                     {visibleItems.map((item) => {
                       const ItemIcon = item.icon;
                       const isItemActive = activeView === item.id;
-                      if (typeof item.href === "string" && (item.id === "payments" || item.id === "early-payments")) {
-                        // Use Next.js Link for Payments and Early Payment Offers
-                        return (
-                          <Link href={item.href} key={item.id}>
-                            <span
-                              className={`
-                                w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                                ${isItemActive 
-                                  ? 'bg-blue-600 text-white' 
-                                  : 'text-muted-foreground hover:bg-white/5 hover:text-white'
-                                }
-                              `}
-                              aria-current={isItemActive ? 'page' : undefined}
-                              onClick={() => setSidebarOpen(false)}
-                              role="button"
-                              tabIndex={0}
-                            >
-                              <ItemIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                              <div className="flex-1 text-left">
-                                <div className="text-sm font-medium">{item.label}</div>
-                                <div className="text-xs opacity-70">{item.description}</div>
-                              </div>
-                            </span>
-                          </Link>
-                        );
-                      } else if (typeof item.href === "string") {
+                      if (["invoices", "payments", "early-payments", "profile", "banking-update", "analytics"].includes(item.id)) {
+                        // Use SPA navigation for all supplier dashboard views
+                        const ItemIcon = item.icon;
+                        const isItemActive = activeView === item.id;
+                        // Use SPA navigation for all supplier dashboard views
                         return (
                           <button
                             key={item.id}
                             onClick={() => {
+                              setActiveView(item.id);
                               setSidebarOpen(false);
-                              if (item.href) window.location.assign(item.href);
                             }}
                             className={`
                               w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
@@ -572,7 +552,6 @@ export default function SupplierDashboard() {
                             </div>
                           </button>
                         );
-                      } else {
                         return (
                           <button
                             key={item.id}
@@ -693,6 +672,27 @@ export default function SupplierDashboard() {
                   <OnboardingProgress data={data} />
                   <SupplierOnboardingWizard />
                 </>
+              )}
+              {activeView === 'profile' && (
+                <SupplierProfilePage />
+              )}
+              {activeView === 'banking-update' && (
+                <SupplierBankingPage />
+              )}
+              {activeView === 'analytics' && (
+                <SupplierAnalyticsPage />
+              )}
+              {activeView === 'invoices' && (
+                <InvoicesPage />
+              )}
+              {activeView === 'early-payments' && (
+                <EarlyPaymentOffers />
+              )}
+              {activeView === 'payments' && (
+                <SupplierPaymentsTable />
+              )}
+              {activeView === 'support' && (
+                <SupplierSupportTickets />
               )}
 
               {activeView === 'kyc' && (
