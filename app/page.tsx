@@ -33,24 +33,22 @@ const HeroSection = () => {
               </svg>
             </div>
             <div className="flex items-center justify-center gap-4">
-              <h1 className="font-black text-4xl md:text-5xl lg:text-6xl" style={{ color: '#050505' }}>Future</h1>
-              <span className="h-10 w-px mx-4" style={{ background: '#3594f7', width: '1px', height: '2.5rem', display: 'inline-block' }}></span>
-              <span className="font-light text-4xl md:text-5xl lg:text-6xl" style={{ color: '#727272' }}>Mining Finance</span>
+              <h1 className="font-black text-4xl md:text-5xl lg:text-6xl" style={{ color: '#050505' }}>Finance Cashflow</h1>
             </div>
           </div>
 
           {/* Description */}
           <div className="space-y-6 mb-8">
             <p className="text-xl font-light text-foreground">
-              Future Mining Finance is a fintech and funding platform enabling mining companies to offer
+              Cashflow is a fintech and funding platform enabling companies to offer
               <span style={{ background: '#3594f7', color: '#fefefe', borderRadius: '9999px', padding: '0.25rem 1rem', fontWeight: 600, margin: '0 0.5rem' }}>early payment</span>
               programs for SMEs in their supply chain.
             </p>
             <p className="text-xl font-light text-foreground">
-              Africa's mining sector can have a much greater impact on SMEs, but most mines take too long to pay their suppliers.
+              Our platform helps businesses make a greater impact on SMEs by enabling faster payments to suppliers.
             </p>
             <p className="text-xl font-light text-foreground">
-              Through our platform, suppliers can receive immediate payments for approved invoices,
+              Through Cashflow, suppliers can receive immediate payments for approved invoices,
               <span style={{ textDecoration: 'underline', textDecorationColor: '#3594f7', textUnderlineOffset: '4px', margin: '0 0.25rem' }}>improving their cash flow</span>
               and fostering sustainable growth.
             </p>
@@ -77,8 +75,8 @@ const CompanyDescriptionSection = () => {
           <div className="space-y-8 text-2xl lg:text-3xl leading-relaxed font-light">
             <div className="mb-16">
               <p>
-                <span className="font-semibold">Future Mining Finance is a fintech and funding platform</span> enabling
-                mining companies to offer{" "}
+                <span className="font-semibold">Cashflow is a fintech and funding platform</span> enabling
+                companies to offer{" "}
                 <span className="bg-blue-600 text-white rounded-full px-6 py-2 font-semibold">
                   early payment
                 </span>{" "}
@@ -88,14 +86,13 @@ const CompanyDescriptionSection = () => {
             
             <div className="mb-16">
               <p>
-                Africa's mining sector can have a much greater impact on SMEs,
-                but most mines take too long to pay their suppliers.
+                Our platform helps businesses make a greater impact on SMEs by enabling faster payments to suppliers.
               </p>
             </div>
             
             <div>
               <p>
-                Through our platform, suppliers can receive{" "}
+                Through Cashflow, suppliers can receive{" "}
                 <span className="underline decoration-blue-500 underline-offset-4">immediate payments</span>{" "}
                 for approved invoices, improving their{" "}
                 <span className="underline decoration-blue-500 underline-offset-4">cash flow</span>{" "}
@@ -601,16 +598,16 @@ export default function LandingPage() {
             <span className="h-8 w-px bg-[#2563eb] mx-2"></span>
             <span className="font-bold text-2xl md:text-3xl lg:text-4xl text-blue-600">Finance</span>
             <span className="font-bold text-2xl md:text-3xl lg:text-4xl text-blue-600" style={{ marginLeft: '8px' }}>
-              <WordSpinner words={["eCommerce", "Blockchain", "Mining"]} />
+              Cashflow
             </span>
           </div>
 
           <div className="mt-12 space-y-6 text-xl text-gray-600 font-light">
             <p>
-              Future Mining Finance is a fintech and funding platform enabling mining companies to offer <span className="bg-[#2563eb] text-white rounded-full px-3 py-1 font-normal">early payment</span> programs for SMEs in their supply chain.
+             Future Fiance is a fintech and funding platform enabling companies to offer <span className="bg-[#2563eb] text-white rounded-full px-3 py-1 font-normal">early payment</span> programs for SMEs in their supply chain.
             </p>
             <p>
-              Africa's mining sector can have a much greater impact on SMEs, but most mines take too long to pay their suppliers.
+              Our platform helps businesses make a greater impact on SMEs by enabling faster payments to suppliers.
             </p>
             <p>
               Through our platform, suppliers can receive immediate payments for approved invoices, <span className="underline decoration-[#2563eb] decoration-2 underline-offset-4">improving their cash flow</span> and fostering sustainable growth.
