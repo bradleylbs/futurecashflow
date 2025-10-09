@@ -78,7 +78,7 @@ type ViewMode = 'table' | 'cards'
 const StatCard = ({ title, value, icon: Icon, color, subtitle, trend, loading }: any) => {
   if (loading) {
     return (
-      <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+      <div className="p-4 rounded-xl bg-card/80 backdrop-blur-sm border border-border">
         <Skeleton className="h-24 w-full" />
       </div>
     )
@@ -95,7 +95,7 @@ const StatCard = ({ title, value, icon: Icon, color, subtitle, trend, loading }:
   return (
     <div className={`
       p-4 rounded-xl bg-gradient-to-br ${colorStyles[color] || colorStyles.blue} 
-      backdrop-blur-sm border hover:scale-[1.02] transition-all duration-300 cursor-pointer
+      backdrop-blur-sm border border-border hover:scale-[1.02] transition-all duration-300 cursor-pointer
     `}>
       <div className="flex items-center justify-between mb-2">
         <div className="p-2 rounded-lg bg-white/10">
@@ -203,7 +203,7 @@ const EmptyState: React.FC<{ role: UserRole; onClearFilters?: () => void; hasFil
   onClearFilters, 
   hasFilters 
 }) => (
-  <Card className="bg-white/5 backdrop-blur-sm border-white/10">
+  <Card className="bg-card/80 backdrop-blur-sm border-border">
     <CardContent className="text-center py-16">
       <div className="flex justify-center mb-6">
         <div className="rounded-full bg-muted/50 p-6">
@@ -247,12 +247,12 @@ const LoadingSkeleton = () => (
   <div className="space-y-6">
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+        <div key={i} className="p-4 rounded-xl bg-card/80 backdrop-blur-sm border border-border">
           <Skeleton className="h-24 w-full" />
         </div>
       ))}
     </div>
-    <div className="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+    <div className="p-6 bg-card/80 backdrop-blur-sm rounded-xl border border-border">
       <Skeleton className="h-20 w-full" />
     </div>
     <div className="space-y-3">
@@ -508,7 +508,7 @@ export default function InvoicesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background">
         <main className="container mx-auto py-8">
           <LoadingSkeleton />
         </main>
@@ -518,7 +518,7 @@ export default function InvoicesPage() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-card focus:text-foreground focus:border focus:border-border focus:px-3 focus:py-2 focus:rounded-md"
@@ -526,11 +526,11 @@ export default function InvoicesPage() {
           Skip to main content
         </a>
 
-        <main id="main-content" className="container mx-auto py-8 space-y-6">
+  <main id="main-content" className="container mx-auto py-8 space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-info bg-clip-text text-transparent">
                 Invoice Management
               </h1>
               <p className="text-muted-foreground mt-1">
@@ -605,7 +605,7 @@ export default function InvoicesPage() {
               </div>
 
               {/* Payment Progress Card */}
-              <Card className="bg-white/5 backdrop-blur-sm border-white/10">
+              <Card className="bg-card/80 backdrop-blur-sm border-border">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -635,7 +635,7 @@ export default function InvoicesPage() {
           )}
 
           {/* Enhanced Filters and Controls */}
-          <div className="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 space-y-4">
+          <div className="p-6 bg-card/80 backdrop-blur-sm rounded-xl border border-border space-y-4">
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Search Input */}
               <div className="relative flex-1 max-w-md">
@@ -678,7 +678,7 @@ export default function InvoicesPage() {
                   variant={viewMode === 'cards' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('cards')}
-                  className={viewMode === 'cards' ? 'bg-blue-600 hover:bg-blue-700' : 'border-white/20 hover:bg-white/10'}
+                  className={viewMode === 'cards' ? 'bg-primary hover:bg-primary/90' : 'border-border hover:bg-muted/50'}
                 >
                   <Grid3x3 className="h-4 w-4" />
                 </Button>
@@ -686,7 +686,7 @@ export default function InvoicesPage() {
                   variant={viewMode === 'table' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('table')}
-                  className={viewMode === 'table' ? 'bg-blue-600 hover:bg-blue-700' : 'border-white/20 hover:bg-white/10'}
+                  className={viewMode === 'table' ? 'bg-primary hover:bg-primary/90' : 'border-border hover:bg-muted/50'}
                 >
                   <List className="h-4 w-4" />
                 </Button>
@@ -695,14 +695,14 @@ export default function InvoicesPage() {
               {/* Bulk Actions */}
               {selectedInvoices.size > 0 && (
                 <div className="flex gap-2">
-                  <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                  <Badge className="bg-primary/20 text-primary border-primary/30">
                     {selectedInvoices.size} selected
                   </Badge>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={handleBulkExport}
-                    className="border-white/20 hover:bg-white/10"
+                    className="border-border hover:bg-muted/50"
                   >
                     <Download className="h-3 w-3 mr-1" />
                     Export Selected
@@ -711,7 +711,7 @@ export default function InvoicesPage() {
                     size="sm"
                     variant="ghost"
                     onClick={() => setSelectedInvoices(new Set())}
-                    className="hover:bg-white/10"
+                    className="hover:bg-muted/50"
                   >
                     Clear
                   </Button>
@@ -725,7 +725,7 @@ export default function InvoicesPage() {
                     onClick={handleExport}
                     variant="outline"
                     size="sm"
-                    className="border-white/20 hover:bg-white/10"
+                    className="border-border hover:bg-muted/50"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Export All
@@ -734,7 +734,7 @@ export default function InvoicesPage() {
                 <Button
                   onClick={handleRefresh}
                   disabled={refreshing}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-primary hover:bg-primary/90"
                 >
                   <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
                   Refresh
@@ -747,12 +747,12 @@ export default function InvoicesPage() {
               <div className="flex items-center gap-4 text-muted-foreground">
                 <span>{filteredAndSortedInvoices.length} invoices</span>
                 {searchQuery && (
-                  <Badge variant="secondary" className="bg-white/10">
+                  <Badge variant="secondary" className="bg-muted/50">
                     Searching: "{searchQuery}"
                   </Badge>
                 )}
                 {statusFilter !== "all" && (
-                  <Badge variant="secondary" className="bg-white/10">
+                  <Badge variant="secondary" className="bg-muted/50">
                     Filter: {statusFilter}
                   </Badge>
                 )}
@@ -777,11 +777,11 @@ export default function InvoicesPage() {
                 return (
                   <Card 
                     key={invoice.id} 
-                    className={`relative overflow-hidden p-0 rounded-xl bg-black bg-gradient-to-br from-primary/20 to-info/10 border border-white/10 backdrop-blur-sm hover:scale-[1.02] transition-all duration-300 cursor-pointer group ${
+                    className={`relative overflow-hidden p-0 rounded-xl bg-background bg-gradient-to-br from-primary/20 to-info/10 border border-border backdrop-blur-sm hover:scale-[1.02] transition-all duration-300 cursor-pointer group ${
                       isSelected ? 'ring-2 ring-primary/50' : ''
                     }`}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-card to-transparent pointer-events-none" />
                     <CardContent className="p-5 relative">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3">
@@ -877,8 +877,8 @@ export default function InvoicesPage() {
               })}
             </div>
           ) : (
-            <Card className="relative overflow-hidden p-0 rounded-xl bg-black bg-gradient-to-br from-primary/20 to-info/10 border border-white/10 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+            <Card className="relative overflow-hidden p-0 rounded-xl bg-background bg-gradient-to-br from-primary/20 to-info/10 border border-border backdrop-blur-sm">
+              <div className="absolute inset-0 bg-gradient-to-br from-card to-transparent pointer-events-none" />
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <Table className="min-w-[800px]">
