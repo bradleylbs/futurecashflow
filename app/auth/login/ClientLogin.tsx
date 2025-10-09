@@ -489,7 +489,7 @@ export default function ClientLogin() {
           <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
         </div>
-        <Card className="w-full max-w-md bg-card border border-border shadow-sm text-foreground">
+        <Card className="w-full max-w-xl md:max-w-2xl bg-card border-0 shadow-none text-foreground">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="p-4 rounded-full border border-border bg-muted">
@@ -563,7 +563,7 @@ export default function ClientLogin() {
             Logout
           </Button>
         </div>
-        <Card className="w-full max-w-md bg-card border border-border shadow-sm text-foreground">
+        <Card className="w-full max-w-xl md:max-w-2xl bg-card border-0 shadow-none text-foreground">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="p-4 rounded-full border border-border bg-muted">
@@ -674,7 +674,7 @@ export default function ClientLogin() {
         <div className="absolute -top-40 -right-40 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
       </div>
-  <Card className="w-full max-w-md bg-card border border-border shadow-sm text-foreground">
+  <Card className="w-full max-w-xl md:max-w-2xl bg-card border-0 shadow-none text-foreground">
         <CardHeader className="text-center">
           <div className="flex items-center justify-between mb-4">
             {(isFromFacilityApp || returnTo) && (

@@ -4,75 +4,100 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color tokens for Future Mining Finance branding */
-  --background: oklch(1 0 0); /* Pure white */
-  --foreground: oklch(0.205 0 0); /* Dark gray-800 equivalent */
-  --card: oklch(0.97 0 0); /* Light gray background */
-  --card-foreground: oklch(0.205 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.205 0 0);
-  --primary: oklch(0.205 0 0); /* Professional dark gray */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.646 0.222 280.116); /* Purple accent */
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.646 0.222 280.116); /* Purple accent */
-  --accent-foreground: oklch(1 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.556 0 0);
-  --input: oklch(0.97 0 0);
-  --ring: oklch(0.646 0.222 280.116);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  /* Modern Fintech / Tech‑Industrial Elegance (Light) */
+  /* Core brand */
+  --brand-blue: #3594F7;
+  --brand-blue-hover: #1E7BE5;
+  --brand-blue-soft: #B4C5D6;
+  --accent-red: #FF4D4F;
+  --accent-green: #27AE60;
+  --accent-yellow: #F2C94C;
+
+  /* Neutrals */
+  --white: #FEFEFE;
+  --black: #000000;
+  --charcoal: #161B22;
+  --darkgray: #2D2D2D;
+  --mediumgray: #727272;
+  --lightgray: #B8B6B4;
+
+  /* App tokens */
+  --background: var(--white);
+  --foreground: #050505; /* text-black */
+  --card: var(--white);
+  --card-foreground: #050505;
+  --popover: var(--white);
+  --popover-foreground: #050505;
+  --primary: var(--brand-blue);
+  --primary-foreground: var(--white);
+  --secondary: var(--brand-blue-soft);
+  --secondary-foreground: #0F172A; /* readable on soft blue */
+  --muted: #F5F7FA; /* subtle surfaces */
+  --muted-foreground: var(--mediumgray);
+  --accent: var(--brand-blue-soft);
+  --accent-foreground: #0F172A;
+  --destructive: var(--accent-red);
+  --destructive-foreground: var(--white);
+  --border: var(--mediumgray);
+  --input: var(--white);
+  --ring: var(--brand-blue);
+
+  /* Charts (light) */
+  --chart-1: var(--brand-blue);
+  --chart-2: var(--accent-green);
+  --chart-3: var(--accent-yellow);
+  --chart-4: var(--accent-red);
+  --chart-5: var(--brand-blue-soft);
+
   --radius: 0.5rem;
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.205 0 0);
-  --sidebar-primary: oklch(0.646 0.222 280.116);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.646 0.222 41.116);
-  --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(0.556 0 0);
-  --sidebar-ring: oklch(0.646 0.222 280.116);
+
+  /* Sidebar */
+  --sidebar: var(--white);
+  --sidebar-foreground: #050505;
+  --sidebar-primary: var(--brand-blue);
+  --sidebar-primary-foreground: var(--white);
+  --sidebar-accent: var(--brand-blue-soft);
+  --sidebar-accent-foreground: #0F172A;
+  --sidebar-border: var(--mediumgray);
+  --sidebar-ring: var(--brand-blue);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --background: var(--charcoal); /* #161B22 */
+  --foreground: #E6E6E6;
+  --card: var(--charcoal);
+  --card-foreground: #E6E6E6;
+  --popover: var(--charcoal);
+  --popover-foreground: #E6E6E6;
+  --primary: var(--brand-blue);
+  --primary-foreground: #F5FAFF;
+  --secondary: var(--darkgray); /* #2D2D2D */
+  --secondary-foreground: #E6E6E6;
+  --muted: var(--darkgray);
+  --muted-foreground: var(--lightgray);
+  --accent: #0F2A50; /* subtle blue-tinted hover on dark */
+  --accent-foreground: #E6E6E6;
+  --destructive: var(--accent-red);
+  --destructive-foreground: #FFFFFF;
+  --border: var(--darkgray);
+  --input: var(--darkgray);
+  --ring: var(--brand-blue);
+
+  /* Charts (dark) */
+  --chart-1: var(--brand-blue);
+  --chart-2: var(--accent-green);
+  --chart-3: #EAC94B; /* tuned yellow */
+  --chart-4: var(--accent-red);
+  --chart-5: #9FB3C7; /* softened soft blue */
+
+  --sidebar: #0B0F14; /* darker shell */
+  --sidebar-foreground: #E6E6E6;
+  --sidebar-primary: var(--brand-blue);
+  --sidebar-primary-foreground: #F5FAFF;
+  --sidebar-accent: #0F2A50;
+  --sidebar-accent-foreground: #E6E6E6;
+  --sidebar-border: var(--darkgray);
+  --sidebar-ring: var(--brand-blue);
 }
 
 @theme inline {
