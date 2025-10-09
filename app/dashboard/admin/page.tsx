@@ -259,7 +259,7 @@ export default function AdminDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="text-center space-y-4">
           <Shield className="w-12 h-12 text-primary mx-auto animate-pulse" />
           <h1 className="text-2xl font-semibold">Loading Dashboard...</h1>
@@ -269,11 +269,11 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar Backdrop (Mobile) */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-muted/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
@@ -282,15 +282,15 @@ export default function AdminDashboardPage() {
       {/* Sidebar Navigation */}
       <aside 
         className={`
-          fixed lg:sticky top-0 left-0 h-screen w-72 bg-black/95 backdrop-blur-xl 
-          border-r border-white/10 z-50 transform transition-transform duration-300 
+          fixed lg:sticky top-0 left-0 h-screen w-72 bg-card/95 backdrop-blur-xl 
+          border-r border-border/10 z-50 transform transition-transform duration-300 
           flex flex-col
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
         aria-label="Main navigation"
       >
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-white/10">
+  <div className="p-6 border-b border-border/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
@@ -314,7 +314,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Navigation Menu */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1" aria-label="Admin sections">
+  <nav className="flex-1 overflow-y-auto p-4 space-y-1" aria-label="Admin sections">
           {NAV_SECTIONS.map((section) => {
             const SectionIcon = section.icon;
             const isExpanded = expandedSection === section.id;
@@ -402,7 +402,7 @@ export default function AdminDashboardPage() {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-white/10 space-y-2">
+  <div className="p-4 border-t border-border/10 space-y-2">
           <SystemStatus />
           <Button
             onClick={handleLogout}
@@ -418,7 +418,7 @@ export default function AdminDashboardPage() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 backdrop-blur-xl bg-black/70 border-b border-white/10">
+  <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/70 border-b border-border/10">
           <div className="flex items-center justify-between h-16 px-4 lg:px-6">
             {/* Mobile Menu + Breadcrumb */}
             <div className="flex items-center gap-4">
