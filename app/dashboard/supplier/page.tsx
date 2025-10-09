@@ -429,11 +429,11 @@ export default function SupplierDashboard() {
   if (loading) return <LoadingSkeleton />
 
   return (
-    <div className="min-h-screen bg-black text-white flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Backdrop */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-muted/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
@@ -442,13 +442,13 @@ export default function SupplierDashboard() {
       {/* Sidebar */}
       <aside 
         className={`
-          fixed lg:sticky top-0 left-0 h-screen w-72 bg-black/95 backdrop-blur-xl 
-          border-r border-white/10 z-50 transform transition-transform duration-300 flex flex-col
+          fixed lg:sticky top-0 left-0 h-screen w-72 bg-background/95 backdrop-blur-xl 
+          border-r border-border z-50 transform transition-transform duration-300 flex flex-col
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
         aria-label="Main navigation"
       >
-        <div className="p-6 border-b border-white/10">
+  <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
@@ -471,7 +471,7 @@ export default function SupplierDashboard() {
           </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1" aria-label="Supplier sections">
+  <nav className="flex-1 overflow-y-auto p-4 space-y-1" aria-label="Supplier sections">
           {visibleSections.map((section) => {
             const SectionIcon = section.icon
             const isExpanded = expandedSection === section.id
@@ -486,8 +486,8 @@ export default function SupplierDashboard() {
                   className={`
                     w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200
                     ${activeView === section.id 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                     }
                   `}
                   aria-current={activeView === section.id ? 'page' : undefined}
@@ -504,7 +504,7 @@ export default function SupplierDashboard() {
                   onClick={() => setExpandedSection(isExpanded ? "" : section.id)}
                   className={`
                     w-full flex items-center justify-between px-4 py-2.5 rounded-lg transition-all duration-200
-                    ${isActive ? 'text-white bg-white/5' : 'text-muted-foreground hover:bg-white/5 hover:text-white'}
+                    ${isActive ? 'text-foreground bg-muted/50' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'}
                   `}
                   aria-expanded={isExpanded}
                   aria-controls={`section-${section.id}`}
@@ -539,8 +539,8 @@ export default function SupplierDashboard() {
                             className={`
                               w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
                               ${isItemActive 
-                                ? 'bg-blue-600 text-white' 
-                                : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                                ? 'bg-primary text-primary-foreground' 
+                                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                               }
                             `}
                             aria-current={isItemActive ? 'page' : undefined}
@@ -559,8 +559,8 @@ export default function SupplierDashboard() {
                             className={`
                               w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
                               ${isItemActive 
-                                ? 'bg-blue-600 text-white' 
-                                : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                                ? 'bg-primary text-primary-foreground' 
+                                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                               }
                             `}
                             aria-current={isItemActive ? 'page' : undefined}
@@ -581,7 +581,7 @@ export default function SupplierDashboard() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/10 space-y-2">
+  <div className="p-4 border-t border-border space-y-2">
           <SystemStatus />
           <Button
             onClick={handleLogout}
@@ -595,8 +595,8 @@ export default function SupplierDashboard() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-30 backdrop-blur-xl bg-black/70 border-b border-white/10">
+      <div className="flex-1 flex flex-col min-h-screen bg-background text-foreground">
+        <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/80 border-b border-border">
           <div className="flex items-center justify-between h-16 px-4 lg:px-6">
             <div className="flex items-center gap-4">
               <Button
@@ -620,7 +620,7 @@ export default function SupplierDashboard() {
                 {currentItem && (
                   <>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                    <span className="text-white font-medium">{currentItem.label}</span>
+                    <span className="text-foreground font-medium">{currentItem.label}</span>
                   </>
                 )}
               </nav>
@@ -649,7 +649,7 @@ export default function SupplierDashboard() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-6 space-y-6">
+  <main className="flex-1 p-4 lg:p-6 space-y-6 bg-background">
           {error && (
             <Alert variant="destructive" className="border-error/50 bg-error/10">
               <AlertCircle className="h-4 w-4" />
@@ -696,7 +696,7 @@ export default function SupplierDashboard() {
               )}
 
               {activeView === 'kyc' && (
-                <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <Card className="bg-card/80 backdrop-blur-sm border-border">
                   <CardHeader>
                     <CardTitle>Complete Your KYC Application</CardTitle>
                     <CardDescription>Submit your company information and required documents</CardDescription>
@@ -708,7 +708,7 @@ export default function SupplierDashboard() {
               )}
 
               {activeView === 'banking' && (
-                <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <Card className="bg-card/80 backdrop-blur-sm border-border">
                   <CardHeader>
                     <CardTitle>Submit Banking Details</CardTitle>
                     <CardDescription>Provide your banking information for verification</CardDescription>
@@ -728,7 +728,7 @@ export default function SupplierDashboard() {
               )}
 
               {activeView === 'agreements' && (
-                <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <Card className="bg-card/80 backdrop-blur-sm border-border">
                   <CardHeader>
                     <CardTitle>Your Agreements</CardTitle>
                     <CardDescription>Review and manage your signed agreements</CardDescription>

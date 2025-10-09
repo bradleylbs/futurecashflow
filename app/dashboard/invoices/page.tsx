@@ -957,8 +957,8 @@ export default function InvoicesPage() {
                         return (
                           <TableRow 
                             key={invoice.id} 
-                            className={`border-b border-white/5 hover:bg-white/5 transition-colors ${
-                              isSelected ? 'bg-white/10' : ''
+                            className={`border-b border-border hover:bg-muted/50 transition-colors ${
+                              isSelected ? 'bg-muted/70' : ''
                             }`}
                           >
                             <TableCell>
@@ -966,7 +966,7 @@ export default function InvoicesPage() {
                                 type="checkbox"
                                 checked={isSelected}
                                 onChange={() => toggleSelection(invoice.id)}
-                                className="rounded border-white/30 bg-white/10"
+                                className="rounded border-border bg-muted/50"
                               />
                             </TableCell>
                             <TableCell className="font-medium">{invoice.invoice_number}</TableCell>

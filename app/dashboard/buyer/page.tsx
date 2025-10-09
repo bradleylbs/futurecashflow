@@ -249,11 +249,11 @@ export default function BuyerDashboard() {
   const currentSection = NAVIGATION_SECTIONS.find(s => s.id === activeView)
 
   return (
-    <div className="min-h-screen bg-black text-white flex">
+  <div className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar Backdrop */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-muted/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
@@ -262,15 +262,15 @@ export default function BuyerDashboard() {
       {/* Sidebar */}
       <aside 
         className={`
-          fixed lg:sticky top-0 left-0 h-screen w-72 bg-black/95 backdrop-blur-xl 
-          border-r border-white/10 z-50 transform transition-transform duration-300 
+          fixed lg:sticky top-0 left-0 h-screen w-72 bg-background/95 backdrop-blur-xl 
+          border-r border-border z-50 transform transition-transform duration-300 
           flex flex-col
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
         aria-label="Main navigation"
       >
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-white/10">
+  <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
@@ -311,17 +311,17 @@ export default function BuyerDashboard() {
                   w-full flex items-center gap-3 px-4 py-3 rounded-lg 
                   transition-all duration-200 group
                   ${isActive 
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-primary text-primary-foreground' 
                     : isLocked
                     ? 'text-muted-foreground/50 cursor-not-allowed'
-                    : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                   }
                 `}
                 aria-current={isActive ? 'page' : undefined}
               >
                 <div className={`
                   p-2 rounded-lg
-                  ${isActive ? 'bg-blue-500/20' : 'bg-white/5'}
+                  ${isActive ? 'bg-primary/20' : 'bg-muted/50'}
                 `}>
                   <SectionIcon className="h-5 w-5" />
                 </div>
@@ -340,7 +340,7 @@ export default function BuyerDashboard() {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-white/10 space-y-2">
+  <div className="p-4 border-t border-border space-y-2">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Activity className="h-4 w-4 text-success" />
             <span>System OK</span>
@@ -357,9 +357,9 @@ export default function BuyerDashboard() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen bg-background text-foreground">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 backdrop-blur-xl bg-black/70 border-b border-white/10">
+        <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/80 border-b border-border">
           <div className="flex items-center justify-between h-16 px-4 lg:px-6">
             {/* Mobile Menu + Breadcrumb */}
             <div className="flex items-center gap-4">
@@ -378,7 +378,7 @@ export default function BuyerDashboard() {
                 {currentSection && (
                   <>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-white font-medium">{currentSection.title}</span>
+                    <span className="text-foreground font-medium">{currentSection.title}</span>
                   </>
                 )}
               </nav>
@@ -389,7 +389,7 @@ export default function BuyerDashboard() {
               <Button 
                 onClick={fetchDashboardData}
                 size="sm"
-                className="rounded-full bg-blue-600 hover:bg-blue-700"
+                className="rounded-full bg-primary hover:bg-primary/90"
                 aria-label="Refresh"
               >
                 <RefreshCw className="h-4 w-4" />
@@ -398,7 +398,7 @@ export default function BuyerDashboard() {
 
               <Button variant="ghost" size="icon" className="relative rounded-full">
                 <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-blue-600 text-xs flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-xs flex items-center justify-center">
                   2
                 </span>
               </Button>
@@ -411,7 +411,7 @@ export default function BuyerDashboard() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-4 lg:p-6 space-y-6">
+  <main className="flex-1 p-4 lg:p-6 space-y-6 bg-background">
           {/* Overview */}
           {activeView === 'overview' && (
             <>
@@ -453,7 +453,7 @@ export default function BuyerDashboard() {
 
               {/* Onboarding Progress */}
               {!isActivated && (
-                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-info/5">
+                <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-info/10">
                   <CardHeader>
                     <CardTitle>Complete Your Onboarding</CardTitle>
                     <CardDescription>
@@ -492,7 +492,7 @@ export default function BuyerDashboard() {
                             Complete
                           </Badge>
                         ) : kycComplete ? (
-                          <Badge variant="secondary" className="bg-blue-600 text-white">
+                          <Badge variant="secondary" className="bg-primary text-primary-foreground">
                             <Clock className="h-3 w-3 mr-1" />
                             Next Step
                           </Badge>
@@ -503,7 +503,7 @@ export default function BuyerDashboard() {
                     {kycComplete && !agreementComplete && (
                       <Button 
                         onClick={() => handleNavClick('agreements')}
-                        className="w-full bg-blue-600 hover:bg-blue-700"
+                        className="w-full bg-primary hover:bg-primary/90"
                       >
                         Sign Agreement Now
                         <ChevronRight className="h-4 w-4 ml-2" />
@@ -515,10 +515,10 @@ export default function BuyerDashboard() {
 
               {/* Activation Success */}
               {isActivated && (
-                <Alert className="border-green-500/30 bg-green-500/5">
+                <Alert className="border-success/30 bg-success/10">
                   <CheckCircle2 className="h-4 w-4 text-success" />
-                  <AlertTitle className="text-green-400">Account Activated!</AlertTitle>
-                  <AlertDescription className="text-green-300">
+                  <AlertTitle className="text-success">Account Activated!</AlertTitle>
+                  <AlertDescription className="text-success/80">
                     Your account is fully activated. You can now invite suppliers and manage operations.
                   </AlertDescription>
                 </Alert>
@@ -526,7 +526,7 @@ export default function BuyerDashboard() {
 
               {/* Quick Actions */}
               {isActivated && (
-                <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle>Quick Actions</CardTitle>
                     <CardDescription>Common tasks and operations</CardDescription>
@@ -635,7 +635,7 @@ export default function BuyerDashboard() {
           {activeView === 'operations' && isActivated && (
             <div className="space-y-6">
               {/* Actions Bar */}
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building className="h-5 w-5 text-primary" />
