@@ -177,8 +177,8 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent flex items-center gap-3">
-          <UploadIcon className="h-6 w-6 text-blue-500" />
+        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-info bg-clip-text text-transparent flex items-center gap-3">
+          <UploadIcon className="h-6 w-6 text-primary" />
           Upload AP Data (CSV)
         </CardTitle>
         <CardDescription className="text-gray-700 font-medium">
@@ -192,12 +192,12 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
           onDrop={onDrop}
           className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 ${
             dragOver 
-              ? 'border-blue-400 bg-gradient-to-br from-blue-50/80 to-purple-50/80 backdrop-blur-sm scale-105' 
-              : 'border-gray-300 bg-gradient-to-br from-gray-50/50 to-white/50 hover:border-blue-300 hover:bg-gradient-to-br hover:from-blue-50/60 hover:to-purple-50/60'
+              ? 'border-primary/50 bg-gradient-to-br from-primary/10 to-info/10 backdrop-blur-sm scale-105' 
+              : 'border-border bg-gradient-to-br from-muted/50 to-card/50 hover:border-primary/40 hover:bg-gradient-to-br hover:from-primary/10 hover:to-info/10'
           }`}
         >
-          <div className="mb-4 p-4 bg-gradient-to-br from-blue-100/80 to-purple-100/80 rounded-full backdrop-blur-sm">
-            <UploadIcon className="h-8 w-8 text-blue-600" />
+          <div className="mb-4 p-4 bg-gradient-to-br from-primary/20 to-info/20 rounded-full backdrop-blur-sm">
+            <UploadIcon className="h-8 w-8 text-primary" />
           </div>
           <p className="text-lg font-semibold text-gray-800 mb-2">Drag & drop your CSV here</p>
           <p className="text-sm text-gray-600 mb-4">or</p>
@@ -212,7 +212,7 @@ export function APUpload({ consentedVendors, buyerId }: { consentedVendors: stri
           <Input ref={inputRef} type="file" accept=".csv" onChange={onInputChange} className="hidden" />
         </div>
 
-        <div className="text-sm text-gray-600 bg-gradient-to-r from-blue-50/60 to-purple-50/60 p-4 rounded-xl border-0 shadow-inner">
+        <div className="text-sm text-muted-foreground bg-gradient-to-r from-primary/5 to-info/5 p-4 rounded-xl border-0 shadow-inner">
           <span className="font-semibold text-gray-800">Expected columns:</span> <br />
           {EXCEL_COLUMNS.join(", ")}
         </div>

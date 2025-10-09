@@ -137,11 +137,11 @@ interface StatsCardProps {
 }
 
 const colorMap: Record<'blue' | 'green' | 'amber' | 'red' | 'purple', { bg: string; border: string; icon: string }> = {
-  blue: { bg: "bg-blue-500/10", border: "border-blue-500/20", icon: "text-blue-500" },
-  green: { bg: "bg-green-500/10", border: "border-green-500/20", icon: "text-green-500" },
-  amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-500" },
-  red: { bg: "bg-red-500/10", border: "border-red-500/20", icon: "text-red-500" },
-  purple: { bg: "bg-purple-500/10", border: "border-purple-500/20", icon: "text-purple-500" },
+  blue: { bg: "bg-primary/10", border: "border-primary/20", icon: "text-primary" },
+  green: { bg: "bg-success/10", border: "border-success/20", icon: "text-success" },
+  amber: { bg: "bg-warning/10", border: "border-warning/20", icon: "text-warning" },
+  red: { bg: "bg-error/10", border: "border-error/20", icon: "text-error" },
+  purple: { bg: "bg-info/10", border: "border-info/20", icon: "text-info" },
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ 

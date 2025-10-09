@@ -33,8 +33,8 @@ export default function SupplierAnalyticsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
-          <BarChart className="h-6 w-6 text-blue-500" />
+        <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
+          <BarChart className="h-6 w-6 text-primary" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-white">Analytics Dashboard</h2>
@@ -43,8 +43,8 @@ export default function SupplierAnalyticsPage() {
       </div>
 
       {error && (
-        <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
-          <AlertDescription className="text-red-400">{error}</AlertDescription>
+        <Alert variant="destructive" className="border-error/50 bg-error/10">
+          <AlertDescription className="text-error/80">{error}</AlertDescription>
         </Alert>
       )}
 
@@ -62,38 +62,38 @@ export default function SupplierAnalyticsPage() {
             </div>
           ) : metrics ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 backdrop-blur-sm">
-                <FileText className="h-6 w-6 text-blue-500" />
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 backdrop-blur-sm">
+                <FileText className="h-6 w-6 text-primary" />
                 <div>
                   <div className="text-lg font-bold text-white">{metrics.totalInvoices}</div>
                   <div className="text-xs text-muted-foreground">Invoices Assigned to You</div>
                   <div className="text-xs text-muted-foreground">Linked via buyer/vendor consent and accepted status</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 backdrop-blur-sm">
-                <CreditCard className="h-6 w-6 text-blue-500" />
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 backdrop-blur-sm">
+                <CreditCard className="h-6 w-6 text-primary" />
                 <div>
                   <div className="text-lg font-bold text-white">{metrics.totalPayments}</div>
                   <div className="text-xs text-muted-foreground">Payments Received</div>
                   <div className="text-xs text-muted-foreground">Total Paid: R{metrics.totalPaid}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 backdrop-blur-sm">
-                <Zap className="h-6 w-6 text-blue-500" />
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 backdrop-blur-sm">
+                <Zap className="h-6 w-6 text-primary" />
                 <div>
                   <div className="text-lg font-bold text-white">{metrics.totalOffers}</div>
                   <div className="text-xs text-muted-foreground">Early Payment Offers</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 backdrop-blur-sm">
-                <MessageCircle className="h-6 w-6 text-blue-500" />
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 backdrop-blur-sm">
+                <MessageCircle className="h-6 w-6 text-primary" />
                 <div>
                   <div className="text-lg font-bold text-white">{metrics.totalTickets}</div>
                   <div className="text-xs text-muted-foreground">Support Tickets</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 backdrop-blur-sm">
-                <CheckCircle className="h-6 w-6 text-blue-500" />
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 backdrop-blur-sm">
+                <CheckCircle className="h-6 w-6 text-primary" />
                 <div>
                   <div className="text-lg font-bold text-white">{metrics.onboardingLevel.replace("_", " ")}</div>
                   <div className="text-xs text-muted-foreground">Onboarding Progress</div>

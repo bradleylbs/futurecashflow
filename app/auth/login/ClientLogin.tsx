@@ -418,10 +418,10 @@ export default function ClientLogin() {
       !completionStatus?.agreementsSigned
     ) {
       // Show blue AlertCircle for pending agreement
-      return <AlertTriangle className="h-5 w-5 text-blue-500" />
+      return <AlertTriangle className="h-5 w-5 text-primary" />
     }
-    if (completed) return <CheckCircle className="h-5 w-5 text-blue-500" />
-    if (current) return <Clock className="h-5 w-5 text-blue-500" />
+    if (completed) return <CheckCircle className="h-5 w-5 text-primary" />
+    if (current) return <Clock className="h-5 w-5 text-primary" />
     return <XCircle className="h-5 w-5 text-gray-300" />
   }
 

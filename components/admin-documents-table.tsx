@@ -439,7 +439,7 @@ export function AdminDocumentsTable({ refreshTrigger }: AdminDocumentsTableProps
         
         {successMessage && (
           <Alert className="border-green-500/50 bg-green-500/10">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="h-4 w-4 text-success" />
             <AlertTitle>Success</AlertTitle>
             <AlertDescription>{successMessage}</AlertDescription>
           </Alert>

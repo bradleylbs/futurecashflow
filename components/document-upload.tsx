@@ -68,25 +68,25 @@ export function DocumentUpload({ kycId, userRole, documents, onDocumentUploaded 
         variant: "secondary" as const, 
         icon: Clock, 
         label: "Pending Review",
-  classes: "bg-gradient-to-r from-blue-100 to-indigo-200 text-blue-800 border border-blue-200/50 backdrop-blur-sm"
+  classes: "bg-gradient-to-r from-primary/10 to-info/20 text-primary border border-primary/20 backdrop-blur-sm"
       },
       under_review: { 
         variant: "default" as const, 
         icon: Eye, 
         label: "Under Review",
-        classes: "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-200/50 backdrop-blur-sm"
+        classes: "bg-gradient-to-r from-primary/10 to-primary/20 text-primary border border-primary/20 backdrop-blur-sm"
       },
       verified: { 
         variant: "default" as const, 
         icon: CheckCircle, 
         label: "Verified",
-  classes: "bg-gradient-to-r from-blue-100 to-purple-200 text-blue-800 border border-blue-200/50 backdrop-blur-sm"
+  classes: "bg-gradient-to-r from-primary/10 to-info/20 text-primary border border-primary/20 backdrop-blur-sm"
       },
       rejected: { 
         variant: "destructive" as const, 
         icon: AlertCircle, 
         label: "Rejected",
-        classes: "bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-200/50 backdrop-blur-sm"
+        classes: "bg-gradient-to-r from-error/10 to-error/20 text-error border border-error/20 backdrop-blur-sm"
       },
     }
 

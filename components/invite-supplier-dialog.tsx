@@ -119,7 +119,7 @@ export function InviteSupplierDialog({ onInviteSent }: InviteSupplierDialogProps
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
           <Plus className="mr-2 h-4 w-4" />
           Invite Supplier
         </Button>
@@ -127,7 +127,7 @@ export function InviteSupplierDialog({ onInviteSent }: InviteSupplierDialogProps
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Mail className="h-5 w-5 text-blue-500" />
+            <Mail className="h-5 w-5 text-primary" />
             Invite New Supplier
           </DialogTitle>
           <DialogDescription>
@@ -138,8 +138,8 @@ export function InviteSupplierDialog({ onInviteSent }: InviteSupplierDialogProps
         {success ? (
           <div className="space-y-4 py-4">
             <div className="flex items-center justify-center">
-              <div className="rounded-full bg-green-500/10 p-3">
-                <CheckCircle className="h-8 w-8 text-green-500" />
+              <div className="rounded-full bg-success/10 p-3">
+                <CheckCircle className="h-8 w-8 text-success" />
               </div>
             </div>
             

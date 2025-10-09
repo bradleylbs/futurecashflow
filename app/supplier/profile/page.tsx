@@ -67,7 +67,7 @@ export default function SupplierProfilePage() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
-          <User className="h-6 w-6 text-blue-500" />
+          <User className="h-6 w-6 text-primary" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-white">Profile Settings</h2>
@@ -78,7 +78,7 @@ export default function SupplierProfilePage() {
       <Card className="bg-card/50 backdrop-blur-sm border-border">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-white">
-            <Building className="h-6 w-6 text-blue-500" />
+            <Building className="h-6 w-6 text-primary" />
             Company Information
           </CardTitle>
           <CardDescription className="text-muted-foreground">

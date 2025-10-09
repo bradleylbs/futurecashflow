@@ -73,10 +73,10 @@ interface StatsCardProps {
 }
 
 const colorMap: Record<'blue' | 'green' | 'amber' | 'red', { bg: string; border: string; icon: string }> = {
-  blue: { bg: "bg-blue-500/10", border: "border-blue-500/20", icon: "text-blue-500" },
-  green: { bg: "bg-green-500/10", border: "border-green-500/20", icon: "text-green-500" },
-  amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-500" },
-  red: { bg: "bg-red-500/10", border: "border-red-500/20", icon: "text-red-500" },
+  blue: { bg: "bg-primary/10", border: "border-primary/20", icon: "text-primary" },
+  green: { bg: "bg-success/10", border: "border-success/20", icon: "text-success" },
+  amber: { bg: "bg-warning/10", border: "border-warning/20", icon: "text-warning" },
+  red: { bg: "bg-error/10", border: "border-error/20", icon: "text-error" },
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon: Icon, color = "blue" }) => {
@@ -234,12 +234,12 @@ export function InvitationsTable({ refreshTrigger }: InvitationsTableProps) {
     const actualStatus = isExpired && status !== "completed" && status !== "cancelled" ? "expired" : status
 
     const statusConfig: Record<string, { color: string; icon: React.ElementType; label: string }> = {
-      sent: { color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: Mail, label: "Sent" },
-      opened: { color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', icon: Clock, label: "Opened" },
-      registered: { color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', icon: UserPlus, label: "Registered" },
-      completed: { color: 'bg-green-500/10 text-green-500 border-green-500/20', icon: CheckCircle, label: "Completed" },
-      expired: { color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: Calendar, label: "Expired" },
-      cancelled: { color: 'bg-gray-500/10 text-gray-500 border-gray-500/20', icon: XCircle, label: "Cancelled" },
+      sent: { color: 'bg-primary/10 text-primary border-primary/20', icon: Mail, label: "Sent" },
+      opened: { color: 'bg-warning/10 text-warning border-warning/20', icon: Clock, label: "Opened" },
+      registered: { color: 'bg-info/10 text-info border-info/20', icon: UserPlus, label: "Registered" },
+      completed: { color: 'bg-success/10 text-success border-success/20', icon: CheckCircle, label: "Completed" },
+      expired: { color: 'bg-error/10 text-error border-error/20', icon: Calendar, label: "Expired" },
+      cancelled: { color: 'bg-muted text-muted-foreground border-border/20', icon: XCircle, label: "Cancelled" },
     }
 
     const config = statusConfig[actualStatus] || statusConfig.sent

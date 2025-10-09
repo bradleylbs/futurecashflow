@@ -220,7 +220,7 @@ const InvitationBanner: React.FC<{ invitation: DashboardData['invitation'] }> = 
   if (!invitation) return null
   
   return (
-    <Card className="bg-blue-500/10 border-blue-500/20">
+    <Card className="bg-primary/10 border-primary/20">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Mail className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -322,7 +322,7 @@ const OnboardingProgress: React.FC<{ data: DashboardData }> = ({ data }) => {
 
 const SystemStatus: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
   <div className={`flex items-center gap-2 ${compact ? 'text-xs' : 'text-sm'}`}>
-    <Activity className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-green-500`} aria-hidden="true" />
+    <Activity className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-success`} aria-hidden="true" />
     <span className="text-muted-foreground">System OK</span>
     <span className="sr-only">All systems operational</span>
   </div>
@@ -586,7 +586,7 @@ export default function SupplierDashboard() {
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-500/10"
+            className="w-full justify-start text-error/80 hover:text-red-300 hover:bg-red-500/10"
           >
             <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
             Logout
@@ -651,7 +651,7 @@ export default function SupplierDashboard() {
 
         <main className="flex-1 p-4 lg:p-6 space-y-6">
           {error && (
-            <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+            <Alert variant="destructive" className="border-error/50 bg-error/10">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error Loading Data</AlertTitle>
               <AlertDescription className="flex items-center justify-between flex-wrap gap-2">

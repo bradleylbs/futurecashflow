@@ -156,7 +156,7 @@ const ViewSkeleton = () => (
 
 const SystemStatus: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
   <div className={`flex items-center gap-2 ${compact ? 'text-xs' : 'text-sm'}`}>
-    <Activity className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-green-500`} aria-hidden="true" />
+    <Activity className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-success`} aria-hidden="true" />
     <span className="text-muted-foreground">System OK</span>
     <span className="sr-only">All systems operational</span>
   </div>
@@ -481,7 +481,7 @@ export default function AdminDashboardPage() {
         <main className="flex-1 p-4 lg:p-6 space-y-6">
           {/* Error Alert with Retry */}
           {error && (
-            <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+            <Alert variant="destructive" className="border-error/50 bg-error/10">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error Loading Data</AlertTitle>
               <AlertDescription className="flex items-center justify-between">

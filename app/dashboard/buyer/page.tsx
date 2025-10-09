@@ -342,13 +342,13 @@ export default function BuyerDashboard() {
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-white/10 space-y-2">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Activity className="h-4 w-4 text-green-500" />
+            <Activity className="h-4 w-4 text-success" />
             <span>System OK</span>
           </div>
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-500/10"
+            className="w-full justify-start text-error/80 hover:text-red-300 hover:bg-red-500/10"
           >
             <LogOut className="mr-2 h-4 w-4" />
             Logout
@@ -516,7 +516,7 @@ export default function BuyerDashboard() {
               {/* Activation Success */}
               {isActivated && (
                 <Alert className="border-green-500/30 bg-green-500/5">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                   <AlertTitle className="text-green-400">Account Activated!</AlertTitle>
                   <AlertDescription className="text-green-300">
                     Your account is fully activated. You can now invite suppliers and manage operations.
