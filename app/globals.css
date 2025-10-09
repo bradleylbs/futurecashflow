@@ -13,6 +13,14 @@
   --accent-green: #27AE60;
   --accent-yellow: #F2C94C;
 
+  /* Semantic accents */
+  --success: var(--accent-green);
+  --success-foreground: var(--white);
+  --warning: var(--accent-yellow);
+  --warning-foreground: #0F172A;
+  --info: #8B5CF6; /* elegant violet accent for info */
+  --info-foreground: var(--white);
+
   /* Neutrals */
   --white: #FEFEFE;
   --black: #000000;
@@ -38,6 +46,8 @@
   --accent-foreground: #0F172A;
   --destructive: var(--accent-red);
   --destructive-foreground: var(--white);
+  --error: var(--accent-red);
+  --error-foreground: var(--white);
   --border: var(--mediumgray);
   --input: var(--white);
   --ring: var(--brand-blue);
@@ -79,6 +89,14 @@
   --accent-foreground: #E6E6E6;
   --destructive: var(--accent-red);
   --destructive-foreground: #FFFFFF;
+  --error: var(--accent-red);
+  --error-foreground: #FFFFFF;
+  --success: var(--accent-green);
+  --success-foreground: #0B0F14;
+  --warning: #EAC94B; /* slightly tuned for dark */
+  --warning-foreground: #0B0F14;
+  --info: #7C3AED; /* deeper violet on dark */
+  --info-foreground: #F5FAFF;
   --border: var(--darkgray);
   --input: var(--darkgray);
   --ring: var(--brand-blue);
@@ -111,6 +129,14 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);

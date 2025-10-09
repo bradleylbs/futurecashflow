@@ -93,10 +93,10 @@ const PaymentStatsCard: React.FC<{
   }
 
   const colorStyles: Record<string, string> = {
-    blue: "from-blue-500/20 to-indigo-500/20 text-blue-400",
-    green: "from-green-500/20 to-emerald-500/20 text-green-400",
-    amber: "from-amber-500/20 to-orange-500/20 text-amber-400",
-    purple: "from-purple-500/20 to-pink-500/20 text-purple-400",
+    blue: "from-primary/20 to-primary/10 text-primary",
+    green: "from-success/20 to-success/10 text-success",
+    amber: "from-warning/20 to-warning/10 text-warning",
+    purple: "from-info/20 to-info/10 text-info",
   }
 
   return (
@@ -112,7 +112,7 @@ const PaymentStatsCard: React.FC<{
           <p className="text-2xl font-bold mt-1">{value}</p>
           {trend && (
             <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${
-              trend.isPositive ? 'text-green-500' : 'text-red-500'
+              trend.isPositive ? 'text-success' : 'text-error'
             }`}>
               {trend.isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
               <span>{Math.abs(trend.value)}% from last period</span>
@@ -207,25 +207,25 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
         variant: "secondary" as const, 
         icon: Clock, 
         label: "Pending", 
-        bgClass: "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30"
+        bgClass: "bg-gradient-to-r from-warning/20 to-warning/10 text-warning border-warning/30"
       },
       paid: { 
         variant: "default" as const, 
         icon: CheckCircle, 
         label: "Paid", 
-        bgClass: "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30"
+        bgClass: "bg-gradient-to-r from-success/20 to-success/10 text-success border-success/30"
       },
       failed: { 
         variant: "destructive" as const, 
         icon: XCircle, 
         label: "Failed", 
-        bgClass: "bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30"
+        bgClass: "bg-gradient-to-r from-error/20 to-error/10 text-error border-error/30"
       },
       reversed: { 
         variant: "outline" as const, 
         icon: AlertCircle, 
         label: "Reversed", 
-        bgClass: "bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-400 border-gray-500/30"
+        bgClass: "bg-gradient-to-r from-muted/20 to-muted/10 text-muted-foreground border-border/30"
       },
     }
 
@@ -437,7 +437,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
         
         {successMessage && (
           <Alert className="border-green-500/50 bg-green-500/10">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="h-4 w-4 text-success" />
             <AlertTitle>Success</AlertTitle>
             <AlertDescription>{successMessage}</AlertDescription>
           </Alert>
@@ -731,7 +731,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
                   {/* Payment Breakdown */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
-                      <DollarSign className="h-5 w-5 text-green-500" />
+                      <DollarSign className="h-5 w-5 text-success" />
                       Payment Breakdown
                     </h3>
                     <div className="space-y-3 p-4 bg-white/5 rounded-xl border border-white/10">

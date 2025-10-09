@@ -194,7 +194,7 @@ function getAccessLevelInfo(level: string) {
 function getStatusColor(status: string) {
   const s = (status || '').toLowerCase()
   if (s === 'rejected') return 'bg-red-500/10 text-red-500 border-red-500/20'
-  if (s === 'approved' || s === 'signed' || s === 'verified') return 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+  if (s === 'approved' || s === 'signed' || s === 'verified') return 'bg-primary/10 text-primary border-primary/20'
   if (s === 'pending' || s === 'under_review') return 'bg-amber-500/10 text-amber-500 border-amber-500/20'
   return 'bg-muted text-muted-foreground border-border'
 }
@@ -204,7 +204,7 @@ const LoadingSkeleton = () => (
   <div className="relative min-h-screen flex items-center justify-center bg-black text-white">
     <div className="text-center space-y-6">
       <div className="p-6 rounded-full border border-white/10 bg-white/5">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
+        <RefreshCw className="w-8 h-8 text-primary animate-spin" />
       </div>
       <div className="flex items-baseline space-x-3">
         <h1 className="text-3xl font-bold">Future Finance</h1>
@@ -223,7 +223,7 @@ const InvitationBanner: React.FC<{ invitation: DashboardData['invitation'] }> = 
     <Card className="bg-blue-500/10 border-blue-500/20">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Mail className="h-5 w-5 text-blue-500" aria-hidden="true" />
+          <Mail className="h-5 w-5 text-primary" aria-hidden="true" />
           Invitation Details
         </CardTitle>
       </CardHeader>
@@ -257,7 +257,7 @@ const OnboardingProgress: React.FC<{ data: DashboardData }> = ({ data }) => {
     <Card className="bg-card/50 backdrop-blur-sm border-border">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Building className="h-5 w-5 text-blue-500" aria-hidden="true" />
+          <Building className="h-5 w-5 text-primary" aria-hidden="true" />
           Onboarding Progress
         </CardTitle>
         <CardDescription>{levelInfo.description}</CardDescription>
@@ -280,9 +280,9 @@ const OnboardingProgress: React.FC<{ data: DashboardData }> = ({ data }) => {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               {data.dashboard.kyc_status === "approved" ? (
-                <CheckCircle className="h-4 w-4 text-blue-500" aria-hidden="true" />
+                <CheckCircle className="h-4 w-4 text-primary" aria-hidden="true" />
               ) : (
-                <Clock className="h-4 w-4 text-blue-500" aria-hidden="true" />
+                <Clock className="h-4 w-4 text-primary" aria-hidden="true" />
               )}
               <span className="text-sm font-medium">KYC Status</span>
             </div>
@@ -294,7 +294,7 @@ const OnboardingProgress: React.FC<{ data: DashboardData }> = ({ data }) => {
           {data.dashboard.banking_status && (
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
-                <CreditCard className="h-4 w-4 text-blue-500" aria-hidden="true" />
+                <CreditCard className="h-4 w-4 text-primary" aria-hidden="true" />
                 <span className="text-sm font-medium">Banking</span>
               </div>
               <Badge className={getStatusColor(data.dashboard.banking_status)}>
@@ -306,7 +306,7 @@ const OnboardingProgress: React.FC<{ data: DashboardData }> = ({ data }) => {
           {data.dashboard.agreement_status && (
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
-                <FileText className="h-4 w-4 text-blue-500" aria-hidden="true" />
+                <FileText className="h-4 w-4 text-primary" aria-hidden="true" />
                 <span className="text-sm font-medium">Agreement</span>
               </div>
               <Badge className={getStatusColor(data.dashboard.agreement_status)}>
@@ -451,8 +451,8 @@ export default function SupplierDashboard() {
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
-                <Building className="h-6 w-6 text-blue-500" aria-hidden="true" />
+              <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
+                <Building className="h-6 w-6 text-primary" aria-hidden="true" />
               </div>
               <div>
                 <h1 className="text-lg font-bold">Supplier Portal</h1>
@@ -631,7 +631,7 @@ export default function SupplierDashboard() {
                 onClick={handleRefresh} 
                 disabled={refreshing}
                 size="sm"
-                className="rounded-full bg-blue-600 hover:bg-blue-700"
+                className="rounded-full bg-primary hover:bg-primary/90"
                 aria-label="Refresh dashboard data"
               >
                 <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} aria-hidden="true" />
@@ -714,13 +714,13 @@ export default function SupplierDashboard() {
                     <CardDescription>Provide your banking information for verification</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Alert className="mb-4 border-blue-500/50 bg-blue-500/10">
-                      <AlertTriangle className="h-4 w-4 text-blue-500" />
+                    <Alert className="mb-4 border-primary/50 bg-primary/10">
+                    <AlertTriangle className="h-4 w-4 text-primary" />
                       <AlertDescription>
                         Your KYC application has been approved. Continue to submit your banking details for verification.
                       </AlertDescription>
                     </Alert>
-                    <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                    <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
                       <a href="/supplier/banking">Go to Banking</a>
                     </Button>
                   </CardContent>
