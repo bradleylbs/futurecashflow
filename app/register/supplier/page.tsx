@@ -158,7 +158,7 @@ export default function SupplierRegisterPage() {
   if (!invitationToken || invalidInvitationReason) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
-        <Card className="w-full max-w-md bg-card border border-border shadow-sm">
+        <Card className="w-full max-w-md bg-card border-0 shadow-none">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="p-4 rounded-full border border-gray-200 bg-gray-50">
@@ -189,7 +189,7 @@ export default function SupplierRegisterPage() {
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
-        <Card className="w-full max-w-md bg-card border border-border shadow-sm">
+        <Card className="w-full max-w-md bg-card border-0 shadow-none">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="p-4 rounded-full border border-gray-200 bg-gray-50">
@@ -208,7 +208,7 @@ export default function SupplierRegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
-      <Card className="w-full max-w-md bg-card border border-border shadow-sm">
+      <Card className="w-full max-w-md bg-card border-0 shadow-none">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <LogoIcon className="w-8 h-8 text-blue-600" />

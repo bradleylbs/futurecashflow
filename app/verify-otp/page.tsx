@@ -241,7 +241,7 @@ export default function VerifyOTPPage() {
   if (success) {
     return (
       <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4">
-        <Card className="w-full max-w-md bg-card border border-border shadow-sm rounded-3xl text-foreground">
+        <Card className="w-full max-w-md bg-card border-0 shadow-none rounded-3xl text-foreground">
           <CardContent className="p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <LogoIcon className="w-8 h-8 text-blue-600" />
@@ -282,7 +282,7 @@ export default function VerifyOTPPage() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4">
-      <Card className="w-full max-w-md bg-card border border-border shadow-sm rounded-3xl text-foreground">
+      <Card className="w-full max-w-md bg-card border-0 shadow-none rounded-3xl text-foreground">
         <CardHeader className="text-center pb-6">
           <div className="flex items-center justify-between mb-6">
             <Button
