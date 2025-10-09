@@ -14,7 +14,7 @@ import { CreditCard, Loader2, Building } from "lucide-react"
 // LogoIcon matching presentation exactly
 const LogoIcon = () => (
   <div className="relative">
-    <svg aria-hidden="true" className="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 80 80">
+    <svg aria-hidden="true" className="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 80 80">
       <path d="M40 8L16 32H26L40 18L54 32H64L40 8Z" />
       <path d="M40 28L16 52H26L40 38L54 52H64L40 28Z" />
     </svg>
@@ -139,7 +139,7 @@ export default function SupplierBankingPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
-          <CreditCard className="h-6 w-6 text-blue-500" />
+          <CreditCard className="h-6 w-6 text-primary" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-white">Banking Details</h2>
@@ -154,7 +154,7 @@ export default function SupplierBankingPage() {
       <Card className="bg-card/50 backdrop-blur-sm border-border">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-white">
-            <Building className="h-6 w-6 text-blue-500" />
+            <Building className="h-6 w-6 text-primary" />
             Submit Banking Information
           </CardTitle>
           <CardDescription className="text-muted-foreground">

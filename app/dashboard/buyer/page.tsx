@@ -58,10 +58,10 @@ interface StatsCardProps {
 }
 
 const colorMap: Record<'blue' | 'green' | 'amber' | 'purple', { bg: string; border: string; icon: string }> = {
-  blue: { bg: "bg-blue-500/10", border: "border-blue-500/20", icon: "text-blue-500" },
-  green: { bg: "bg-green-500/10", border: "border-green-500/20", icon: "text-green-500" },
-  amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-500" },
-  purple: { bg: "bg-purple-500/10", border: "border-purple-500/20", icon: "text-purple-500" },
+  blue: { bg: "bg-primary/10", border: "border-primary/20", icon: "text-primary" },
+  green: { bg: "bg-success/10", border: "border-success/20", icon: "text-success" },
+  amber: { bg: "bg-warning/10", border: "border-warning/20", icon: "text-warning" },
+  purple: { bg: "bg-info/10", border: "border-info/20", icon: "text-info" },
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ 
@@ -220,7 +220,7 @@ export default function BuyerDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
         <div className="text-center space-y-4">
-          <Shield className="w-12 h-12 text-blue-500 mx-auto animate-pulse" />
+          <Shield className="w-12 h-12 text-primary mx-auto animate-pulse" />
           <h1 className="text-2xl font-semibold">Loading Dashboard...</h1>
         </div>
       </div>
@@ -273,8 +273,8 @@ export default function BuyerDashboard() {
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
-                <Shield className="h-6 w-6 text-blue-500" />
+              <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
+                <Shield className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <h1 className="text-lg font-bold">Buyer Portal</h1>
@@ -342,13 +342,13 @@ export default function BuyerDashboard() {
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-white/10 space-y-2">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Activity className="h-4 w-4 text-green-500" />
+            <Activity className="h-4 w-4 text-success" />
             <span>System OK</span>
           </div>
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-500/10"
+            className="w-full justify-start text-error/80 hover:text-red-300 hover:bg-red-500/10"
           >
             <LogOut className="mr-2 h-4 w-4" />
             Logout
@@ -453,7 +453,7 @@ export default function BuyerDashboard() {
 
               {/* Onboarding Progress */}
               {!isActivated && (
-                <Card className="border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-purple-500/5">
+                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-info/5">
                   <CardHeader>
                     <CardTitle>Complete Your Onboarding</CardTitle>
                     <CardDescription>
@@ -464,30 +464,30 @@ export default function BuyerDashboard() {
                     <Progress value={kycComplete && agreementComplete ? 100 : kycComplete ? 50 : 0} className="h-2" />
                     
                     <div className="space-y-3">
-                      <div className={`flex items-center gap-3 p-3 rounded-lg ${kycComplete ? 'bg-green-500/10 border border-green-500/20' : 'bg-blue-500/10 border border-blue-500/20'}`}>
-                        <div className={`p-2 rounded-full ${kycComplete ? 'bg-green-500/20 text-green-500' : 'bg-blue-500/20 text-blue-500'}`}>
+                      <div className={`flex items-center gap-3 p-3 rounded-lg ${kycComplete ? 'bg-success/10 border border-success/20' : 'bg-primary/10 border border-primary/20'}`}>
+                        <div className={`p-2 rounded-full ${kycComplete ? 'bg-success/20 text-success' : 'bg-primary/20 text-primary'}`}>
                           <Shield className="h-4 w-4" />
                         </div>
                         <div className="flex-1">
                           <div className="font-medium">Complete KYC Verification</div>
                         </div>
                         {kycComplete && (
-                          <Badge variant="default" className="bg-green-600">
+                          <Badge variant="default" className="bg-success text-success-foreground">
                             <CheckCircle2 className="h-3 w-3 mr-1" />
                             Complete
                           </Badge>
                         )}
                       </div>
 
-                      <div className={`flex items-center gap-3 p-3 rounded-lg ${agreementComplete ? 'bg-green-500/10 border border-green-500/20' : kycComplete ? 'bg-blue-500/10 border border-blue-500/20' : 'opacity-50'}`}>
-                        <div className={`p-2 rounded-full ${agreementComplete ? 'bg-green-500/20 text-green-500' : kycComplete ? 'bg-blue-500/20 text-blue-500' : 'bg-muted text-muted-foreground'}`}>
+                      <div className={`flex items-center gap-3 p-3 rounded-lg ${agreementComplete ? 'bg-success/10 border border-success/20' : kycComplete ? 'bg-primary/10 border border-primary/20' : 'opacity-50'}`}>
+                        <div className={`p-2 rounded-full ${agreementComplete ? 'bg-success/20 text-success' : kycComplete ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
                           <FileText className="h-4 w-4" />
                         </div>
                         <div className="flex-1">
                           <div className="font-medium">Sign Buyer Agreement</div>
                         </div>
                         {agreementComplete ? (
-                          <Badge variant="default" className="bg-green-600">
+                          <Badge variant="default" className="bg-success text-success-foreground">
                             <CheckCircle2 className="h-3 w-3 mr-1" />
                             Complete
                           </Badge>
@@ -516,7 +516,7 @@ export default function BuyerDashboard() {
               {/* Activation Success */}
               {isActivated && (
                 <Alert className="border-green-500/30 bg-green-500/5">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                   <AlertTitle className="text-green-400">Account Activated!</AlertTitle>
                   <AlertDescription className="text-green-300">
                     Your account is fully activated. You can now invite suppliers and manage operations.
@@ -576,7 +576,7 @@ export default function BuyerDashboard() {
             <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-blue-500" />
+                  <FileText className="h-5 w-5 text-primary" />
                   Your Agreements
                 </CardTitle>
                 <CardDescription>
@@ -585,9 +585,9 @@ export default function BuyerDashboard() {
               </CardHeader>
               <CardContent>
                 {kycComplete && !agreementComplete && (
-                  <Alert className="mb-4 border-blue-500/30 bg-blue-500/5">
-                    <AlertTriangle className="h-4 w-4 text-blue-500" />
-                    <AlertDescription className="text-blue-300">
+                  <Alert className="mb-4 border-primary/30 bg-primary/5">
+                    <AlertTriangle className="h-4 w-4 text-primary" />
+                    <AlertDescription className="text-primary/70">
                       Your KYC has been approved. Please sign your agreement to continue.
                     </AlertDescription>
                   </Alert>
@@ -615,7 +615,7 @@ export default function BuyerDashboard() {
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-blue-500" />
+                      <Users className="h-5 w-5 text-primary" />
                       Supplier Invitations
                     </CardTitle>
                     <CardDescription>
@@ -638,18 +638,18 @@ export default function BuyerDashboard() {
               <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Building className="h-5 w-5 text-blue-500" />
+                    <Building className="h-5 w-5 text-primary" />
                     Operations
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <Button onClick={handleMatchInvoices} disabled={matching} className="bg-green-600 hover:bg-green-700">
+                    <Button onClick={handleMatchInvoices} disabled={matching} className="bg-success hover:bg-success/90">
                       {matching && <RefreshCw className="h-4 w-4 mr-2 animate-spin" />}
                       Auto-Match
                     </Button>
                     <Button
-                      className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 shadow-lg rounded-full px-6 py-2"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 shadow-lg rounded-full px-6 py-2"
                       aria-label="Upload AP Data"
                       onClick={() => {
                         const el = document.getElementById('ap-upload-section');
@@ -669,11 +669,11 @@ export default function BuyerDashboard() {
               </Card>
 
               {/* Vendors */}
-              <Card className="border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-purple-500/10 mb-6">
+              <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-info/10 mb-6">
                 <CardHeader className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-blue-500" />
+                      <Users className="h-5 w-5 text-primary" />
                       Assign Vendors
                     </CardTitle>
                     <CardDescription>
@@ -686,8 +686,8 @@ export default function BuyerDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-col items-center justify-center gap-4 py-6">
-                    <Users className="h-12 w-12 text-blue-500 opacity-70" />
-                    <p className="text-lg font-semibold text-white">Total consented vendors: <span className="font-bold text-blue-400">{data.dashboard.vendor_count ?? 0}</span></p>
+                    <Users className="h-12 w-12 text-primary opacity-70" />
+                    <p className="text-lg font-semibold text-foreground">Total consented vendors: <span className="font-bold text-primary/80">{data.dashboard.vendor_count ?? 0}</span></p>
                     <p className="text-sm text-muted-foreground">Vendors assigned here will be authorized for invoice uploads and payments.</p>
                   </div>
                 </CardContent>

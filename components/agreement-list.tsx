@@ -38,9 +38,9 @@ interface AgreementListProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  'signed': 'bg-green-500/10 text-green-500 border-green-500/20',
-  'presented': 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-  'expired': 'bg-red-500/10 text-red-500 border-red-500/20',
+  'signed': 'bg-success/10 text-success border-success/20',
+  'presented': 'bg-primary/10 text-primary border-primary/20',
+  'expired': 'bg-error/10 text-error border-error/20',
 }
 
 const getAgreementTitle = (type: string): string => {
@@ -119,11 +119,11 @@ export function AgreementList({ onSelectAgreement }: AgreementListProps) {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "signed":
-        return <CheckCircle className="h-5 w-5 text-green-500" />
+        return <CheckCircle className="h-5 w-5 text-success" />
       case "presented":
-        return <Clock className="h-5 w-5 text-blue-500" />
+        return <Clock className="h-5 w-5 text-primary" />
       case "expired":
-        return <AlertCircle className="h-5 w-5 text-red-500" />
+        return <AlertCircle className="h-5 w-5 text-error" />
       default:
         return <FileText className="h-5 w-5 text-muted-foreground" />
     }

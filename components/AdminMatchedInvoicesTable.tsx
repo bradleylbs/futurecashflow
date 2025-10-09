@@ -102,10 +102,10 @@ interface SuppliersResponse {
 // ============================================================================
 
 const STATUS_COLORS: Record<Supplier["match_status"], string> = {
-  matched: "bg-green-500/10 text-green-500 border-green-500/20",
-  new_profile: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  conflict: "bg-red-500/10 text-red-500 border-red-500/20",
-  missing_data: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+  matched: "bg-success/10 text-success border-success/20",
+  new_profile: "bg-primary/10 text-primary border-primary/20",
+  conflict: "bg-error/10 text-error border-error/20",
+  missing_data: "bg-muted text-muted-foreground border-border/20",
 }
 
 const STATUS_LABELS: Record<Supplier["match_status"], string> = {
@@ -170,10 +170,10 @@ interface StatsCardProps {
 }
 
 const colorMap: Record<'blue' | 'green' | 'amber' | 'red', { bg: string; border: string; icon: string }> = {
-  blue: { bg: "bg-blue-500/10", border: "border-blue-500/20", icon: "text-blue-500" },
-  green: { bg: "bg-green-500/10", border: "border-green-500/20", icon: "text-green-500" },
-  amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-500" },
-  red: { bg: "bg-red-500/10", border: "border-red-500/20", icon: "text-red-500" },
+  blue: { bg: "bg-primary/10", border: "border-primary/20", icon: "text-primary" },
+  green: { bg: "bg-success/10", border: "border-success/20", icon: "text-success" },
+  amber: { bg: "bg-warning/10", border: "border-warning/20", icon: "text-warning" },
+  red: { bg: "bg-error/10", border: "border-error/20", icon: "text-error" },
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ 
@@ -445,7 +445,7 @@ const AdminMatchedInvoicesTable: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-500" />
+                <FileText className="h-5 w-5 text-primary" />
                 Supplier Matching Dashboard
               </CardTitle>
               <CardDescription>

@@ -88,7 +88,7 @@ const EmptyState = () => (
       <p className="text-muted-foreground max-w-md mx-auto">
         No eligible offers right now. Offers appear for invoices due in ≥48 hours with buyer consent.
       </p>
-      <Alert className="mt-6 max-w-lg mx-auto border-blue-500/50 bg-blue-500/10">
+      <Alert className="mt-6 max-w-lg mx-auto border-primary/50 bg-primary/10">
         <Info className="h-4 w-4 text-blue-400" />
         <AlertDescription className="text-sm">
           Early payment offers allow you to receive payment before the due date at a transparent fee.
@@ -208,7 +208,7 @@ export function EarlyPaymentOffers() {
   return (
     <div className="space-y-6">
       {error && (
-        <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+        <Alert variant="destructive" className="border-error/50 bg-error/10">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
@@ -216,8 +216,8 @@ export function EarlyPaymentOffers() {
       )}
 
       {success && (
-        <Alert className="border-green-500/50 bg-green-500/10">
-          <CheckCircle className="h-4 w-4 text-green-500" />
+        <Alert className="border-success/50 bg-success/10">
+          <CheckCircle className="h-4 w-4 text-success" />
           <AlertTitle>Success</AlertTitle>
           <AlertDescription>{success}</AlertDescription>
         </Alert>
@@ -363,7 +363,7 @@ export function EarlyPaymentOffers() {
                       <Separator className="mb-4 bg-white/10" />
 
                       {/* Comparison Section */}
-                      <div className="mb-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                      <div className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/30">
                         <div className="flex items-start gap-3">
                           <Info className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
                           <div className="text-sm">
@@ -425,7 +425,7 @@ export function EarlyPaymentOffers() {
             <div className="space-y-4 my-4">
               {confirmAction === "accept" ? (
                 <>
-                  <Alert className="border-green-500/50 bg-green-500/10">
+                  <Alert className="border-success/50 bg-success/10">
                     <CheckCircle className="h-4 w-4 text-green-400" />
                     <AlertDescription>
                       You will receive <span className="font-bold text-green-400">{formatCurrency(selectedOffer.offered_amount)}</span> immediately
@@ -449,7 +449,7 @@ export function EarlyPaymentOffers() {
                 </>
               ) : (
                 <>
-                  <Alert className="border-blue-500/50 bg-blue-500/10">
+                  <Alert className="border-primary/50 bg-primary/10">
                     <Info className="h-4 w-4 text-blue-400" />
                     <AlertDescription>
                       You will receive the full amount of <span className="font-bold text-blue-400">{formatCurrency(selectedOffer.amount)}</span> on the due date

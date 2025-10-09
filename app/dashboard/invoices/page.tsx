@@ -85,11 +85,11 @@ const StatCard = ({ title, value, icon: Icon, color, subtitle, trend, loading }:
   }
 
   const colorStyles: Record<string, string> = {
-    blue: "from-blue-500/20 to-blue-500/10 text-blue-400 border-blue-500/30",
-    green: "from-green-500/20 to-green-500/10 text-green-400 border-green-500/30",
-    amber: "from-amber-500/20 to-amber-500/10 text-amber-400 border-amber-500/30",
-    red: "from-red-500/20 to-red-500/10 text-red-400 border-red-500/30",
-    purple: "from-purple-500/20 to-purple-500/10 text-purple-400 border-purple-500/30",
+    blue: "from-primary/20 to-primary/10 text-primary border-primary/30",
+    green: "from-success/20 to-success/10 text-success border-success/30",
+    amber: "from-warning/20 to-warning/10 text-warning border-warning/30",
+    red: "from-error/20 to-error/10 text-error border-error/30",
+    purple: "from-info/20 to-info/10 text-info border-info/30",
   }
 
   return (
@@ -123,19 +123,19 @@ const getStatusBadge = (status: string, size: "default" | "small" = "default") =
     paid: { 
       icon: CheckCircle2, 
       label: "Paid", 
-      className: "bg-green-500/20 text-green-400 border-green-500/30",
+      className: "bg-success/20 text-success border-success/30",
       description: "Invoice has been paid"
     },
     accepted: { 
       icon: CheckCircle2, 
       label: "Accepted", 
-      className: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+      className: "bg-primary/20 text-primary border-primary/30",
       description: "Invoice accepted and pending payment"
     },
     pending: { 
       icon: Clock, 
       label: "Pending", 
-      className: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+      className: "bg-warning/20 text-warning border-warning/30",
       description: "Awaiting review"
     },
     rejected: { 
@@ -226,8 +226,8 @@ const EmptyState: React.FC<{ role: UserRole; onClearFilters?: () => void; hasFil
         </Button>
       )}
       {!hasFilters && role === 'buyer' && (
-        <Alert className="max-w-md mx-auto border-blue-500/50 bg-blue-500/10 mt-6">
-          <AlertCircle className="h-4 w-4 text-blue-400" />
+        <Alert className="max-w-md mx-auto border-primary/50 bg-primary/10 mt-6">
+          <AlertCircle className="h-4 w-4 text-primary/70" />
           <AlertDescription className="text-sm text-left">
             <p className="font-medium mb-2">Getting Started:</p>
             <ul className="space-y-1 list-disc list-inside text-muted-foreground">
@@ -543,7 +543,7 @@ export default function InvoicesPage() {
 
           {/* Alerts */}
           {error && (
-            <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+            <Alert variant="destructive" className="border-error/50 bg-error/10">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error Loading Invoices</AlertTitle>
               <AlertDescription className="flex items-center justify-between flex-wrap gap-2">
@@ -557,8 +557,8 @@ export default function InvoicesPage() {
           )}
           
           {successMessage && (
-            <Alert className="border-green-500/50 bg-green-500/10">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <Alert className="border-success/50 bg-success/10">
+              <CheckCircle2 className="h-4 w-4 text-success" />
               <AlertTitle>Success</AlertTitle>
               <AlertDescription>{successMessage}</AlertDescription>
             </Alert>
@@ -777,8 +777,8 @@ export default function InvoicesPage() {
                 return (
                   <Card 
                     key={invoice.id} 
-                    className={`relative overflow-hidden p-0 rounded-xl bg-black bg-gradient-to-br from-blue-500/20 to-purple-500/10 border border-white/10 backdrop-blur-sm hover:scale-[1.02] transition-all duration-300 cursor-pointer group ${
-                      isSelected ? 'ring-2 ring-blue-500/50' : ''
+                    className={`relative overflow-hidden p-0 rounded-xl bg-black bg-gradient-to-br from-primary/20 to-info/10 border border-white/10 backdrop-blur-sm hover:scale-[1.02] transition-all duration-300 cursor-pointer group ${
+                      isSelected ? 'ring-2 ring-primary/50' : ''
                     }`}
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
@@ -794,7 +794,7 @@ export default function InvoicesPage() {
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-3">
-                              <div className="p-2 rounded-lg bg-blue-500/20 border border-blue-500/30">
+                              <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
                                 <FileText className="h-4 w-4 text-blue-400" />
                               </div>
                               <div className="flex-1">
@@ -877,7 +877,7 @@ export default function InvoicesPage() {
               })}
             </div>
           ) : (
-            <Card className="relative overflow-hidden p-0 rounded-xl bg-black bg-gradient-to-br from-blue-500/20 to-purple-500/10 border border-white/10 backdrop-blur-sm">
+            <Card className="relative overflow-hidden p-0 rounded-xl bg-black bg-gradient-to-br from-primary/20 to-info/10 border border-white/10 backdrop-blur-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
               <CardContent className="p-0">
                 <div className="overflow-x-auto">

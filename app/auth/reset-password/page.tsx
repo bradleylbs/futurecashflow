@@ -77,7 +77,7 @@ function ResetPasswordContent() {
   if (success) {
     return (
       <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4">
-        <Card className="w-full max-w-md bg-card border border-border shadow-sm text-foreground">
+        <Card className="w-full max-w-md bg-card border-0 shadow-none text-foreground">
           <CardContent className="p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <LogoIcon className="w-8 h-8 text-blue-600" />
@@ -96,7 +96,7 @@ function ResetPasswordContent() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4">
-      <Card className="w-full max-w-md bg-card border border-border shadow-sm text-foreground">
+      <Card className="w-full max-w-md bg-card border-0 shadow-none text-foreground">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <LogoIcon className="w-8 h-8 text-blue-600" />

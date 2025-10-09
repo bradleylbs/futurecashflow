@@ -5,6 +5,7 @@ import "./globals.css"
 import ClientToaster from "@/components/ClientToaster"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 // Font configuration
 const inter = Inter({
@@ -133,11 +134,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn("min-h-screen bg-background text-foreground font-sans antialiased", inter.className)}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={true}>
           <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md z-50 transition-all duration-200">
             Skip to main content
           </a>
           <div id="main-content" className="relative">
+            <div className="fixed right-3 top-3 z-50">
+              <ThemeToggle />
+            </div>
             {children}
           </div>
           <ClientToaster />

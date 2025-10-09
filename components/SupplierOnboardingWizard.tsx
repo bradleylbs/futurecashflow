@@ -42,7 +42,7 @@ export default function SupplierOnboardingWizard() {
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold flex items-center gap-2">
-        <ClipboardList className="h-5 w-5 text-blue-500" />
+        <ClipboardList className="h-5 w-5 text-primary" />
         Onboarding Checklist
       </h2>
 
@@ -81,7 +81,7 @@ export default function SupplierOnboardingWizard() {
               </CardHeader>
               <CardContent>
                 {step.completed ? (
-                  <Button size="sm" disabled className="bg-green-500/10 text-green-600 border-green-500/20">
+                  <Button size="sm" disabled className="bg-success/10 text-success border-success/20">
                     <CheckCircle2 className="h-4 w-4 mr-1" /> Completed
                   </Button>
                 ) : step.locked ? (

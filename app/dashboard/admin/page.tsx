@@ -90,10 +90,10 @@ type StatsCardProps = {
 };
 
 const colorMap: Record<'blue' | 'green' | 'amber' | 'purple', { bg: string; border: string; icon: string }> = {
-  blue: { bg: "bg-blue-500/10", border: "border-blue-500/20", icon: "text-blue-500" },
-  green: { bg: "bg-green-500/10", border: "border-green-500/20", icon: "text-green-500" },
-  amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-500" },
-  purple: { bg: "bg-purple-500/10", border: "border-purple-500/20", icon: "text-purple-500" },
+  blue: { bg: "bg-primary/10", border: "border-primary/20", icon: "text-primary" },
+  green: { bg: "bg-success/10", border: "border-success/20", icon: "text-success" },
+  amber: { bg: "bg-warning/10", border: "border-warning/20", icon: "text-warning" },
+  purple: { bg: "bg-info/10", border: "border-info/20", icon: "text-info" },
 };
 
 const StatsCard: React.FC<StatsCardProps> = ({ 
@@ -156,7 +156,7 @@ const ViewSkeleton = () => (
 
 const SystemStatus: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
   <div className={`flex items-center gap-2 ${compact ? 'text-xs' : 'text-sm'}`}>
-    <Activity className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-green-500`} aria-hidden="true" />
+    <Activity className={`${compact ? 'h-3 w-3' : 'h-4 w-4'} text-success`} aria-hidden="true" />
     <span className="text-muted-foreground">System OK</span>
     <span className="sr-only">All systems operational</span>
   </div>
@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
         <div className="text-center space-y-4">
-          <Shield className="w-12 h-12 text-blue-500 mx-auto animate-pulse" />
+          <Shield className="w-12 h-12 text-primary mx-auto animate-pulse" />
           <h1 className="text-2xl font-semibold">Loading Dashboard...</h1>
         </div>
       </div>
@@ -293,8 +293,8 @@ export default function AdminDashboardPage() {
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
-                <Shield className="h-6 w-6 text-blue-500" />
+              <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
+                <Shield className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <h1 className="text-lg font-bold">Admin Portal</h1>
@@ -481,7 +481,7 @@ export default function AdminDashboardPage() {
         <main className="flex-1 p-4 lg:p-6 space-y-6">
           {/* Error Alert with Retry */}
           {error && (
-            <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+            <Alert variant="destructive" className="border-error/50 bg-error/10">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error Loading Data</AlertTitle>
               <AlertDescription className="flex items-center justify-between">
@@ -629,7 +629,7 @@ export default function AdminDashboardPage() {
                 {currentItem && (
                   <div>
                     <h2 className="text-2xl font-bold flex items-center gap-2">
-                      <currentItem.icon className="h-6 w-6 text-blue-500" />
+                      <currentItem.icon className="h-6 w-6 text-primary" />
                       {currentItem.label}
                     </h2>
                     {currentItem.description && (

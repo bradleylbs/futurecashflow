@@ -81,15 +81,15 @@ interface AuditLogResponse {
 // ============================================================================
 
 const ACTION_COLORS: Record<string, string> = {
-  'create': 'bg-green-500/10 text-green-500 border-green-500/20',
-  'update': 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-  'delete': 'bg-red-500/10 text-red-500 border-red-500/20',
-  'approve': 'bg-green-500/10 text-green-500 border-green-500/20',
-  'reject': 'bg-red-500/10 text-red-500 border-red-500/20',
-  'login': 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-  'logout': 'bg-gray-500/10 text-gray-500 border-gray-500/20',
-  'export': 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-  'failed': 'bg-red-500/10 text-red-500 border-red-500/20',
+  'create': 'bg-success/10 text-success border-success/20',
+  'update': 'bg-primary/10 text-primary border-primary/20',
+  'delete': 'bg-error/10 text-error border-error/20',
+  'approve': 'bg-success/10 text-success border-success/20',
+  'reject': 'bg-error/10 text-error border-error/20',
+  'login': 'bg-primary/10 text-primary border-primary/20',
+  'logout': 'bg-muted text-muted-foreground border-border/20',
+  'export': 'bg-info/10 text-info border-info/20',
+  'failed': 'bg-error/10 text-error border-error/20',
 }
 
 const TIME_FILTERS = [
@@ -139,10 +139,10 @@ interface StatsCardProps {
 }
 
 const colorMap: Record<'blue' | 'green' | 'amber' | 'red', { bg: string; border: string; icon: string }> = {
-  blue: { bg: "bg-blue-500/10", border: "border-blue-500/20", icon: "text-blue-500" },
-  green: { bg: "bg-green-500/10", border: "border-green-500/20", icon: "text-green-500" },
-  amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-500" },
-  red: { bg: "bg-red-500/10", border: "border-red-500/20", icon: "text-red-500" },
+  blue: { bg: "bg-primary/10", border: "border-primary/20", icon: "text-primary" },
+  green: { bg: "bg-success/10", border: "border-success/20", icon: "text-success" },
+  amber: { bg: "bg-warning/10", border: "border-warning/20", icon: "text-warning" },
+  red: { bg: "bg-error/10", border: "border-error/20", icon: "text-error" },
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ 
@@ -195,7 +195,7 @@ const CopyButton = ({ text }: { text: string }) => {
       className="h-6 px-2"
       aria-label={`Copy ${text}`}
     >
-      {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+      {copied ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
     </Button>
   )
 }

@@ -89,17 +89,17 @@ interface UsersResponse {
 // ============================================================================
 
 const ROLE_COLORS: Record<User['role'], string> = {
-  'admin': 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-  'fm_admin': 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-  'fa_admin': 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
-  'buyer': 'bg-green-500/10 text-green-500 border-green-500/20',
-  'supplier': 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+  'admin': 'bg-info/10 text-info border-info/20',
+  'fm_admin': 'bg-primary/10 text-primary border-primary/20',
+  'fa_admin': 'bg-info/10 text-info border-info/20',
+  'buyer': 'bg-success/10 text-success border-success/20',
+  'supplier': 'bg-warning/10 text-warning border-warning/20',
 }
 
 const STATUS_COLORS: Record<User['account_status'], string> = {
-  'active': 'bg-green-500/10 text-green-500 border-green-500/20',
-  'suspended': 'bg-red-500/10 text-red-500 border-red-500/20',
-  'pending': 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+  'active': 'bg-success/10 text-success border-success/20',
+  'suspended': 'bg-error/10 text-error border-error/20',
+  'pending': 'bg-warning/10 text-warning border-warning/20',
 }
 
 // ============================================================================
@@ -115,10 +115,10 @@ interface StatsCardProps {
 }
 
 const colorMap: Record<'blue' | 'green' | 'amber' | 'red', { bg: string; border: string; icon: string }> = {
-  blue: { bg: "bg-blue-500/10", border: "border-blue-500/20", icon: "text-blue-500" },
-  green: { bg: "bg-green-500/10", border: "border-green-500/20", icon: "text-green-500" },
-  amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-500" },
-  red: { bg: "bg-red-500/10", border: "border-red-500/20", icon: "text-red-500" },
+  blue: { bg: "bg-primary/10", border: "border-primary/20", icon: "text-primary" },
+  green: { bg: "bg-success/10", border: "border-success/20", icon: "text-success" },
+  amber: { bg: "bg-warning/10", border: "border-warning/20", icon: "text-warning" },
+  red: { bg: "bg-error/10", border: "border-error/20", icon: "text-error" },
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ 
@@ -517,7 +517,7 @@ export default function AdminUserManagement() {
                               {user.account_status === 'active' ? (
                                 <Ban className="h-4 w-4 text-red-500" />
                               ) : (
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                <CheckCircle2 className="h-4 w-4 text-success" />
                               )}
                             </Button>
 

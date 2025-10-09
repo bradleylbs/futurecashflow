@@ -548,7 +548,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <LogoIcon className="w-8 h-8 text-blue-500" />
+            <LogoIcon className="w-8 h-8 text-primary" />
             <span className="font-bold text-white text-xl">Future Mining Finance</span>
           </div>
           <p className="text-base mb-6">

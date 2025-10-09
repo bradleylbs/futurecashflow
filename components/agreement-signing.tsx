@@ -143,12 +143,12 @@ export function AgreementSigning({ agreement, onSigned }: AgreementSigningProps)
   return (
     <div className="space-y-6">
       {/* Agreement Header */}
-      <Card className="border-blue-500/20 bg-blue-500/5">
+      <Card className="border-primary/20 bg-primary/5">
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-2">
               <CardTitle className="flex items-center gap-2 text-xl">
-                <FileText className="h-5 w-5 text-blue-500" />
+                <FileText className="h-5 w-5 text-primary" />
                 {getAgreementTitle(agreement.agreement_type)}
               </CardTitle>
               <CardDescription className="flex flex-wrap items-center gap-2">
@@ -200,7 +200,7 @@ export function AgreementSigning({ agreement, onSigned }: AgreementSigningProps)
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <PenTool className="h-5 w-5 text-blue-500" />
+            <PenTool className="h-5 w-5 text-primary" />
             Electronic Signature
           </CardTitle>
           <CardDescription>
@@ -218,7 +218,7 @@ export function AgreementSigning({ agreement, onSigned }: AgreementSigningProps)
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="signatory-name">
-                Full Name <span className="text-red-500">*</span>
+                Full Name <span className="text-error">*</span>
               </Label>
               <Input
                 id="signatory-name"
@@ -258,7 +258,7 @@ export function AgreementSigning({ agreement, onSigned }: AgreementSigningProps)
           </div>
 
           <Alert className="border-blue-500/30 bg-blue-500/5">
-            <Shield className="h-4 w-4 text-blue-500" />
+            <Shield className="h-4 w-4 text-primary" />
             <AlertDescription className="text-blue-900">
               Your electronic signature will be legally binding and equivalent to a handwritten signature.
             </AlertDescription>

@@ -131,10 +131,10 @@ const DocumentStatsCard: React.FC<{
   }
 
   const colorStyles: Record<string, string> = {
-    blue: "from-blue-500/20 to-indigo-500/20 text-blue-400 border-blue-500/30",
-    green: "from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30",
-    amber: "from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30",
-    red: "from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30",
+    blue: "from-primary/20 to-primary/10 text-primary border-primary/30",
+    green: "from-success/20 to-success/10 text-success border-success/30",
+    amber: "from-warning/20 to-warning/10 text-warning border-warning/30",
+    red: "from-error/20 to-error/10 text-error border-error/30",
   }
 
   return (
@@ -439,7 +439,7 @@ export function AdminDocumentsTable({ refreshTrigger }: AdminDocumentsTableProps
         
         {successMessage && (
           <Alert className="border-green-500/50 bg-green-500/10">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="h-4 w-4 text-success" />
             <AlertTitle>Success</AlertTitle>
             <AlertDescription>{successMessage}</AlertDescription>
           </Alert>

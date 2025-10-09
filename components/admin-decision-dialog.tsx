@@ -350,7 +350,7 @@ export function AdminDecisionDialog({
               <TabsContent value="decision" className="space-y-6 mt-0">
                 {/* Alerts */}
                 {error && (
-                  <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+                  <Alert variant="destructive" className="border-error/50 bg-error/10">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Error</AlertTitle>
                     <AlertDescription>{error}</AlertDescription>
@@ -358,8 +358,8 @@ export function AdminDecisionDialog({
                 )}
                 
                 {successMessage && (
-                  <Alert className="border-green-500/50 bg-green-500/10">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  <Alert className="border-success/50 bg-success/10">
+                    <CheckCircle className="h-4 w-4 text-success" />
                     <AlertTitle>Success</AlertTitle>
                     <AlertDescription>{successMessage}</AlertDescription>
                   </Alert>

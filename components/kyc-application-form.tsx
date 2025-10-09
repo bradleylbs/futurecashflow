@@ -106,7 +106,7 @@ export function KYCApplicationForm({ onApplicationCreated, initialData }: KYCApp
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-3 text-2xl font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">
-          <Building className="h-6 w-6 text-blue-500" />
+          <Building className="h-6 w-6 text-primary" />
           Company Information
         </CardTitle>
         <CardDescription className="text-gray-700 font-medium">
@@ -124,7 +124,7 @@ export function KYCApplicationForm({ onApplicationCreated, initialData }: KYCApp
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
               <Label htmlFor="companyName" className="font-semibold text-gray-800">
-                Company Name <span className="text-red-500">*</span>
+                Company Name <span className="text-error">*</span>
               </Label>
               <Input
                 id="companyName"
@@ -139,7 +139,7 @@ export function KYCApplicationForm({ onApplicationCreated, initialData }: KYCApp
 
             <div className="space-y-3">
               <Label htmlFor="registrationNumber" className="font-semibold text-gray-800">
-                Registration Number <span className="text-red-500">*</span>
+                Registration Number <span className="text-error">*</span>
               </Label>
               <Input
                 id="registrationNumber"
@@ -154,7 +154,7 @@ export function KYCApplicationForm({ onApplicationCreated, initialData }: KYCApp
 
             <div className="space-y-3">
               <Label htmlFor="taxNumber" className="font-semibold text-gray-800">
-                Tax Number <span className="text-red-500">*</span>
+                Tax Number <span className="text-error">*</span>
               </Label>
               <Input
                 id="taxNumber"
