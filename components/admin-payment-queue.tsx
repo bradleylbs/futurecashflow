@@ -706,7 +706,7 @@ export function AdminPaymentQueue({ refreshTrigger, tabActive }: AdminPaymentQue
                   {/* Invoice Information */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-blue-500" />
+                      <FileText className="h-5 w-5 text-primary" />
                       Invoice Information
                     </h3>
                     <div className="space-y-3 p-4 bg-white/5 rounded-xl border border-white/10">

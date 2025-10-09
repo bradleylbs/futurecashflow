@@ -298,7 +298,7 @@ export default function AdminReports() {
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-blue-500" />
+            <Calendar className="h-5 w-5 text-primary" />
             Date Range
           </CardTitle>
           <CardDescription>
@@ -426,7 +426,7 @@ export default function AdminReports() {
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5 text-blue-500" />
+            <Download className="h-5 w-5 text-primary" />
             Export Reports
           </CardTitle>
           <CardDescription>

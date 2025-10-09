@@ -258,7 +258,7 @@ export function AgreementSigning({ agreement, onSigned }: AgreementSigningProps)
           </div>
 
           <Alert className="border-blue-500/30 bg-blue-500/5">
-            <Shield className="h-4 w-4 text-blue-500" />
+            <Shield className="h-4 w-4 text-primary" />
             <AlertDescription className="text-blue-900">
               Your electronic signature will be legally binding and equivalent to a handwritten signature.
             </AlertDescription>

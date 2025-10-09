@@ -193,9 +193,9 @@ function getAccessLevelInfo(level: string) {
 
 function getStatusColor(status: string) {
   const s = (status || '').toLowerCase()
-  if (s === 'rejected') return 'bg-red-500/10 text-red-500 border-red-500/20'
+  if (s === 'rejected') return 'bg-error/10 text-error border-error/20'
   if (s === 'approved' || s === 'signed' || s === 'verified') return 'bg-primary/10 text-primary border-primary/20'
-  if (s === 'pending' || s === 'under_review') return 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+  if (s === 'pending' || s === 'under_review') return 'bg-warning/10 text-warning border-warning/20'
   return 'bg-muted text-muted-foreground border-border'
 }
 

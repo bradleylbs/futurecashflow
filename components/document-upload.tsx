@@ -186,7 +186,7 @@ export function DocumentUpload({ kycId, userRole, documents, onDocumentUploaded 
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-3 text-2xl font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">
-          <FileText className="h-6 w-6 text-blue-500" />
+          <FileText className="h-6 w-6 text-primary" />
           Document Upload
         </CardTitle>
         <CardDescription className="text-gray-700 font-medium">
