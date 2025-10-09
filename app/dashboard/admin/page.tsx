@@ -178,11 +178,11 @@ export default function AdminDashboardPage() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/analytics", { credentials: "include" });
+      // Use the correct API endpoint that returns stats in the expected format
+      const res = await fetch("/api/admin/applications?limit=1", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch statistics");
       const data = await res.json();
-      // You may want to update AdminStats type to match analytics response if needed
-      setStats(data.stats || null);
+      setStats(data.stats);
       setInvoicesBySupplier(data.invoicesBySupplier || []);
       setError("");
       lastRefresh.current = new Date();
@@ -550,36 +550,34 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Supplier Invoice Counts Table */}
-              <Card className="bg-card/50 backdrop-blur-sm border-border/50 mt-6">
-                <CardHeader>
-                  <CardTitle>Invoices Assigned to Suppliers</CardTitle>
-                  <CardDescription>Number of invoices per supplier (user ID)</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full text-sm">
-                      <thead>
-                        <tr>
-                          <th className="text-left px-2 py-1">Supplier User ID</th>
-                          <th className="text-left px-2 py-1">Invoice Count</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {invoicesBySupplier.length === 0 ? (
-                          <tr><td colSpan={2} className="px-2 py-2 text-muted-foreground">No data</td></tr>
-                        ) : (
-                          invoicesBySupplier.map(row => (
+              {invoicesBySupplier.length > 0 && (
+                <Card className="bg-card/50 backdrop-blur-sm border-border/50 mt-6">
+                  <CardHeader>
+                    <CardTitle>Invoices Assigned to Suppliers</CardTitle>
+                    <CardDescription>Number of invoices per supplier (user ID)</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full text-sm">
+                        <thead>
+                          <tr>
+                            <th className="text-left px-2 py-1">Supplier User ID</th>
+                            <th className="text-left px-2 py-1">Invoice Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {invoicesBySupplier.map(row => (
                             <tr key={row.supplier_user_id}>
                               <td className="px-2 py-1 font-mono">{row.supplier_user_id}</td>
                               <td className="px-2 py-1">{row.invoice_count}</td>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               <Card className="bg-card/50 backdrop-blur-sm border-border/50">
                 <CardHeader>
